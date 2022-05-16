@@ -80,7 +80,6 @@ class HistoryRepositoryImpl(
             language = Locale.getDefault().language
         )
         val response = client.getHistory(body)
-// TODO v odpovědi serveru by nějak mělo byt zaznačeno cert měření
         return response.map {
             val items = it.toModelList()
             if (offset == 0) {
@@ -106,7 +105,6 @@ class HistoryRepositoryImpl(
             devices = if (ignoreFilters) null else historyFilterOptions.activeDevices?.toList(),
             networks = if (ignoreFilters) null else historyFilterOptions.activeNetworks?.toList()
         )
-        // TODO v odpovědi serveru by nějak mělo byt zaznačeno cert měření
         val response = client.getHistoryONT(body, limit.toLong(), (offset / limit).toLong())
         return response.map {
             val items = it.toModelList()

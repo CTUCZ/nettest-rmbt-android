@@ -72,7 +72,8 @@ fun HistoryItemResponse.toModel() = History(
     jitterMillis = jitterMillisResult,
     packetLossPercents = packetLossPercents,
     packetLossClassification = classificationPacketLoss?.let { Classification.fromValue(it) },
-    jitterClassification = classificationJitter?.let { Classification.fromValue(it) }
+    jitterClassification = classificationJitter?.let { Classification.fromValue(it) },
+    certMode = certMode
 )
 
 fun HistoryONTResponse.toModelList(): List<History> =
@@ -80,7 +81,6 @@ fun HistoryONTResponse.toModelList(): List<History> =
 
 fun HistoryItemONTResponse.toModel(): History {
     val dateTime = DateTime(measurementDate)
-// TODO v odpovědi serveru by nějak mělo byt zaznačeno cert měření
     return History(
         testUUID = testUUID,
         loopUUID = loopUUID,
@@ -120,7 +120,8 @@ fun HistoryItemONTResponse.toModel(): History {
             packetLossPercents?.roundToInt().toString()
         },
         packetLossClassification = Classification.NONE,
-        jitterClassification = Classification.NONE
+        jitterClassification = Classification.NONE,
+        certMode = false
     )
 }
 

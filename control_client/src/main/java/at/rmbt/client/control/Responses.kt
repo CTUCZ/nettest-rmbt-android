@@ -669,7 +669,9 @@ data class HistoryItemResponse(
     @SerializedName("classification_jitter")
     val classificationJitter: Int?,
     @SerializedName("classification_packet_loss")
-    val classificationPacketLoss: Int?
+    val classificationPacketLoss: Int?,
+    @SerializedName("cert_mode")
+    val certMode: Boolean?
 )
 
 @Keep

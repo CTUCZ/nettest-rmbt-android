@@ -39,5 +39,6 @@ data class History(
     val jitterMillis: String?,
     val packetLossPercents: String?,
     val packetLossClassification: Classification?,
-    val jitterClassification: Classification?
+    val jitterClassification: Classification?,
+    val certMode: Boolean?
 )
