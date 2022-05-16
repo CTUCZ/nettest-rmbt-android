@@ -120,7 +120,9 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
             if (homeViewModel.isConnected.value == true) {
                 if (!homeViewModel.clientUUID.value.isNullOrEmpty()) {
                     if (homeViewModel.state.isCertModeActive.get()) {
-                        if(isPermissionsForCertMeasuringGranted()) {
+                        if(LocationState.DISABLED_DEVICE == homeViewModel.state.isLocationEnabled.get()) {
+                            OpenGpsSettingDialog.instance().show(activity)
+                        }else if(isPermissionsForCertMeasuringGranted()) {
                             val networkType = homeViewModel.activeNetworkLiveData.activeNetworkWatcher.currentNetworkInfo?.type
                             if(networkType != TransportType.CELLULAR) {
                                 SimpleDialog.Builder()

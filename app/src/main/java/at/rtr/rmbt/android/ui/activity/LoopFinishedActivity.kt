@@ -66,10 +66,11 @@ class LoopFinishedActivity : BaseActivity() {
         if(viewModel.state.isCertModeActive.get()) {
             binding.loopFinishedTitle.setText(R.string.cert_mode_finished)
             binding.buttonRunAgain.visibility = View.GONE
-        }
 
-        if(viewModel.state.isCertModeActive.get()) {
             viewModel.resetLoopMode()
+        } else {
+            binding.buttonDownloadPdf.visibility = View.GONE
+            binding.buttonDownloadPdfInBrowser.visibility = View.GONE
         }
     }
 
