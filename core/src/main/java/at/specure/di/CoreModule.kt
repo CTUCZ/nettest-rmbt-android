@@ -5,10 +5,7 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
-import at.rmbt.client.control.ControlEndpointProvider
-import at.rmbt.client.control.ControlServerClient
-import at.rmbt.client.control.IpEndpointProvider
-import at.rmbt.client.control.MapEndpointProvider
+import at.rmbt.client.control.*
 import at.specure.config.Config
 import at.specure.config.ControlServerProviderImpl
 import at.specure.config.IpEndpointProviderImpl
@@ -138,7 +135,8 @@ class CoreModule {
         connectivityWatcher: ConnectivityWatcher,
         wifiInfoWatcher: WifiInfoWatcher,
         locationWatcher: LocationWatcher,
-        captivePortal: CaptivePortal
+        captivePortal: CaptivePortal,
+        cellInfoWatcher: CellInfoWatcher
     ): ActiveNetworkWatcher =
         ActiveNetworkWatcher(
             context,
@@ -149,7 +147,8 @@ class CoreModule {
             connectivityWatcher,
             wifiInfoWatcher,
             locationWatcher.stateWatcher,
-            captivePortal
+            captivePortal,
+            cellInfoWatcher
         )
 
     @Provides

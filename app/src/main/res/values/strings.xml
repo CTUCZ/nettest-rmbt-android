@@ -51,6 +51,7 @@
     <string name="preferences_loop_mode">Loop mode</string>
     <string name="preferences_advanced_settings">Advanced settings</string>
     <string name="preferences_loop_mode_summary">New test after waiting time or covering the distance. Max. 2 days</string>
+    <string name="preferences_loop_mode_num_of_tests">Number of tests</string>
     <string name="preferences_loop_mode_min_delay">Waiting time (in minutes)</string>
     <string name="preferences_loop_mode_max_movement">Distance (in meters)</string>
     <string name="preferences_expert_mode">Expert mode</string>
@@ -132,6 +133,7 @@
     <string name="input_setting_dialog_ok">OK</string>
     <string name="input_setting_dialog_cancel">Cancel</string>
     <string name="loop_mode_max_delay_invalid" tools:ignore="PluralsCandidate">Please choose a number between %1$d and %2$d.</string>
+    <string name="loop_mode_max_num_of_tests_invalid" tools:ignore="PluralsCandidate">Please choose a number between %1$d and %2$d.</string>
     <string name="about_client_uuid_copied">Client UUID has been copied to clipboard.</string>
     <string name="client_not_registered">App is not registered, try again later.</string>
 
@@ -281,6 +283,10 @@
     <string name="notification_loop_mode_title_active">Loop mode is active</string>
     <string name="notification_loop_mode_title_running">Loop mode is running (%1$d/%2$d)</string>
 
+    <string name="notification_cert_mode_title_active">Certified measurement is active</string>
+    <string name="notification_cert_mode_title_running">Certified measurement is running (%1$d/%2$d)</string>
+    <string name="notification_cert_mode_finished_title">Certified measurement finished</string>
+
     <string name="title_loop_mode">Loop mode</string>
     <string name="title_loop_count">Choose the number of tests</string>
     <string name="text_loop_start">Start tests</string>
@@ -348,4 +354,32 @@
     <string name="cell_info_bsic" translatable="false">BSIC</string>
     <string name="cell_info_arfcn" translatable="false">ARFCN</string>
     <string name="cell_info_rxl" translatable="false">RXL</string>
+
+    <string-array name="spin_modes">
+        <item>Basic measurement</item>
+        <item>Loop measurement</item>
+        <item>Cert measurement</item>
+    </string-array>
+
+    <string name="title_cert_instruction_1">Certified measurement title 1</string>
+    <string name="title_cert_instruction_2">Certified measurement title 2</string>
+    <string name="title_cert_instruction_3">Certified measurement title 3</string>
+    <string name="text_cert_instruction_1">Certified measurement instructions page 1</string>
+    <string name="text_cert_instruction_2">Certified measurement instructions page 2</string>
+    <string name="text_cert_instruction_3">Certified measurement instructions page 3</string>
+    <string name="permissions_dialog_title">Permissions</string>
+    <string name="permissions_dialog_text">Application will require permissions</string>
+    <string name="loop_download_pdf">Download result as PDF</string>
+    <string name="loop_download_pdf_in_browser">Open result in browser</string>
+
+    <string name="cert_location_permission_text_1">The certified measurement function requires access to location while in the background. Permission is necessary for precise location of your device while in the process of certifies measurement. It is then possible to prove that your device was in the specified location during the entire process of certified measurement and there was no movement outside the tolerated distance.\n\nChoose the \"Allow all the time\" option.</string>
+    <string name="cert_location_permission_text_2">The certified measurement function requires access to location while in the background. Permission is necessary for precise location of your device while in the process of certifies measurement. It is then possible to prove that your device was in the specified location during the entire process of certified measurement and there was no movement outside the tolerated distance.\n\nYou have probably declined this permission in the past. In the application settings, open Permissions->Location and select the \"Allow all the time\" option.</string>
+
+    <string name="cert_measurement">Cert measurement</string>
+    <string name="cert_mode_finished">Cert mode finished!</string>
+    <string name="home_attention">Attention</string>
+    <string name="download_pdf_title">NetTest certified measurement result</string>
+    <string name="download_pdf_description">Downloading result PDF</string>
+    <string name="download_pdf_error">Error while retrieving PDF url</string>
+    <string name="download_pdf_starting">Downloading measurement result...</string>
 </resources>

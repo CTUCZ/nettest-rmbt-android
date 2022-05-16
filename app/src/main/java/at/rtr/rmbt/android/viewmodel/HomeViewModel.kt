@@ -43,7 +43,7 @@ class HomeViewModel @Inject constructor(
     val ipV4ChangeLiveData: IpV4ChangeLiveData,
     val ipV6ChangeLiveData: IpV6ChangeLiveData,
     val clientUUID: ClientUUID,
-    private val appConfig: AppConfig,
+    val appConfig: AppConfig,
     private val newsRepository: NewsRepository,
     private val settingsRepository: SettingsRepository,
     measurementServers: MeasurementServers

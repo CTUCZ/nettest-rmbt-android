@@ -32,10 +32,10 @@
         android:title="@string/menu_button_statistics"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/navigation_map"
-        android:icon="@drawable/ic_menu_map"
-        android:title="@string/menu_button_map"
-        app:showAsAction="ifRoom" />
+<!--    <item-->
+<!--        android:id="@+id/navigation_map"-->
+<!--        android:icon="@drawable/ic_menu_map"-->
+<!--        android:title="@string/menu_button_map"-->
+<!--        app:showAsAction="ifRoom" />-->
 
 </menu>

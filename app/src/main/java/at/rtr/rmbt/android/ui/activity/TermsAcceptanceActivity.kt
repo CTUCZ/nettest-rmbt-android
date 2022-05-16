@@ -49,6 +49,10 @@ class TermsAcceptanceActivity : BaseActivity() {
             }
         }
 
+        binding.agreeLabel.setOnClickListener {
+            binding.checkbox.toggle()
+        }
+
         binding.accept.setOnClickListener {
             if (binding.checkbox.isChecked) {
                 viewModel.updateTermsAcceptance(true)

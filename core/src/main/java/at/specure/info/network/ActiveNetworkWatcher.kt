@@ -24,6 +24,7 @@ import android.telephony.TelephonyManager
 import at.rmbt.client.control.getCorrectDataTelephonyManager
 import at.rmbt.client.control.getCurrentDataSubscriptionId
 import at.specure.info.TransportType
+import at.specure.info.cell.CellInfoWatcher
 import at.specure.info.cell.CellNetworkInfo
 import at.specure.info.connectivity.ConnectivityInfo
 import at.specure.info.connectivity.ConnectivityWatcher
@@ -62,7 +63,8 @@ class ActiveNetworkWatcher(
     private val connectivityWatcher: ConnectivityWatcher,
     private val wifiInfoWatcher: WifiInfoWatcher,
     private val locationStateWatcher: LocationStateWatcher,
-    private val captivePortal: CaptivePortal
+    private val captivePortal: CaptivePortal,
+    val cellInfoWatcher: CellInfoWatcher
 ) : LocationStateWatcher.Listener {
 
     private val listeners = Collections.synchronizedSet(mutableSetOf<NetworkChangeListener>())

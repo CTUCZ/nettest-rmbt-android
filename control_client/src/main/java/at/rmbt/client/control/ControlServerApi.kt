@@ -14,11 +14,10 @@
 
 package at.rmbt.client.control
 
+import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Url
+import retrofit2.Response
+import retrofit2.http.*
 
 /**
  * Api interface of Control Server
@@ -150,4 +149,11 @@ interface ControlServerApi {
      */
     @POST
     fun signalResult(@Url url: String, @Body body: SignalMeasurementChunkBody): Call<SignalMeasurementChunkResultResponse>
+
+    /**
+     * Request to generate pdf file
+     */
+    @POST
+    @FormUrlEncoded
+    fun getExportPdf(@Url url: String, @FieldMap fields: Map<String, String>): Call<ExportPdfResponse>
 }

@@ -112,36 +112,36 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:visibleOrGone="@{state.testResult != null &amp;&amp; state.testResult.localOnly}" />
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/mapContainer"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_margin="@dimen/padding_large"
-                        app:cardCornerRadius="@dimen/padding_large"
-                        app:layout_constraintDimensionRatio="H,3:1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/localResultsMessage"
-                        app:visibleOrGone="@{state.testResult.longitude != null &amp;&amp; state.testResult.latitude != null &amp;&amp; state.playServicesAvailable == true}">
+<!--                    <androidx.cardview.widget.CardView-->
+<!--                        android:id="@+id/mapContainer"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="0dp"-->
+<!--                        android:layout_margin="@dimen/padding_large"-->
+<!--                        app:cardCornerRadius="@dimen/padding_large"-->
+<!--                        app:layout_constraintDimensionRatio="H,3:1"-->
+<!--                        app:layout_constraintEnd_toEndOf="parent"-->
+<!--                        app:layout_constraintStart_toStartOf="parent"-->
+<!--                        app:layout_constraintTop_toBottomOf="@+id/localResultsMessage"-->
+<!--                        app:visibleOrGone="@{state.testResult.longitude != null &amp;&amp; state.testResult.latitude != null &amp;&amp; state.playServicesAvailable == true}">-->
 
-                        <at.rtr.rmbt.android.map.MapViewWrapperImpl
-                            android:id="@+id/map"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+<!--                        <at.rtr.rmbt.android.map.MapViewWrapperImpl-->
+<!--                            android:id="@+id/map"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent" />-->
 
-                        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                            android:id="@+id/fullscreen_fab"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="end|top"
-                            android:layout_marginTop="@dimen/padding_medium"
-                            android:layout_marginEnd="@dimen/padding_medium"
-                            android:backgroundTint="@android:color/white"
-                            android:contentDescription="@null"
-                            android:src="@drawable/ic_map_fullscreen"
-                            app:borderWidth="0dp"
-                            app:fabSize="mini" />
-                    </androidx.cardview.widget.CardView>
+<!--                        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--                            android:id="@+id/fullscreen_fab"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="end|top"-->
+<!--                            android:layout_marginTop="@dimen/padding_medium"-->
+<!--                            android:layout_marginEnd="@dimen/padding_medium"-->
+<!--                            android:backgroundTint="@android:color/white"-->
+<!--                            android:contentDescription="@null"-->
+<!--                            android:src="@drawable/ic_map_fullscreen"-->
+<!--                            app:borderWidth="0dp"-->
+<!--                            app:fabSize="mini" />-->
+<!--                    </androidx.cardview.widget.CardView>-->
 
                     <TextView
                         android:id="@+id/networkTypeText"
@@ -153,7 +153,7 @@
                         android:textAllCaps="true"
                         android:textColor="@color/text_black_transparency_40"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/mapContainer"
+                        app:layout_constraintTop_toBottomOf="@+id/localResultsMessage"
                         app:text="@{state.testResult.networkTypeText}"
                         tools:text="WLAN" />
 

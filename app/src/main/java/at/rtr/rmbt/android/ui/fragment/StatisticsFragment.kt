@@ -44,7 +44,7 @@ class StatisticsFragment : BaseFragment() {
             setInitialScale(1)
             settings.loadWithOverviewMode = true
             settings.useWideViewPort = true
-            settings.builtInZoomControls = true
+            settings.builtInZoomControls = false
             settings.javaScriptEnabled = true
             webViewClient = MyWebViewClient(statisticsViewModel)
 

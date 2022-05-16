@@ -5,41 +5,43 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat.checkSelfPermission
 import at.rmbt.client.control.IpProtocol
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.FragmentHomeBinding
 import at.rtr.rmbt.android.di.viewModelLazy
-import at.rtr.rmbt.android.ui.activity.LoopConfigurationActivity
-import at.rtr.rmbt.android.ui.activity.LoopInstructionsActivity
-import at.rtr.rmbt.android.ui.activity.MeasurementActivity
-import at.rtr.rmbt.android.ui.activity.PreferenceActivity
-import at.rtr.rmbt.android.ui.activity.SignalMeasurementTermsActivity
-import at.rtr.rmbt.android.ui.dialog.IpInfoDialog
-import at.rtr.rmbt.android.ui.dialog.LocationInfoDialog
-import at.rtr.rmbt.android.ui.dialog.OpenGpsSettingDialog
-import at.rtr.rmbt.android.ui.dialog.OpenLocationPermissionDialog
-import at.rtr.rmbt.android.ui.dialog.MessageDialog
-import at.rtr.rmbt.android.ui.dialog.NetworkInfoDialog
-import at.rtr.rmbt.android.ui.dialog.SimpleDialog
+import at.rtr.rmbt.android.ui.activity.*
+import at.rtr.rmbt.android.ui.dialog.*
 import at.rtr.rmbt.android.util.InfoWindowStatus
 import at.rtr.rmbt.android.util.ToolbarTheme
 import at.rtr.rmbt.android.util.changeStatusBarColor
 import at.rtr.rmbt.android.util.listen
 import at.rtr.rmbt.android.viewmodel.HomeViewModel
+import at.rtr.rmbt.android.viewmodel.MeasurementViewModel
+import at.specure.data.entity.LoopModeState
+import at.specure.info.TransportType
 import at.specure.info.network.WifiNetworkInfo
 import at.specure.location.LocationState
 import at.specure.measurement.MeasurementService
 import at.specure.util.toast
+import cz.mroczis.netmonster.core.model.connection.SecondaryConnection
+import timber.log.Timber
 
-class HomeFragment : BaseFragment() {
+class HomeFragment : BaseFragment(), SimpleDialog.Callback {
 
     private val homeViewModel: HomeViewModel by viewModelLazy()
     private val binding: FragmentHomeBinding by bindingLazy()
+
+    private val measurementViewModel: MeasurementViewModel by viewModelLazy()
 
     override val layoutResId = R.layout.fragment_home
 
@@ -117,7 +119,26 @@ class HomeFragment : BaseFragment() {
         binding.ivSignalLevel.setOnClickListener {
             if (homeViewModel.isConnected.value == true) {
                 if (!homeViewModel.clientUUID.value.isNullOrEmpty()) {
-                    if (homeViewModel.state.isLoopModeActive.get()) {
+                    if (homeViewModel.state.isCertModeActive.get()) {
+                        if(isPermissionsForCertMeasuringGranted()) {
+                            val networkType = homeViewModel.activeNetworkLiveData.activeNetworkWatcher.currentNetworkInfo?.type
+                            if(networkType != TransportType.CELLULAR) {
+                                SimpleDialog.Builder()
+                                    .titleText("Detekována nepodporovaná síť")
+                                    .messageText("Jste připojení na wifi nebo jinou síť než mobilní data. Certifikované měření je určeno pro mobilní síť.")
+                                    .positiveText(android.R.string.ok)
+                                    .cancelable(true)
+                                    .show(childFragmentManager, CODE_NO_CELLULAR_NETWORK)
+                            } else {
+                                startCertMeasurement()
+                            }
+
+                        } else {
+                            Timber.d("Cert measurement requires all permissions, requiring permissions...")
+                            requirePermissions(true)
+                        }
+
+                    } else if (homeViewModel.state.isLoopModeActive.get()) {
                         LoopConfigurationActivity.start(requireContext())
                     } else {
                         MeasurementService.startTests(requireContext())
@@ -158,6 +179,51 @@ class HomeFragment : BaseFragment() {
             }
         }
 
+        activity?.let {
+            ArrayAdapter.createFromResource(it, R.array.spin_modes, R.layout.measurement_mode_spinner_item)
+                    .also { adapter ->
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        binding.spinMode?.adapter = adapter
+
+                        binding.spinMode?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+//                                Toast.makeText(activity, "Clicked! "+binding.spinMode?.selectedItem.toString(), Toast.LENGTH_SHORT)
+//                                        .show()
+//                                val status = measurementViewModel.state.loopModeRecord.get()?.status
+//                                val loopUUID = measurementViewModel.state.loopLocalUUID.get()
+//                                val testsPerformed = measurementViewModel.state.loopModeRecord.get()?.testsPerformed
+//                                val numberOfTests = measurementViewModel.config.loopModeNumberOfTests
+//                                val isLoopRunning = measurementViewModel.state.loopModeRecord.get()?.status != LoopModeState.FINISHED &&
+//                                        measurementViewModel.state.loopModeRecord.get()?.status != LoopModeState.CANCELLED &&
+//                                        measurementViewModel.state.loopLocalUUID.get() != null &&
+//                                        (measurementViewModel.state.loopModeRecord.get()?.testsPerformed != measurementViewModel.config.loopModeNumberOfTests)
+
+                                if(measurementViewModel.isTestsRunningLiveData.value != true) {
+                                    val loopIsChecked = binding.btnLoop?.isChecked
+                                    when(position) {
+                                        1 -> if(!loopIsChecked) binding.btnLoop?.performClick()
+                                        else -> if(loopIsChecked) binding.btnLoop?.performClick()
+                                    }
+
+                                    when(position) {
+                                        2 -> {
+                                            homeViewModel.state.isCertModeActive.set(true)
+                                            val intent = CertInstructionsActivity.start(requireContext())
+                                            startActivityForResult(intent, CODE_CERT_INSTRUCTIONS)
+                                        }
+                                        else -> homeViewModel.state.isCertModeActive.set(false)
+                                    }
+                                }
+                            }
+
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+                            // do nothing
+                            }
+
+                        }
+                    }
+        }
+
         homeViewModel.newsLiveData.listen(this) {
             it?.forEach { newItem ->
                 val latestNewsShown: Long = homeViewModel.getLatestNewsShown() ?: -1
@@ -188,6 +254,94 @@ class HomeFragment : BaseFragment() {
                 NetworkInfoDialog.show(childFragmentManager)
             }
         }
+
+        binding.debugDataButton?.setOnClickListener {
+            SimpleDialog.Builder()
+                .titleText("Debug data")
+                .messageText(debugData())
+                .positiveText(android.R.string.ok)
+                .cancelable(true)
+                .show(this.childFragmentManager, 0)
+
+            //LoopFinishedActivity.startForCertMode(requireContext(), "L7142468f-7cf3-4ae8-ac0c-0baf25b44c11")
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun debugData(): String {
+        val signalWatcher = homeViewModel.signalStrengthLiveData.signalStrengthWatcher
+        val networkWatcher = homeViewModel.activeNetworkLiveData.activeNetworkWatcher
+        val s = StringBuilder(1000)
+        s.append("Cell UUID: ")
+        s.appendLine(networkWatcher.currentNetworkInfo?.cellUUID)
+        s.appendLine()
+        s.append("Network name: ")
+        s.appendLine(signalWatcher.lastNetworkInfo?.name)
+        s.append("Network type: ")
+        s.appendLine(networkWatcher.currentNetworkInfo?.type?.name)
+        s.append("Signal strength(dbm): ")
+        s.appendLine(signalWatcher.lastDetailedNetworkInfo?.signalStrengthInfo?.value)
+        s.append("Network apn: ")
+        s.appendLine(networkWatcher.cellInfoWatcher.activeNetwork?.apn)
+
+        s.append("Data subscriptionId: ")
+        s.appendLine(networkWatcher.cellInfoWatcher.dataSubscriptionId)
+        s.append("Area code: ")
+        s.appendLine(networkWatcher.cellInfoWatcher.activeNetwork?.areaCode)
+        s.append("LocationId: ")
+        s.appendLine(networkWatcher.cellInfoWatcher.activeNetwork?.locationId)
+        s.append("Scrambling Code: ")
+        s.appendLine(networkWatcher.cellInfoWatcher.activeNetwork?.scramblingCode)
+        s.append("Band channel attribution: ")
+        s.appendLine(networkWatcher.cellInfoWatcher.activeNetwork?.band?.channelAttribution?.name)
+
+        s.append("Roaming: ")
+        s.appendLine(networkWatcher.cellInfoWatcher.activeNetwork?.isRoaming)
+        s.appendLine()
+        s.appendLine("Cell info")
+
+        if(networkWatcher.currentNetworkInfo?.type == TransportType.CELLULAR) {
+            signalWatcher.lastDetailedNetworkInfo?.allCellInfos?.forEach {
+                Timber.d("Cell info: $it")
+                if (it.connectionStatus.toString() == "PrimaryConnection()") {
+                    s.appendLine("PrimaryConnection: ")
+                    s.append("Cell type: ")
+                    s.appendLine(networkWatcher.cellInfoWatcher.activeNetwork?.cellType?.displayName)
+                    s.append("MNC: ")
+                    s.appendLine(it.network?.mnc)
+                    s.append("MCC: ")
+                    s.appendLine(it.network?.mcc)
+                    s.append("ISO: ")
+                    s.appendLine(it.network?.iso)
+                    s.append("Band name: ")
+                    s.appendLine(it.band?.name)
+                    s.append("Band number: ")
+                    s.appendLine(it.band?.number)
+                    s.append("Band channelNumber: ")
+                    s.appendLine(it.band?.channelNumber)
+                }
+                if(it.connectionStatus is SecondaryConnection) {
+                    s.appendLine("SecondaryConnection: ")
+                    s.append("MNC: ")
+                    s.appendLine(it.network?.mnc)
+                    s.append("MCC: ")
+                    s.appendLine(it.network?.mcc)
+                    s.append("ISO: ")
+                    s.appendLine(it.network?.iso)
+                    s.append("Band name: ")
+                    s.appendLine(it.band?.name)
+                    s.append("Band number: ")
+                    s.appendLine(it.band?.number)
+                    s.append("Band channelNumber: ")
+                    s.appendLine(it.band?.channelNumber)
+                }
+            }
+        } else {
+            s.appendLine("Není připojeno na mobilní data")
+        }
+
+
+        return s.toString()
     }
 
     override fun onResume() {
@@ -220,15 +374,36 @@ class HomeFragment : BaseFragment() {
                 if (resultCode == Activity.RESULT_OK) {
                     homeViewModel.state.isLoopModeActive.set(true)
                     binding.btnLoop?.isChecked = true
+
+                    binding.spinMode?.setSelection(1)
+                    homeViewModel.state.isCertModeActive.set(false)
                 } else {
                     homeViewModel.state.isLoopModeActive.set(false)
                     binding.btnLoop?.isChecked = false
+                    binding.spinMode?.setSelection(0)
                 }
             }
             CODE_SIGNAL_MEASUREMENT_TERMS -> {
                 if (resultCode == Activity.RESULT_OK) {
                     homeViewModel.toggleSignalMeasurementService()
                     requireContext().toast(R.string.toast_signal_measurement_enabled)
+                }
+            }
+            CODE_CERT_INSTRUCTIONS -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    homeViewModel.state.isCertModeActive.set(true)
+                    binding.spinMode?.setSelection(2)
+
+                    homeViewModel.state.isLoopModeActive.set(false)
+                    binding.btnLoop?.isChecked = false
+
+                    //showDialog()
+                } else {
+                    homeViewModel.state.isCertModeActive.set(false)
+
+                    homeViewModel.state.isLoopModeActive.set(false)
+                    binding.btnLoop?.isChecked = false
+                    binding.spinMode?.setSelection(0)
                 }
             }
         }
@@ -248,7 +423,9 @@ class HomeFragment : BaseFragment() {
         super.onStart()
         homeViewModel.attach(requireContext())
 
-        checkPermissions()
+        //checkPermissions()
+        //showDialog()
+        if(homeViewModel.shouldAskForPermission()) requirePermissions()
         startTimerForInfoWindow()
         homeViewModel.state.checkConfig()
     }
@@ -270,12 +447,117 @@ class HomeFragment : BaseFragment() {
             }
         }
 
-        if (permissions.isNotEmpty() && homeViewModel.shouldAskForPermission()) {
+        if (permissions.isNotEmpty() /*&& homeViewModel.shouldAskForPermission()*/) {
             requestPermissions(permissions.toTypedArray(), PERMISSIONS_REQUEST_CODE)
             homeViewModel.permissionsWereAsked()
         } else {
             homeViewModel.getNews()
         }
+    }
+
+    private fun showDialog() {
+        val checkPermissions: Boolean
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val background = checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            val fineLocation = checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            checkPermissions = checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        } else {
+            checkPermissions = checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        }
+
+//        ActivityCompat.requestPermissions(
+//            requireActivity(),
+//            arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+//            PERMISSIONS_REQUEST_CODE
+//        )
+
+        if(!checkPermissions /*|| homeViewModel.shouldAskForPermission()*/) {
+            SimpleDialog.Builder()
+                .titleText(R.string.permissions_dialog_title)
+                .messageText(R.string.permissions_dialog_text)
+                .positiveText(android.R.string.ok)
+                .cancelable(false)
+                .show(this.childFragmentManager, CODE_PERM_INFO)
+        }
+    }
+
+    private fun requirePermissions(forceBackgroundLocation: Boolean = false) {
+        val fineLocation = checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val phone = checkSelfPermission(requireContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+
+        if(!fineLocation || !phone) {
+            SimpleDialog.Builder()
+                .titleText(R.string.permissions_dialog_title)
+                .messageText("Aplikace vyžaduje oprávnění pro polohu a informace o telefoním signálu")
+                .positiveText(android.R.string.ok)
+                .cancelable(false)
+                .show(this.childFragmentManager, CODE_PERM_INFO)
+        } else if (forceBackgroundLocation){
+            requireBackgroundLocationPermission()
+        }
+
+    }
+
+    private fun requireBackgroundLocationPermission() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+            checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_DENIED) {
+
+            if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                SimpleDialog.Builder()
+                    .titleText(R.string.permissions_dialog_title)
+                    .messageText(R.string.cert_location_permission_text_1)
+                    .positiveText(android.R.string.ok)
+                    .cancelable(false)
+                    .show(this.childFragmentManager, CODE_BACKGROUND_PERM_INFO)
+            } else {
+                SimpleDialog.Builder()
+                    .titleText(R.string.permissions_dialog_title)
+                    .messageText(R.string.cert_location_permission_text_2)
+                    .positiveText(android.R.string.ok)
+                    .cancelable(false)
+                    .show(this.childFragmentManager, CODE_BACKGROUND_BACKUP_PERM_INFO)
+            }
+        }
+    }
+
+    private fun isPermissionsForCertMeasuringGranted(): Boolean {
+        val fineLocation = checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val phone = checkSelfPermission(requireContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+        val backgroundLocation: Boolean
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            backgroundLocation = checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
+        } else {
+            backgroundLocation = true
+        }
+
+        return fineLocation && phone && backgroundLocation
+    }
+
+    private fun startCertMeasurement() {
+        Timber.d("Cert measurement can run")
+        homeViewModel.state.isLoopModeActive.set(true)
+        homeViewModel.appConfig.savedLoopModeNumberOfTests = homeViewModel.appConfig.loopModeNumberOfTests
+        homeViewModel.appConfig.savedLoopModeWaitingTimeMin = homeViewModel.appConfig.loopModeWaitingTimeMin
+        homeViewModel.appConfig.savedLoopModeDistanceMeters = homeViewModel.appConfig.loopModeDistanceMeters
+
+//        homeViewModel.appConfig.loopModeNumberOfTests = 6 // TODO přepnout na pevno při releasu
+        //homeViewModel.appConfig.loopModeWaitingTimeMin = 10
+
+//        homeViewModel.appConfig.loopModeNumberOfTests = 4
+//        homeViewModel.appConfig.loopModeWaitingTimeMin = 1
+        homeViewModel.appConfig.loopModeDistanceMeters = 100000
+
+        MeasurementService.startTests(requireContext())
+        MeasurementActivity.start(requireContext())
     }
 
     override fun onStop() {
@@ -295,11 +577,60 @@ class HomeFragment : BaseFragment() {
         }, INFO_WINDOW_TIME_MS)
     }
 
+    override fun onDialogPositiveClicked(code: Int) {
+
+
+        if(code == CODE_PERM_INFO) {
+            permRequestLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE))
+        }
+
+        if (code == CODE_BACKGROUND_PERM_INFO && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permRequestLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+        }
+
+        if(code == CODE_BACKGROUND_BACKUP_PERM_INFO) {
+            val i = Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.parse("package:" + activity?.packageName)
+            )
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            activityLauncher.launch(i)
+        }
+
+        if(code == CODE_NO_CELLULAR_NETWORK) {
+            startCertMeasurement()
+        }
+    }
+
+    private val permRequestLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        Timber.d("Permissions request result: $permissions")
+        if(permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true && homeViewModel.state.isCertModeActive.get()) {
+            requireBackgroundLocationPermission()
+        }
+        homeViewModel.permissionsWereAsked()
+        homeViewModel.permissionsWatcher.notifyPermissionsUpdated()
+    }
+
+    private val activityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        Timber.d("Activity result: $it")
+    }
+
+    override fun onDialogNegativeClicked(code: Int) {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         private const val PERMISSIONS_REQUEST_CODE: Int = 10
         private const val INFO_WINDOW_TIME_MS: Long = 2000
         private const val CODE_SIGNAL_MEASUREMENT_TERMS = 12
         private const val CODE_LOOP_INSTRUCTIONS = 13
         private const val CODE_DIALOG_NEWS = 14
+        private const val CODE_CERT_INSTRUCTIONS = 15
+        private const val CODE_PERM_INFO = 16
+        private const val CODE_BACKGROUND_PERM_INFO = 17
+        private const val CODE_BACKGROUND_BACKUP_PERM_INFO = 18
+        private const val CODE_NO_CELLULAR_NETWORK = 19
     }
 }

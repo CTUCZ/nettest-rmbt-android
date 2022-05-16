@@ -95,6 +95,9 @@ class StateRecorder @Inject constructor(
     val loopTestCount: Int
         get() = _loopModeRecord?.testsPerformed ?: 1
 
+    val certMode: Boolean
+        get() = _loopModeRecord?.certMode ?: false
+
     fun updateLocationInfo() {
         _locationInfo = if (locationWatcher.state == LocationState.ENABLED) {
             locationWatcher.latestLocation
@@ -182,6 +185,7 @@ class StateRecorder @Inject constructor(
             developerModeEnabled = config.developerModeIsEnabled,
             serverSelectionEnabled = config.expertModeEnabled,
             loopModeEnabled = config.loopModeEnabled,
+            certModeEnabled = config.certModeEnabled,
             transportType = networkInfo?.type,
             clientVersion = RMBT_CLIENT_VERSION
         )
@@ -198,10 +202,11 @@ class StateRecorder @Inject constructor(
     }
 
     fun initializeLoopModeData(loopUUID: String?) {
+
         if (_loopModeRecord == null) {
             val localLoopUUID = UUID.randomUUID().toString()
             Timber.d("new generated local loop uuid $localLoopUUID")
-            _loopModeRecord = LoopModeRecord(localLoopUUID, loopUUID, lastTestUuid = testRecord?.uuid)
+            _loopModeRecord = LoopModeRecord(localLoopUUID, loopUUID, lastTestUuid = testRecord?.uuid, config.certModeEnabled)
             Timber.d("LOOP STATE SAVED 1: ${_loopModeRecord!!.status}")
             repository.saveLoopMode(_loopModeRecord!!)
         } else {

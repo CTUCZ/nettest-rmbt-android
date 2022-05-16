@@ -104,4 +104,9 @@ interface ControlEndpointProvider {
      * Value for X-Nettest-Client header, do not include header if empty
      */
     val getNettestHeaderValue: String
+
+    /**
+     * Url for PDF exports
+     */
+    val getExportPdfUrl: String
 }

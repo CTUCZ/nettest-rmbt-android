@@ -20,6 +20,7 @@
 
         <import type="at.specure.location.LocationState" />
         <import type="at.rtr.rmbt.android.ui.HomeScreenLabelType" />
+        <import type="at.rtr.rmbt.android.BuildConfig" />
 
         <variable
             name="captiveState"
@@ -49,6 +50,7 @@
             android:layout_marginStart="@dimen/margin_medium"
             android:button="@drawable/selector_loop_mode"
             android:checked="@{state.isLoopModeActive}"
+            android:visibility="@{View.INVISIBLE}"
             android:thumb="@null"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -84,7 +86,7 @@
             android:paddingBottom="@dimen/margin_medium"
             android:text="@string/title_loop_mode"
             android:textColor="@{state.isConnected ? @android:color/white : @color/text_dark_gray}"
-            android:visibility="@{state.isLoopModeActive ? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="@{View.INVISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
@@ -112,6 +114,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loop_mode_title"
             tools:src="@drawable/bg_home_with_internet_circle" />
+        <Spinner
+            android:id="@+id/spinMode"
+            style="@style/RobotoMediumStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/dropdownListPreferredItemHeight"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:background="@drawable/spinner_outline"
+            android:popupBackground="@drawable/spinner_outline_popup"
+            android:textAlignment="center"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:entries="@array/spin_modes"
+            android:popupElevation="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivIsConnectedCircle" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivIsCaptivePortal"
@@ -141,6 +159,22 @@
             app:layout_constraintVertical_bias="0.15"
             app:maxImageSize="48dp"
             app:visibleOrGone="@{state.isLoopModeActive}" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/icon_cert_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/white"
+            android:src="@drawable/ic_label_cert"
+            app:borderWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/ivIsConnectedCircle"
+            app:layout_constraintEnd_toEndOf="@+id/ivIsConnectedCircle"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="@id/ivIsConnectedCircle"
+            app:layout_constraintTop_toTopOf="@+id/ivIsConnectedCircle"
+            app:layout_constraintVertical_bias="0.15"
+            app:maxImageSize="48dp"
+            app:visibleOrGone="@{state.isCertModeActive}" />
 
         <View
             android:id="@+id/circleMarginView"
@@ -218,7 +252,7 @@
             app:layout_constraintBottom_toTopOf="@+id/tvNetworkName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivIsConnectedCircle"
+            app:layout_constraintTop_toBottomOf="@+id/spinMode"
             app:layout_constraintVertical_chainStyle="packed"
             app:networkType="@{state.activeNetworkInfo}"
             tools:text="4G/LTE"
@@ -400,6 +434,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/btnLocation"
                 tools:src="@drawable/ic_upload_enabled" android:visibility="@{state.expertModeIsEnabled ? View.VISIBLE : View.GONE}"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/debugDataButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            app:srcCompat="@drawable/ic_filter_technology"
+            app:layout_constraintBottom_toTopOf="@id/tvFrequency"
+            app:layout_constraintRight_toRightOf="@id/tvFrequency"
+            android:layout_marginEnd="@dimen/margin_24"
+            android:layout_marginBottom="@dimen/margin_24"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

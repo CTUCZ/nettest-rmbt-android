@@ -201,7 +201,8 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                         !config.shouldRunQosTest,
                         stateRecorder.loopModeRecord,
                         config.loopModeNumberOfTests,
-                        stopTestsIntent(this@MeasurementService)
+                        stopTestsIntent(this@MeasurementService),
+                        config.certModeEnabled
                     ),
                     state,
                     false
@@ -265,7 +266,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                 Timber.d("TIMER: cancelling 3: ${loopCountdownTimer?.hashCode()}")
 
                 if (config.loopModeEnabled) {
-                    notificationManager.notify(NOTIFICATION_LOOP_FINISHED_ID, notificationProvider.loopModeFinishedNotification())
+                    notificationManager.notify(NOTIFICATION_LOOP_FINISHED_ID, notificationProvider.loopModeFinishedNotification(config.certModeEnabled, stateRecorder.loopModeRecord?.uuid))
                     loopModeState = LoopModeState.FINISHED
                 }
                 stopForeground(true)
@@ -367,7 +368,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                     if (config.loopModeEnabled) {
                         loopModeState = LoopModeState.FINISHED
                         notificationManager.cancel(NOTIFICATION_ID)
-                        notificationManager.notify(NOTIFICATION_LOOP_FINISHED_ID, notificationProvider.loopModeFinishedNotification())
+                        notificationManager.notify(NOTIFICATION_LOOP_FINISHED_ID, notificationProvider.loopModeFinishedNotification(config.certModeEnabled, stateRecorder.loopModeRecord?.uuid))
                         clientAggregator.onMeasurementError()
                     } else {
                         notificationManager.cancel(NOTIFICATION_ID)
@@ -382,6 +383,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
         }
 
         override fun onClientReady(testUUID: String, loopUUID: String?, loopLocalUUID: String?, testStartTimeNanos: Long) {
+            Timber.d("MeasurementService onClientReady: $testUUID, $loopUUID, $loopLocalUUID, $testStartTimeNanos")
             planInactivityCheck()
             clientAggregator.onClientReady(testUUID, loopLocalUUID)
             startNetwork = connectivityManager.activeNetwork
@@ -430,7 +432,8 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                     !config.shouldRunQosTest,
                     stateRecorder.loopModeRecord,
                     config.loopModeNumberOfTests,
-                    stopTestsIntent(this@MeasurementService)
+                    stopTestsIntent(this@MeasurementService),
+                    config.certModeEnabled
                 ), MeasurementState.QOS, false
             )
         }
@@ -584,7 +587,8 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                                     stateRecorder.loopTestCount,
                                     config.loopModeNumberOfTests,
                                     stopTestsIntent(this@MeasurementService),
-                                    locationAvailable
+                                    locationAvailable,
+                                    config.certModeEnabled
                                 )
                                 notificationManager.notify(NOTIFICATION_ID, notification)
                                 Timber.d("Created measurement notification time remaining IDLE state")
@@ -674,7 +678,8 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                 true,
                 stateRecorder.loopModeRecord,
                 config.loopModeNumberOfTests,
-                stopTestsIntent(this@MeasurementService)
+                stopTestsIntent(this@MeasurementService),
+                config.certModeEnabled
             )
         )
 
@@ -927,6 +932,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
          * This should inform about event when results were sent, but only if client should display them
          */
         override fun onSubmitted() {
+            Timber.d("MeasurementService onSubmitted")
             if (config.loopModeEnabled) {
                 if (stateRecorder.loopTestCount >= config.loopModeNumberOfTests && config.loopModeNumberOfTests != 0) {
                     clients.forEach {

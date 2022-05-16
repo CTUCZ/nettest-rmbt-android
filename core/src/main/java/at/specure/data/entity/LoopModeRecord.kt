@@ -11,6 +11,7 @@ data class LoopModeRecord(
     val localUuid: String,
     var uuid: String?,
     var lastTestUuid: String?,
+    val certMode: Boolean,
     var testsPerformed: Int = 0,
     var lastTestLongitude: Double? = null,
     var lastTestLatitude: Double? = null,

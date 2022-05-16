@@ -361,6 +361,9 @@ data class TestResultBody(
     @SerializedName("user_loop_mode")
     val loopModeEnabled: Boolean,
 
+    @SerializedName("user_cert_mode")
+    val certModeEnabled: Boolean,
+
     /**
      * mcc-mnc of the operator network, mobile networks only, e.g. "231-06"
      */
@@ -1138,4 +1141,37 @@ data class NetworkEventBody(
 
     @SerializedName("time_ns")
     val timeNanos: Long
+)
+
+@Keep
+data class ExportRequestBody (
+
+    @SerializedName("loop_uuid")
+    val loopUUID: String,
+
+//    @SerializedName("isp_name")
+//    val ispName: String,
+//    @SerializedName("isp_name2")
+//    val ispName2: String,
+//    @SerializedName("isp_service_name")
+//    val ispServiceName: String,
+//    @SerializedName("isp_contract_number")
+//    val ispContractNumber: String,
+//    @SerializedName("type_text")
+//    val typeText: String,
+//    @SerializedName("test_device")
+//    val testDevice: String,
+//    val test_pictures[]: (binary)
+    @SerializedName("first")
+    val first: String = "y",
+//    @SerializedName("title_prepend")
+//    val userTitlePrepend: String,
+//    @SerializedName("first_name")
+//    val userFirstname: String,
+//    @SerializedName("last_name")
+//    val userLastname: String,
+//    @SerializedName("title_append")
+//    val userTitleAppend: String,
+//    @SerializedName("address")
+//    val address: String
 )

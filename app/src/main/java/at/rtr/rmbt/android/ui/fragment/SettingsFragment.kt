@@ -43,6 +43,16 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
         super.onViewCreated(view, savedInstanceState)
         binding.state = settingsViewModel.state
 
+        binding.loopModeNumOfTests.frameLayoutRoot.setOnClickListener {
+            InputSettingDialog.instance(
+                getString(R.string.preferences_loop_mode_num_of_tests),
+                binding.loopModeNumOfTests.value.toString(), this,
+                KEY_REQUEST_CODE_LOOP_MODE_NUM_OF_TESTS
+            )
+                .show(activity)
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE)
+        }
+
         binding.loopModeWaitingTime.frameLayoutRoot.setOnClickListener {
             InputSettingDialog.instance(
                 getString(R.string.preferences_loop_mode_min_delay),
@@ -258,6 +268,25 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
 
     override fun onSelected(value: String, requestCode: Int) {
         when (requestCode) {
+            KEY_REQUEST_CODE_LOOP_MODE_NUM_OF_TESTS -> {
+                if(!settingsViewModel.isLoopModeNumberOfTestValid(
+                        value.toInt(),
+                        settingsViewModel.state.appConfig.loopModeMinTestsNumber,
+                        settingsViewModel.state.appConfig.loopModeMaxTestsNumber)
+                    && settingsViewModel.state.developerModeIsEnabled.get() != true) {
+                    SimpleDialog.Builder()
+                        .messageText(
+                            String.format(
+                                getString(R.string.loop_mode_max_num_of_tests_invalid),
+                                settingsViewModel.state.appConfig.loopModeMinTestsNumber,
+                                settingsViewModel.state.appConfig.loopModeMaxTestsNumber
+                            )
+                        )
+                        .positiveText(android.R.string.ok)
+                        .cancelable(false)
+                        .show(childFragmentManager, CODE_DIALOG_INVALID)
+                }
+            }
             KEY_REQUEST_CODE_LOOP_MODE_WAITING_TIME -> {
                 if (!settingsViewModel.isLoopModeWaitingTimeValid(
                         value.toInt(),
@@ -360,6 +389,8 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
 
         private const val CODE_LOOP_INSTRUCTIONS = 13
         private const val CODE_DIALOG_INVALID = 14
+
+        private const val KEY_REQUEST_CODE_LOOP_MODE_NUM_OF_TESTS: Int = 15
 
         fun newInstance() = SettingsFragment()
     }

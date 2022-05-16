@@ -21,8 +21,7 @@
     <!-- Theme colors -->
     <color name="toolbar_blue">#0071D7</color>
     <color name="toolbar_gray">#F2F3F5</color>
-    <color name="ic_launcher_background" tools:ignore="UnusedResources">#2D62B7
-    </color> <!-- for rtr launch screen -->
+    <color name="ic_launcher_background">#FFFFFF</color> <!-- for rtr launch screen -->
 
     <!-- Bottom navigation icon colors -->
     <color name="navigation_green">@color/colorAccent</color>
@@ -65,7 +64,8 @@
 
     <!-- Measurement screen -->
     <color name="text_white_transparency_50">#8CFFFFFF</color>
-    <color name="speed_chart_progress_fill_color">#4D78Ed03</color>
+    <color name="speed_chart_progress_fill_color">#4D0071D7</color>
+    <color name="speed_chart_progress_line_color">#0071D7</color>
     <color name="measurement_bottom_background">#282828</color>
 
 
@@ -74,8 +74,8 @@
     <color name="measurement_scale">#3a3a3a</color>
     <color name="measurement_not_progressed">#7a7a7a</color>
     <color name="measurement_progress_inner">#cccccc</color>
-    <color name="measurement_green">#52d301</color>
-    <color name="measurement_green_dark">#38a300</color>
+    <color name="measurement_green">#0071D7</color>
+    <color name="measurement_green_dark">#0057A5</color>
 
     <color name="classification_green_dark">#007C0E</color>
     <color name="classification_green">#59B200</color>

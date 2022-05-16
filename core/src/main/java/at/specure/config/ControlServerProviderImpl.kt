@@ -47,7 +47,7 @@ class ControlServerProviderImpl(private val config: Config) : ControlEndpointPro
         get() = "$host$routePath/${config.controlServerResultsBasicPath}"
 
     override val getTestResultsOpenDataUrl: String
-        get() = "$host$routePath/${config.controlServerResultsOpenDataPath}"
+        get() = "$host/RMBTStatisticServer/${config.controlServerResultsOpenDataPath}"
 
     override val getTestResultsDetailsUrl: String
         get() = "$host$routePath/${config.controlServerTestResultDetailsEndpoint}"
@@ -72,4 +72,7 @@ class ControlServerProviderImpl(private val config: Config) : ControlEndpointPro
 
     override val getNettestHeaderValue: String
         get() = config.headerValue
+
+    override val getExportPdfUrl: String
+        get() = "$host/RMBTStatisticServer/export/pdf/cs"
 }

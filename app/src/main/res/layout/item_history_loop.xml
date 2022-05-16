@@ -48,6 +48,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="20.11.18, 12:00:45" />
 
+        <!-- TODO přidat string cert měření -->
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/labelLoop"
             style="@style/RobotoRegularStyle.Small"

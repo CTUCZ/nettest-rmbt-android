@@ -4,16 +4,16 @@ buildscript {
 
         // All project module configs should be in config map
         config = [
-                applicationId    : "at.alladin.rmbt.android.prod",
+                applicationId    : "cz.ctu.rmbt.android.prod",
                 minSdkVersion    : 23,
                 targetSdkVersion : 31,
-                versionCode      : (project.hasProperty('buildVersionCode') ? Integer.parseInt(buildVersionCode) : 48),
-                versionName      : (project.hasProperty('buildVersionName') ? buildVersionName : '4.0.458')
+                versionCode      : (project.hasProperty('buildVersionCode') ? Integer.parseInt(buildVersionCode) : 6),
+                versionName      : (project.hasProperty('buildVersionName') ? buildVersionName : 'alpha-06')
         ]
 
         // All project modules dependency versions should be in versions map
         versions = [
-                kotlin              : '1.5.10',
+                kotlin              : '1.6.20',
                 coroutines          : '1.3.7',
                 appcompat           : '1.2.0',
                 androidx_core       : '1.3.1',
@@ -26,7 +26,7 @@ buildscript {
                 navigation_ui       : '2.3.0',
                 lifecycle_extensions: '2.2.0',
                 lifecycle_service   : '2.2.0',
-                dagger              : '2.35.1',
+                dagger              : '2.40.5',
                 timber              : '4.7.1',
                 switch_button       : '0.0.3@aar',
                 google_services     : '17.0.0',

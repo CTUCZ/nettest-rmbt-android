@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import at.rtr.rmbt.android.R
@@ -39,7 +40,7 @@ class ResultsActivity : BaseActivity() {
 
         viewModel.state.playServicesAvailable.set(isGmsAvailable() || isHmsAvailable())
 
-        binding.map.onCreate(savedInstanceState)
+//        binding.map.onCreate(savedInstanceState) // disable map
 
         val testUUID = intent.getStringExtra(KEY_TEST_UUID)
         check(!testUUID.isNullOrEmpty()) { "TestUUID was not passed to result activity" }
@@ -61,15 +62,15 @@ class ResultsActivity : BaseActivity() {
                 resultChartFragmentPagerAdapter = ResultChartFragmentPagerAdapter(supportFragmentManager, testUUID, result.networkType)
                 binding.viewPagerCharts?.adapter = resultChartFragmentPagerAdapter
             }
-
-            result?.let {
-                if (!mapLoadRequested) {
-                    mapLoadRequested = true
-                    binding.map.loadMapAsync {
-                        setUpMap(it)
-                    }
-                }
-            }
+// disable map
+//            result?.let {
+//                if (!mapLoadRequested) {
+//                    mapLoadRequested = true
+//                    binding.map.loadMapAsync {
+//                        setUpMap(it)
+//                    }
+//                }
+//            }
         }
         viewModel.testResultDetailsLiveData.listen(this) {
             Timber.d("found ${it.size} rows of details")
@@ -100,6 +101,8 @@ class ResultsActivity : BaseActivity() {
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, viewModel.state.testResult.get()?.shareTitle)
             shareIntent.type = "text/plain"
             startActivity(Intent.createChooser(shareIntent, null))
+//            Toast.makeText(this, "TestUUID: "+viewModel.state.testUUID, Toast.LENGTH_LONG)
+//                .show()
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -140,45 +143,45 @@ class ResultsActivity : BaseActivity() {
         refreshResults()
     }
 
-    private fun setUpMap(result: TestResultRecord) {
-        if (result.latitude != null && result.longitude != null) {
-            val latLngW = LatLngW(result.latitude!!, result.longitude!!)
+//    private fun setUpMap(result: TestResultRecord) {
+//        if (result.latitude != null && result.longitude != null) {
+//            val latLngW = LatLngW(result.latitude!!, result.longitude!!)
+//
+//            val icon = when (result.networkType) {
+//                NetworkTypeCompat.TYPE_UNKNOWN -> R.drawable.ic_marker_empty
+//                NetworkTypeCompat.TYPE_LAN -> R.drawable.ic_marker_ethernet
+//                NetworkTypeCompat.TYPE_BROWSER -> R.drawable.ic_marker_browser
+//                NetworkTypeCompat.TYPE_WLAN -> R.drawable.ic_marker_wifi
+//                NetworkTypeCompat.TYPE_5G_AVAILABLE,
+//                NetworkTypeCompat.TYPE_4G -> R.drawable.ic_marker_4g
+//                NetworkTypeCompat.TYPE_3G -> R.drawable.ic_marker_3g
+//                NetworkTypeCompat.TYPE_2G -> R.drawable.ic_marker_2g
+//                NetworkTypeCompat.TYPE_5G_NSA,
+//                NetworkTypeCompat.TYPE_5G -> R.drawable.ic_marker_5g
+//            }
+//
+//            mapW().run {
+//                addCircle(
+//                    latLngW,
+//                    ContextCompat.getColor(this@ResultsActivity, R.color.map_circle_fill),
+//                    ContextCompat.getColor(this@ResultsActivity, R.color.map_circle_stroke),
+//                    STROKE_WIDTH, CIRCLE_RADIUS
+//                )
+//                addMarker(this@ResultsActivity, latLngW, ANCHOR_U, ANCHOR_V, icon)
+//                moveCamera(latLngW, ZOOM_LEVEL)
+//                setOnMapClickListener {
+//                    DetailedFullscreenMapActivity.start(
+//                        this@ResultsActivity,
+//                        it.latitude,
+//                        it.longitude,
+//                        result.networkType
+//                    )
+//                }
+//            }
+//        }
+//    }
 
-            val icon = when (result.networkType) {
-                NetworkTypeCompat.TYPE_UNKNOWN -> R.drawable.ic_marker_empty
-                NetworkTypeCompat.TYPE_LAN -> R.drawable.ic_marker_ethernet
-                NetworkTypeCompat.TYPE_BROWSER -> R.drawable.ic_marker_browser
-                NetworkTypeCompat.TYPE_WLAN -> R.drawable.ic_marker_wifi
-                NetworkTypeCompat.TYPE_5G_AVAILABLE,
-                NetworkTypeCompat.TYPE_4G -> R.drawable.ic_marker_4g
-                NetworkTypeCompat.TYPE_3G -> R.drawable.ic_marker_3g
-                NetworkTypeCompat.TYPE_2G -> R.drawable.ic_marker_2g
-                NetworkTypeCompat.TYPE_5G_NSA,
-                NetworkTypeCompat.TYPE_5G -> R.drawable.ic_marker_5g
-            }
-
-            mapW().run {
-                addCircle(
-                    latLngW,
-                    ContextCompat.getColor(this@ResultsActivity, R.color.map_circle_fill),
-                    ContextCompat.getColor(this@ResultsActivity, R.color.map_circle_stroke),
-                    STROKE_WIDTH, CIRCLE_RADIUS
-                )
-                addMarker(this@ResultsActivity, latLngW, ANCHOR_U, ANCHOR_V, icon)
-                moveCamera(latLngW, ZOOM_LEVEL)
-                setOnMapClickListener {
-                    DetailedFullscreenMapActivity.start(
-                        this@ResultsActivity,
-                        it.latitude,
-                        it.longitude,
-                        result.networkType
-                    )
-                }
-            }
-        }
-    }
-
-    private fun mapW(): MapWrapper = binding.map.mapWrapper
+//    private fun mapW(): MapWrapper = binding.map.mapWrapper
 
     private fun refreshResults() {
         viewModel.loadTestResults()
@@ -187,32 +190,32 @@ class ResultsActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        binding.map?.onStart()
+//        binding.map?.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        binding.map?.onResume()
+//        binding.map?.onResume()
     }
 
     override fun onStop() {
         super.onStop()
-        binding.map?.onStop()
+//        binding.map?.onStop()
     }
 
     override fun onPause() {
-        binding.map?.onPause()
+//        binding.map?.onPause()
         super.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        binding.map.onSaveInstanceState(outState)
+//        binding.map.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.map.onDestroy()
+//        binding.map.onDestroy()
     }
 
     override fun onBackPressed() {

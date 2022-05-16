@@ -19,6 +19,7 @@
     <data>
 
         <import type="at.specure.location.LocationState" />
+        <import type="at.rtr.rmbt.android.BuildConfig" />
 
         <variable
             name="captiveState"
@@ -75,6 +76,24 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <Spinner
+            android:id="@+id/spinMode"
+            style="@style/RobotoMediumStyle"
+            android:layout_width="200dp"
+            android:layout_height="?attr/dropdownListPreferredItemHeight"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="12dp"
+            android:dropDownWidth="200dp"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:background="@drawable/spinner_outline"
+            android:popupBackground="@drawable/spinner_outline_popup"
+            android:entries="@array/spin_modes"
+            android:popupElevation="3dp"
+            app:layout_constraintBottom_toTopOf="@id/ivIsConnectedCircle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.145"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnSetting"
@@ -192,6 +211,23 @@
             app:layout_constraintVertical_bias="0.16"
             app:maxImageSize="36dp"
             app:visibleOrGone="@{state.isLoopModeActive}" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/icon_cert_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/white"
+            android:src="@drawable/ic_label_cert"
+            app:borderWidth="0dp"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="@id/ivIsConnectedCircle"
+            app:layout_constraintEnd_toEndOf="@+id/ivIsConnectedCircle"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="@id/ivIsConnectedCircle"
+            app:layout_constraintTop_toTopOf="@+id/ivIsConnectedCircle"
+            app:layout_constraintVertical_bias="0.16"
+            app:maxImageSize="36dp"
+            app:visibleOrGone="@{state.isCertModeActive}" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivIsCaptivePortal"

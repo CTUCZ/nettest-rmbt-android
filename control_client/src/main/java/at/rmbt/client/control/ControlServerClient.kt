@@ -15,6 +15,10 @@
 package at.rmbt.client.control
 
 import at.rmbt.util.Maybe
+import okhttp3.FormBody
+import okhttp3.MultipartBody
+import okhttp3.ResponseBody
+import retrofit2.Callback
 import javax.inject.Inject
 
 class ControlServerClient @Inject constructor(private val endpointProvider: ControlEndpointProvider, private val api: ControlServerApi) {
@@ -105,5 +109,13 @@ class ControlServerClient @Inject constructor(private val endpointProvider: Cont
 
     fun signalResult(body: SignalMeasurementChunkBody): Maybe<SignalMeasurementChunkResultResponse> {
         return api.signalResult(endpointProvider.signalResultUrl, body).exec()
+    }
+
+    fun getExportPdf(body: ExportRequestBody, callback: Callback<ExportPdfResponse>) {
+        val params = buildMap {
+            put("loop_uuid", body.loopUUID)
+            put("mobile", "y")
+        }
+        return api.getExportPdf(endpointProvider.getExportPdfUrl, params).enqueue(callback)
     }
 }

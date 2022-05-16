@@ -35,7 +35,7 @@ public abstract interface Config
     public static final String RMBT_CLIENT_NAME = "RMBT";
     public static final String RMBT_VERSION_NUMBER = "0.3";
     public static final String RMBT_VERSION_EXPRESSION = RMBT_CLIENT_NAME + "v([0-9.]+)";
-    public static final String RMBT_LATEST_SERVER = "1.2.0";
+    public static final String RMBT_LATEST_SERVER = "1.3.0";
     
     public static final int RMBT_CONTROL_PORT = 443;
     public static final boolean RMBT_CONTROL_SSL = true;

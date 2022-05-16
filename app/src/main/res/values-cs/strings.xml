@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="toolbar_title">ČTÚ-NetTest</string>
+
+    <!-- Navigation menu titles -->
+    <string name="menu_button_title_page">Home</string>
+    <string name="menu_button_history">Historie</string>
+    <string name="menu_button_statistics">Statistika</string>
+    <string name="menu_button_map">Mapa</string>
+
+    <!-- Error dialog messages -->
+    <string name="dialog_title_error">Chyba</string>
+    <string name="error_unknown">Špatné připojení. Prosím zkuste to znovu později</string>
+    <string name="no_internet_connection_not_load_data">Nejste připojeni k internetu. Nelze načíst data.</string>
+
+    <!-- Home screen -->
+    <string name="home_signal">Signál</string>
+    <string name="home_frequency">Frekvence</string>
+    <string name="home_attention">Attention</string>
+    <string name="home_no_internet_connection">Zařízení není připojeno k internetu!</string>
+    <string name="home_no_internet_connection_details">Test není možný.</string>
+    <string name="home_signal_value">%1$d dBm</string>
+    <string name="home_start_test_info">Stiskněte tlačítko pro začátek testování!</string>
+    <string name="home_wifi">WLAN</string>
+    <string name="public_ip_address">Veřejná adresa</string>
+    <string name="private_ip_address">Lokální adresa</string>
+
+    <!-- Preference titles -->
+    <string name="options">Nastavení</string>
+    <string name="preferences_general_settings">Obecné nastavení</string>
+    <string name="preferences_ndt">NDT</string>
+    <string name="preferences_qos_measurement">QoS měření</string>
+    <string name="preferences_qos_measurement_only_after_some_time">Pouze po 2 hodinách</string>
+    <string name="preferences_qos_measurement_only_after_some_time_summary">Neprovádět nové QoS měření, pokud bylo provedeno v posledních 2 hodinách</string>
+    <string name="preferences_location">Lokace</string>
+    <string name="preferences_loop_mode">Opakované měření</string>
+    <string name="preferences_advanced_settings">Pokročilé nastavení</string>
+    <string name="preferences_loop_mode_summary">Nový test po čekací době nebo uražené vzdálenosti. Max 2 dny.</string>
+    <string name="preferences_loop_mode_min_delay">Čekací doba (v minutách)</string>
+    <string name="preferences_loop_mode_max_movement">Vzdálenost (v metrech)</string>
+    <string name="preferences_expert_mode">Expertní mód</string>
+    <string name="preferences_expert_mode_summary">Zobrazit pokročílé nastavení a informace</string>
+    <string name="preferences_ipv4_only">Pouze IPv4</string>
+    <string name="preferences_ipv4_only_sum">Nepoužívat IPv6</string>
+    <string name="preferences_radio_info">Informace o mobilním připojení</string>
+    <string name="preferences_radio_info_sum">Podrobnosti o nastavení mobilní sítě</string>
+    <string name="preferences_contact">Kontakt</string>
+    <string name="preferences_go_to_website">Navštivte webové stránky</string>
+    <string name="preferences_contact_us">Napište e-mail</string>
+    <string name="preferences_additional_Information">Dodatečné informace</string>
+    <string name="preferences_client_uuid">UUID klienta</string>
+    <string name="preferences_test_cases">Počet provedených testů</string>
+    <string name="preferences_about">O aplikaci</string>
+    <string name="preferences_source_code">Zdrojový kód</string>
+    <string name="preferences_data_protection">Zásady ochrany osobních údajů a podmínky použití</string>
+    <string name="preferences_developed_by">Developed by Specure GmbH</string>
+    <string name="preferences_version">Verze</string>
+    <string name="preferences_commit_hash">Commit hash</string>
+    <string name="preferences_enter_code">Zadejte prosím kód</string>
+    <string name="preferences_developer_control_server">Control server</string>
+    <string name="preferences_override_control_server">Override control server</string>
+    <string name="preferences_override_control_server_sum">Activate custom control server settings</string>
+    <string name="preferences_override_control_server_host">Control host</string>
+    <string name="preferences_override_control_server_port">Control port</string>
+    <string name="preferences_override_control_server_ssl">Control SSL</string>
+    <string name="preferences_override_control_server_ssl_sum">Use encrypted connection to control server</string>
+    <string name="preferences_developer_options_disabled">Developer options disabled</string>
+    <string name="preferences_developer_options_available">Developer options available</string>
+    <string name="preferences_developer_try_again">Try again!</string>
+    <string name="preferences_developer_map_server">Map server</string>
+    <string name="preferences_developer_map_override">Override map server</string>
+    <string name="preferences_developer_map_override_sum">Activate custom map server settings</string>
+    <string name="preferences_developer_map_host">Map host</string>
+    <string name="preferences_developer_map_port">Map port</string>
+    <string name="preferences_developer_map_ssl">Map server SSL</string>
+    <string name="preferences_developer_map_ssl_sum">Use encrypted connection to map server</string>
+    <string name="preferences_category_developer_qos_server">QoS server</string>
+    <string name="preferences_developer_qos_ssl">QoS server SSL</string>
+    <string name="preferences_developer_qos_ssl_sum">Use encrypted connection to QoS server</string>
+    <string name="preferences_all_disabled">Deactivated.</string>
+    <string name="preferences_server_selection">Server selection</string>
+    <string name="preferences_default_server_selection"/>
+    <string name="preferences_5g_simulation_title">xG network debug(experimental)</string>
+    <string name="preferences_5g_simulation">Simulate xG</string>
+    <string name="preferences_5g_simulation_sum">Replaces networks with xG simulation</string>
+    <string name="label_server_selection">Server selection</string>
+    <string name="preferences_tag">Tag</string>
+
+    <!-- Location Dialog -->
+    <string name="location_dialog_label_title">Umístění</string>
+    <string name="location_dialog_label_position">Poloha</string>
+    <string name="location_dialog_label_accuracy">Přesnost</string>
+    <string name="location_dialog_label_age">Stáří</string>
+    <string name="location_dialog_label_source">Zdroj</string>
+    <string name="location_dialog_label_altitude">Nadmořská výška</string>
+    <string name="location_dialog_label_speed">Rychlost</string>
+    <string name="location_dialog_label_satellites">Satelity</string>
+    <string name="location_dialog_label_location_progress_message">Určování polohy, čekejte prosím…</string>
+    <string name="open_gps_setting_dialog_label_gps_not_enabled">Lokalizační služby nejsou povoleny. Chcete upravit nastavení polohy?</string>
+    <string name="open_gps_setting_dialog_label_open_gps_setting">Otevřít nastavení polohy</string>
+    <string name="open_gps_setting_dialog_label_cancel">Zrušit</string>
+    <string name="location_dialog_not_available">Nedostupné</string>
+    <string name="location_dialog_age">%1$s s</string>
+    <string name="location_dialog_accuracy">%1$s m</string>
+    <string name="location_dialog_speed">%1$s km/h</string>
+    <string name="location_location_direction_n">S %1$s</string>
+    <string name="location_location_direction_e">V %1$s</string>
+    <string name="location_location_direction_s">J %1$s</string>
+    <string name="location_location_direction_w">Z %1$s</string>
+    <string name="open_location_permission_dialog_label_location_not_permitted">Poloha není k dispozici. Povolit přístup k poloze vašeho zařízení?</string>
+    <string name="open_location_permission_dialog_label_open_permission_setting">Otevřít nastavení aplikace</string>
+
+    <string name="text_ip_address_not_available">Adresa není dostupná</string>
+    <string name="input_setting_dialog_ok">OK</string>
+    <string name="input_setting_dialog_cancel">Zrušit</string>
+    <string name="loop_mode_max_delay_invalid" tools:ignore="PluralsCandidate">Vyberte hodnotu mezi %1$d a %2$d.</string>
+    <string name="about_client_uuid_copied">UUID klienta bylo zkopírováno do schránky.</string>
+    <string name="client_not_registered">Aplikace není registrována. Zkuste prosím znovu později.</string>
+
+    <!-- Measurement screen -->
+    <string name="measurement_ping_value">%1$s ms</string>
+    <string name="measurement_ping_value_1f">%1$.1f ms</string>
+    <string name="measurement_download_upload_speed">%1$s Mbit/s</string>
+    <string name="measurement_download">Download</string>
+    <string name="measurement_upload">Upload</string>
+    <string name="measurement_dash">-</string>
+    <string name="measurement_speed_chart_x_label_min">0s</string>
+    <string name="measurement_speed_chart_x_label_max">8s</string>
+    <string name="measurement_ping">Ping</string>
+    <string name="measurement_down">Down</string>
+    <string name="measurement_up">Up</string>
+    <string name="measurement_qos">Quality of service (QoS)</string>
+    <string name="measurement_qos_web_site">Web</string>
+    <string name="measurement_qos_transparent_connection">"Transparentní spojení "</string>
+    <string name="measurement_qos_dns">DNS</string>
+    <string name="measurement_qos_tcp_ports">TCP porty</string>
+    <string name="measurement_qos_udp_ports">UDP porty</string>
+    <string name="measurement_qos_unmodified_content">Unmodified content</string>
+    <string name="measurement_qos_traceroute">Traceroute</string>
+    <string name="measurement_qos_voip">VoIP</string>
+
+    <string-array name="measurement_speed_chart_y_labels">
+        <item>1</item>
+        <item>10</item>
+        <item>100</item>
+        <item>1000</item>
+    </string-array>
+
+    <string name="label_qos">QoS</string>
+    <string name="label_upload">Upload</string>
+    <string name="label_download">Download</string>
+    <string name="label_ping">Ping</string>
+    <string name="label_init">Init</string>
+    <string name="label_signal_strength">Signál</string>
+    <string name="network_label">Síť</string>
+    <string name="technology_label">Technologie</string>
+
+    <string name="title_cancel_measurement">Opravdu chcete zrušit probíhající měření?</string>
+    <string name="text_continue_measurement">Pokračovat v měření</string>
+    <string name="text_cancel_measurement">Zrušit měření</string>
+    <string name="text_stop_measurement">Zastavit měření</string>
+
+    <string name="notification_test_title">NetTest běží</string>
+
+    <string name="test_dialog_error_text">Test se nezdařil. Prosím zkuste to znovu později.</string>
+
+    <!-- History -->
+    <string name="history_item_header_test">Test</string>
+    <string name="history_item_header_down">Stahování (download)</string>
+    <string name="history_item_header_up">Vkládání (upload)</string>
+    <string name="history_item_header_ping">Odezva (ping)</string>
+    <string name="history_item_header_ms">ms</string>
+    <string name="history_no_data">Nejsou k dispozici žádné údaje.</string>
+
+    <!-- Results -->
+    <string name="results_other_details">Více informací</string>
+    <string name="results_qoe_videos_sd">Videa SD</string>
+    <string name="results_qoe_videos_hd">Videa HD</string>
+    <string name="results_qoe_videos_uhd">Videa UHD</string>
+    <string name="results_qoe_gaming">Hry</string>
+    <string name="results_qoe_gaming_cloud">Herní cloud</string>
+    <string name="results_qoe_gaming_streaming">Streamování her</string>
+    <string name="results_qoe_gaming_download">Stahování her</string>
+    <string name="results_qoe_audio_streaming">Streamování audia</string>
+    <string name="results_qoe_voip">VoIP</string>
+    <string name="results_qoe_video_telephony">Videotelefonie</string>
+    <string name="results_qoe_video_conferencing">Video konference</string>
+    <string name="results_qoe_messaging">Zasílání zpráv</string>
+    <string name="results_qoe_web">Síť</string>
+    <string name="results_qoe_cloud">Cloud</string>
+    <string name="results_qoe_qos">QoS testy</string>
+    <string name="results_quality">Kvalita</string>
+    <string name="results_network_type">Typ</string>
+    <string name="results_network_provider">Poskytovatel</string>
+    <string name="results_network_ssid">WLAN SSID</string>
+    <string name="result_test_details">Podrobnosti testu</string>
+    <string name="label_information">Informace</string>
+    <string name="label_tests">Testy</string>
+    <string name="label_succeeded">ÚSPĚŠNÝ</string>
+    <string name="label_failed">SELHAL</string>
+    <string name="label_description">POPIS</string>
+    <string name="label_detail">DETAILY</string>
+
+    <!-- Map -->
+    <string name="map_layer_communities">Obce</string>
+    <string name="map_layer_points">Body</string>
+    <string name="map_layer_automatic">Automaticky</string>
+    <string name="map_label_overlay_type">Typ vrstvy</string>
+    <string name="map_label_map_appearance">Vzhled mapy</string>
+    <string name="title_marker_item_details">Zobrazit další podrobnosti</string>
+
+    <string name="map_search_location_dialog_title">Hledat</string>
+    <string name="map_search_location_dialog_info">Vyhledejte adresu nebo město:</string>
+    <string name="map_search_location_dialog_not_found">Adresa nenalezena.</string>
+    <string name="map_search_location_not_supported">Vaše zařízení tuto funkci nepodporuje.</string>
+
+    <string-array name="spin_modes">
+        <item>Běžné měření</item>
+        <item>Opakované měření</item>
+        <item>Certifikované měření</item>
+    </string-array>
+    <string name="title_cert_instruction_1">Certifikované měření</string>
+    <string name="text_cert_instruction_1"><![CDATA[<p>Jsou-li splněny všechny podmínky měření, umožňuje certifikované měření uplatnit výsledky tohoto měření jako průkazná zjištění o kvalitě Vaší služby přístupu k internetu v pevném místě (tzv. pevného internetu), pokud je nabízena na území České republiky. Tato zjištění můžete uplatnit v případě, pokud se rozhodnete využít prostředky nápravy, které máte k dispozici podle vnitrostátního práva.</p><p>V případě vzniku jakékoliv <b>velké trvající</b> či <b>velké pravidelně se opakující odchylky</b> skutečného výkonu služby, pokud jde o rychlost stahování (download) nebo vkládání (upload), od výkonu, který Váš poskytovatel služby přístupu k internetu uvedl ve smluvních podmínkách, můžete u něj kvalitu poskytované služby reklamovat.</p><p>Důležitým parametrem pro posouzení výkonu služby je v případě služby přístupu k internetu v pevném místě smluvně udávaná hodnota <b>běžně dostupné rychlosti</b>. Ta je rozhodující pro určení, zda dochází k případný odchylkám.</p><p>Dalším důležitým parametrem je smluvně udávaná <b>minimální rychlost</b>. Pokud skutečně dosahovaná rychlost stahování (download) nebo vkládání (upload) klesne pod smluvně udávanou minimální rychlost pro daný směr datové komunikace, dochází k výpadku služby, tedy k jejímu neposkytování. I v tomto případě máte právo na reklamaci služby.</p><p><b>Upozorňujeme, že z obecné povahy přesnosti měřicích nástrojů založených na principu webových prohlížečů lze měřicí nástroj ČTÚ-NetTest použít pro rychlost stahování do (včetně) 500 Mb/s a pro rychlost vkládání do (včetně) 250 Mb/s hodnoty inzerované rychlosti služby.</b></p>]]></string>
+    <string name="title_cert_instruction_2">Podmínky měření</string>
+    <string name="text_cert_instruction_2"><![CDATA[<p>Před provedením certifikovaného měření si pozorně přečtěte úplné znění podmínek měření, které jsou uvedeny v návodu k jeho provedení. Obsahuje také kontrolní seznam, který Vám pomůže certifikované měření provést. S dotazy ohledně certifikovaného měření se můžete obrátit na nettest@ctu.cz.</p><p><b>Prosíme, věnujte pozornost zejména následujícímu:</b><br/><ul><li>Certifikované měření lze provádět pomocí webového prohlížeče (Chrome, Edge, Firefox apod.) na Vašem uživatelském zařízení (tj. desktop PC, notebook) s aktualizovaným operačním systémem a webovým prohlížečem.</li><li>Vaše uživatelské zařízení (desktop PC, notebook) musí být vždy připojeno k uživatelskému ethernetovému rozhraní (porty RJ‑45) koncového zařízení pevným způsobem, tedy metalickým (min. Cat. 5e) nebo případně optickým kabelem.</li><li>Výkon uživatelského zařízení, ale i operační systém má zásadní vliv na naměřené hodnoty skutečné rychlosti. Pro měření rychlostí vyšších něž 100 Mb/s se doporučuje operační systém, který využívá algoritmus TCP CUBIC (Windows 10 a vyšší, MacOS X Yosemite a vyšší, Linux kernel 2.6.19 a vyšší).</li><li>Z povahy měřicích nástrojů založených na bázi webových prohlížečů lze měřicí nástroj NetTest použít pro certifikované měření kvality služeb přístupu k internetu do inzerovaných hodnot menších nebo rovno limitním hodnotám 500 Mbit/s (download) a 250 Mb/s (upload).</li><li>Během celého procesu certifikovaného měření nepoužívejte Vaše zařízení pro jiné aplikace.</li><li>Před spuštěním měřicího cyklu se ujistěte, že po celou dobu měření nebudou službu přístupu k internetu využívat jiní uživatelé (např. rodinní příslušníci v rámci chytrých koncových zařízení, např. prostřednictvím mobilních telefonů, tabletů, TV atd.).</li></ul></p>]]></string>
+    <string name="text_button_accept">Přijmout</string>
+    <string name="text_button_decline">Zrušit</string>
+    <string name="text_loop_instruction_1">Režim opakovaného měření umožňuje automatické provedení opakovaného měření nástrojem ČTÚ-NetTest dle vlastního uživatelského nastavení.  První test začne ihned po zapnutí režimu opakovaného měření. Další testy začnou po uplynutí čekací doby (výchozí nastavení je na 15 minut). Tyto hodnoty mohou být nastaveny v části „Nastavení.“ Testy budou probíhat, dokud nebude dosaženo zadaného počtu testů (výchozí nastavení je nastaveno na 6 testů). V případě dlouhodobého nastavení režimu opakovaného měření se tento režim automaticky ukončí po dvou dnech. Režim opakovaného měření může být kdykoliv uživatelem zastaven.</string>
+    <string name="text_loop_instruction_2">V případě velmi velkého množství uživatelských požadavků na provádění testů může být režim opakovaného měření zamítnut, a to z důvodů zabránění přetížení měřicího serveru. Prosím, vezměte na vědomí, že režim opakovaného měření je určen (pouze) pro oblasti zemí Evropské Unie (EU) a Evropského hospodářského prostoru (EHP).  Režim opakovaného měření může navíc na základě Vašeho požadovaného nastavení způsobovat vysokou spotřebu dat. V kombinaci s rychlou službou přístupu k internetu může 10 provedených testů spotřebovat 1 GB a více. Důrazně proto doporučujeme, abyste režim opakovaného měření používali pouze s tarify bez FUP limitu, kde nebude pro Vás vyčerpání vašeho FUP limitu znamenat další finanční náklady.</string>
+    <string name="title_cert_instruction_3">Proces certifikovaného měření</string>
+    <string name="text_cert_instruction_3"><![CDATA[<p>Certifikované měření se skládá ze 6 časově diverzifikovaných testů během dne v rámci měřicího cyklu. Měřicí cyklus trvá 1 hodinu a 30 minut. V rámci testu jsou automaticky prováděna jednotlivá měření o celkové délce měření 10 sekund pro každý směr datové komunikace (download a upload). Časový rozestup mezi jednotlivými testy je 15 minut.</p><p>Dotazy ohledně certifikovaného měření směřujte, prosím, na adresu nettest@ctu.cz.</p>]]></string>
+    <string name="cert_location_permission_text_1">Funkce certifikovaného měření pro své správné fungování vyžaduje přístup k poloze na pozadí. Oprávnění je nezbytné pro zaznamenání přesné polohy Vašeho zařízení v průběhu certifikovaného měření. Tímto způsobem je možné prokázat, že se Vaše zařízení nacházelo v udávané lokalitě v průběhu celého procesu certifikovaného měření a nedocházelo k pohybu mimo tolerovanou vzdálenost.\n\nZvolte volbu \"Povolit vždy\".</string>
+    <string name="cert_location_permission_text_2">Funkce certifikovaného měření pro své správné fungování vyžaduje přístup k poloze na pozadí. Oprávnění je nezbytné pro zaznamenání přesné polohy Vašeho zařízení v průběhu certifikovaného měření. Tímto způsobem je možné prokázat, že se Vaše zařízení nacházelo v udávané lokalitě v průběhu celého procesu certifikovaného měření a nedocházelo k pohybu mimo tolerovanou vzdálenost.\nNejspíš jste již jednou toto oprávnění neudělili. V nastavení aplikace otevřete Oprávnění->Poloha a zvolte volbu \"Povolit vždy\".</string>
+    <string name="title_loop_count">Počet testů</string>
+    <string name="text_loop_start">Spustit testování</string>
+    <string name="title_loop_mode">Opakované měření</string>
+    <string name="notification_loop_mode_title_active">Opakované měření je aktivní</string>
+    <string name="notification_loop_mode_title_running">Opakované měření běží (%1$d/%2$d)</string>
+    <string name="notification_loop_mode_finished_title">Opakované měření dokončeno</string>
+    <string name="notification_cert_mode_title_active">Certifikované měření je aktivní</string>
+    <string name="notification_cert_mode_title_running">Certifikované měření běží (%1$d/%2$d)</string>
+    <string name="notification_cert_mode_finished_title">Certifikované měření dokončeno</string>
+    <string name="text_loop_mode">Další test se spustí po čekací době nebo překonání vzdálenosti. Max. 2 dny.</string>
+    <string name="title_loop_instruction_1">Aktivace</string>
+    <string name="title_loop_instruction_2">Použití</string>
+    <string name="loop_mode_next_test">Další test</string>
+    <string name="loop_mode_minutes">Minuty</string>
+    <string name="loop_mode_meters">Metry</string>
+    <string name="loop_mode_no_gps">Bez GPS</string>
+    <string name="or">nebo</string>
+    <string name="loop_mode_finished">Opakované měření dokončeno!</string>
+    <string name="loop_continue_to_results">Zobrazit výsledky</string>
+    <string name="loop_run_again">Spustit znovu</string>
+    <string name="title_privacy_policy">Zásady ochrany osobních údajů</string>
+    <string name="text_terms_agree">Souhlasím se zásadami ochrany osobních údajů a podmínkami použití.</string>
+    <string name="text_terms_agree_empty">Pro pokračování musíte souhlasit s podmínkami užití.</string>
+    <string name="dialog_title_config_check">Upravte prosím následující hodnoty:</string>
+    <string name="label_ip_processing">Zpracování…</string>
+    <string name="radio_info_warning_title">Informace o mobilním připojení</string>
+    <string name="radio_info_warning_message">Upozornění: Změny v pokročilých nastaveních konfigurace mobilní sítě mohou ovlivnit funkci, stabilitu a výkon vašeho zařízení.</string>
+    <string name="accept_risk">Rozumím rizikům</string>
+    <string name="preferences_connection_details_not_supported">Podrobnosti o nastavení mobilní sítě nejsou na tomto zařízení podporovány.</string>
+    <string name="dialog_signal_info_band">Pásmo</string>
+    <string name="dialog_signal_info_channel">Kanál</string>
+    <string name="text_local_results">Pouze lokální výsledky</string>
+    <string name="signal_measurement_terms_title">Aktivace a použití</string>
+
+    <string name="permissions_dialog_title">Oprávnění</string>
+    <string name="permissions_dialog_text">Aplikace bude požadovat oprávnění</string>
+    <string name="loop_download_pdf">Stáhnout výsledky (PDF)</string>
+    <string name="loop_download_pdf_in_browser">Stáhnout výsledky (prohlížeč)</string>
+    <string name="cert_measurement">Certifikované měření</string>
+    <string name="cert_mode_finished">Certifikované měření dokončeno!</string>
+    <string name="preferences_loop_mode_num_of_tests">Počet testů</string>
+    <string name="loop_mode_max_num_of_tests_invalid">Vyberte hodnotu mezi %1$d a %2$d.</string>
+
+    <string name="toast_signal_measurement_enabled">Zahájeno měření signálu.</string>
+    <string name="notification_signal_test_title">Spuštěno měření signálu</string>
+    <string name="notification_signal_test_text">NetTest Měření signálu běží na pozadí</string>
+    <string name="download_pdf_title">NetTest výsledek certfiikovaného měření</string>
+    <string name="download_pdf_description">Stahuji PDF s výsledkem testu</string>
+    <string name="download_pdf_error">Chyba při získávání adresy pro stažení PDF</string>
+    <string name="download_pdf_starting">Výsledky měření se stahují...</string>
+</resources>

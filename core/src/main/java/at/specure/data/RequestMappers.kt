@@ -340,6 +340,7 @@ fun TestRecord.toRequest(
         testTag = testTag,
         developerModeEnabled = developerModeEnabled,
         loopModeEnabled = loopModeEnabled,
+        certModeEnabled = certModeEnabled,
         userServerSelectionEnabled = serverSelectionEnabled,
         telephonyNRConnection = telephonyNRConnectionState,
         packetLoss = voipTestResultRecord?.getPacketLoss(),

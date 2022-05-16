@@ -7,7 +7,7 @@
     app:grid_color="@color/result_chart_grid_line_color"
     app:grid_row="4"
     app:progress_fill_color="@color/speed_chart_progress_fill_color"
-    app:progress_line_color="@color/colorAccent"
+    app:progress_line_color="@color/speed_chart_progress_line_color"
     app:xlabel_color="@color/text_gray"
     app:xlabel_text_size="@dimen/chart_label_text_size"
     app:ylabel_color="@color/text_gray"

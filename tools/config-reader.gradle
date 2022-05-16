@@ -36,6 +36,8 @@ android {
             pattern = Pattern.compile("assemble(\\w+)")
         } else if (tskReqStr.contains("generate")) {
             pattern = Pattern.compile("generate(\\w+)")
+        } else if (tskReqStr.contains("bundle")) {
+            pattern = Pattern.compile("bundle(\\w+)")
         } else {
             pattern = Pattern.compile("lint(\\w+)")
         }
@@ -73,15 +75,15 @@ android {
 
             flavorDimension = flavorDimension - buildType
             println("flavorDimension: ${flavorDimension}")
-            flavorDimension = flavorDimension.substring(0,1).toLowerCase() + flavorDimension.substring(1, flavorDimension.length())
+            flavorDimension = flavorDimension.substring(0, 1).toLowerCase() + flavorDimension.substring(1, flavorDimension.length())
             println("flavorDimension: ${flavorDimension}")
 
-    def jsonFile
-    if ((isPrivate) && (flavorDimension != "openRmbt")) {
-        jsonFile = file("$project.rootDir/private/$project.name/src/${flavorDimension}/config.json")
-    } else {
-        jsonFile = file("$project.rootDir/$project.name/src/${flavorDimension}/config.json")
-    }
+            def jsonFile
+            if ((isPrivate) && (flavorDimension != "openRmbt")) {
+                jsonFile = file("$project.rootDir/private/$project.name/src/${flavorDimension}/config.json")
+            } else {
+                jsonFile = file("$project.rootDir/$project.name/src/${flavorDimension}/config.json")
+            }
 
             def parsedJson = new JsonSlurper().parseText(jsonFile.text)
 

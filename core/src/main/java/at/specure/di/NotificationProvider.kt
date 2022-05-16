@@ -24,7 +24,8 @@ interface NotificationProvider {
         skipQoSTests: Boolean,
         loopModeRecord: LoopModeRecord?,
         loopModeTestsCount: Int,
-        cancellationIntent: Intent
+        cancellationIntent: Intent,
+        isCertMeasurement: Boolean
 
     ): Notification
 
@@ -44,11 +45,12 @@ interface NotificationProvider {
         testsPassed: Int,
         testsCount: Int,
         cancellationIntent: Intent,
-        locationAvailable: Boolean
+        locationAvailable: Boolean,
+        isCertMeasurement: Boolean
     ): Notification
 
     /**
      * Returns notification to notify that loop mode finished
      */
-    fun loopModeFinishedNotification(): Notification
+    fun loopModeFinishedNotification(isCertMeasurement: Boolean, uuid: String?): Notification
 }

@@ -443,9 +443,8 @@ class SignalMeasurementProcessor @Inject constructor(
 
                 val cellNetworkInfo = detailedNetworkInfo.networkInfo
                 val active5GNetworkInfos = detailedNetworkInfo.secondary5GActiveCellNetworks
-                val otherCells = detailedNetworkInfo.allCellInfos as MutableList
+                val otherCells = if(detailedNetworkInfo.allCellInfos?.isNotEmpty() == true) detailedNetworkInfo.allCellInfos as MutableList else mutableListOf()
                 val testStartTimeNanos = testStartTimeNanos ?: 0
-
                 if (detailedNetworkInfo.networkInfo is CellNetworkInfo) {
                     otherCells.remove(detailedNetworkInfo.networkInfo.rawCellInfo)
                 }

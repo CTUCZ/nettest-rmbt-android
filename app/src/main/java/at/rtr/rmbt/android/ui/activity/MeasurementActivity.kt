@@ -138,7 +138,14 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
         if (measurementFinished) {
             finish()
             if (viewModel.state.isLoopModeActive.get()) {
-                LoopFinishedActivity.start(this)
+                val certMode = viewModel.state.loopModeRecord.get()?.certMode ?: false
+                // TODO předat do loop finished pro zobrazení možného exportu
+                val loopUUID = viewModel.state.loopModeRecord.get()?.uuid
+                if(certMode && !loopUUID.isNullOrBlank()) {
+                    LoopFinishedActivity.startForCertMode(this, loopUUID)
+                } else {
+                    LoopFinishedActivity.start(this)
+                }
             } else {
                 viewModel.testUUID?.let {
                     if (viewModel.state.measurementState.get() == MeasurementState.FINISH)

@@ -31,7 +31,8 @@ class NotificationProviderImpl(private val context: Context) : NotificationProvi
         skipQoSTests: Boolean,
         loopModeRecord: LoopModeRecord?,
         loopModeTestsCount: Int,
-        cancellationIntent: Intent
+        cancellationIntent: Intent,
+        isCertMeasurement: Boolean
     ): Notification {
         return if (loopModeRecord == null) {
             Timber.d("Created measurement notification no loop mode")
@@ -42,11 +43,15 @@ class NotificationProviderImpl(private val context: Context) : NotificationProvi
                 createMeasurementNotification(progress, state, skipQoSTests, context.getString(R.string.notification_test_title), cancellationIntent)
             } else {
                 Timber.d("Created measurement notification loop mode TEST PROGRESS")
+                val titleText = if(isCertMeasurement)
+                    context.getString(R.string.notification_cert_mode_title_running, loopModeRecord.testsPerformed, loopModeTestsCount)
+                else
+                    context.getString(R.string.notification_loop_mode_title_running, loopModeRecord.testsPerformed, loopModeTestsCount)
                 createMeasurementNotification(
                     progress,
                     state,
                     skipQoSTests,
-                    context.getString(R.string.notification_loop_mode_title_running, loopModeRecord.testsPerformed, loopModeTestsCount),
+                    titleText,
                     cancellationIntent
                 )
             }
@@ -132,22 +137,37 @@ class NotificationProviderImpl(private val context: Context) : NotificationProvi
         testsPassed: Int,
         testsCount: Int,
         cancellationIntent: Intent,
-        locationAvailable: Boolean
+        locationAvailable: Boolean,
+        isCertMeasurement: Boolean
     ): Notification {
 
-        val locationString = if (locationAvailable) {
-            String.format("  %dm left  ", metersRequired - metersPassed)
+        val text: CharSequence
+        if(isCertMeasurement) {
+            text = String.format(
+                "%s (%d/%d)",
+                timePassedMillis.timeString(),
+                testsPassed,
+                testsCount
+            )
         } else {
-            "  No GPS  "
+            val locationString = if (locationAvailable) {
+                String.format("  %dm left  ", metersRequired - metersPassed)
+            } else {
+                "  No GPS  "
+            }
+
+            text = String.format(
+                "%s%s(%d/%d)",
+                timePassedMillis.timeString(),
+                locationString,
+                testsPassed,
+                testsCount
+            )
         }
 
-        val text = String.format(
-            "%s%s(%d/%d)",
-            timePassedMillis.timeString(),
-            locationString,
-            testsPassed,
-            testsCount
-        )
+        val title = if(isCertMeasurement) context.getString(R.string.notification_cert_mode_title_active)
+            else
+            context.getString(R.string.notification_loop_mode_title_active)
 
         val intent = PendingIntent.getActivity(context, 0, Intent(context, MeasurementActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
         val actionIntent = PendingIntent.getService(context, 0, cancellationIntent, PendingIntent.FLAG_IMMUTABLE)
@@ -165,7 +185,7 @@ class NotificationProviderImpl(private val context: Context) : NotificationProvi
                 .setOnlyAlertOnce(true)
                 .setContentText(text)
                 .setContentIntent(intent)
-                .setContentTitle(context.getString(R.string.notification_loop_mode_title_active))
+                .setContentTitle(title)
         } else {
             loopCountdownNotification!!.setContentText(text)
         }
@@ -189,16 +209,26 @@ class NotificationProviderImpl(private val context: Context) : NotificationProvi
             .build()!!
     }
 
-    override fun loopModeFinishedNotification(): Notification {
-        val intent = PendingIntent.getActivity(context, 0, Intent(context, LoopFinishedActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
+    override fun loopModeFinishedNotification(isCertMeasurement: Boolean, uuid: String?): Notification {
+        val intent = Intent(context, LoopFinishedActivity::class.java).apply {
+            putExtra("loopUUID", uuid)
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT )
+
+
+        val title = if(isCertMeasurement)
+                        context.getString(R.string.notification_cert_mode_finished_title)
+                    else
+                        context.getString(R.string.notification_loop_mode_finished_title)
 
         return NotificationCompat.Builder(context, measurementChannelId())
             .extend(clearActionsNotificationExtender)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentIntent(intent)
-            .setContentTitle(context.getString(R.string.notification_loop_mode_finished_title))
+            .setContentIntent(pendingIntent)
+            .setContentTitle(title)
             .build()!!
     }
 

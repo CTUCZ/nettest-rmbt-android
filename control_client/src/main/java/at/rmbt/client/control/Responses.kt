@@ -945,3 +945,9 @@ data class QosResultItem(
     @SerializedName("testType")
     val testType: String?
 )
+
+@Keep
+data class ExportPdfResponse(
+    @SerializedName("file")
+    val file: String
+): BaseResponse()

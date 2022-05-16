@@ -30,6 +30,7 @@ private const val KEY_LOOP_NEXT_TEST_DISTANCE_METERS = "KEY_LOOP_NEXT_TEST_DISTA
 private const val KEY_LOOP_NEXT_TEST_DISTANCE_PERCENT = "KEY_LOOP_NEXT_TEST_DISTANCE_PERCENT"
 private const val KEY_LOOP_UUID = "KEY_LOOP_UUID"
 private const val KEY_LOOP_MODE_ENABLED = "KEY_LOOP_MODE_ENABLED"
+private const val KEY_CERT_MODE_ENABLED = "KEY_CERT_MODE_ENABLED"
 private const val KEY_LAST_MEASUREMENT_SIGNAL = "KEY_LAST_MEASUREMENT_SIGNAL"
 
 class MeasurementViewState(private val config: AppConfig) : ViewState {
@@ -56,6 +57,7 @@ class MeasurementViewState(private val config: AppConfig) : ViewState {
     val loopNextTestPercent = ObservableInt()
     val gpsEnabled = ObservableBoolean()
     val isLoopModeActive = ObservableBoolean(config.loopModeEnabled)
+    val isCertModeActive = ObservableBoolean(config.certModeEnabled)
 
     val metersLeft = ObservableField<String>().apply { set(loopNextTestDistanceMeters.get()) }
     val locationAvailable = ObservableBoolean().apply { set(true) }
@@ -114,6 +116,7 @@ class MeasurementViewState(private val config: AppConfig) : ViewState {
             loopNextTestPercent.set(bundle.getInt(KEY_LOOP_NEXT_TEST_DISTANCE_PERCENT))
             loopLocalUUID.set(bundle.getString(KEY_LOOP_UUID))
             isLoopModeActive.set(bundle.getBoolean(KEY_LOOP_MODE_ENABLED))
+            isCertModeActive.set(bundle.getBoolean(KEY_CERT_MODE_ENABLED))
             signalStrengthInfoResult.set(bundle.getParcelable(KEY_LAST_MEASUREMENT_SIGNAL))
         }
     }
@@ -135,6 +138,7 @@ class MeasurementViewState(private val config: AppConfig) : ViewState {
             putInt(KEY_LOOP_NEXT_TEST_DISTANCE_PERCENT, loopNextTestPercent.get())
             putString(KEY_LOOP_UUID, loopLocalUUID.get())
             putBoolean(KEY_LOOP_MODE_ENABLED, isLoopModeActive.get())
+            putBoolean(KEY_CERT_MODE_ENABLED, isCertModeActive.get())
             putParcelable(KEY_LAST_MEASUREMENT_SIGNAL, signalStrengthInfoResult.get())
         }
     }

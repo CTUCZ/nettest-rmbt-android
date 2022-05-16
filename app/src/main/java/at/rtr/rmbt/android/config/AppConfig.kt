@@ -151,6 +151,10 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
         set(value) {
             // this value cannot be changed
         }
+    override var certModeEnabled: Boolean
+        get() = getBoolean(BuildConfig.CERT_MODE_ENABLED)
+        set(value) = setBoolean(BuildConfig.CERT_MODE_ENABLED, value)
+
 
     override var expertModeEnabled: Boolean
         get() = getBoolean(BuildConfig.EXPERT_MODE_ENABLED)
@@ -438,4 +442,14 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
     override var performJitterAndPacketLossTest: Boolean
         get() = getBoolean(BuildConfig.ENABLED_JITTER_AND_PACKET_LOSS)
         set(value) {}
+
+    var savedLoopModeNumberOfTests: Int
+        get() = preferences.getInt("savedNumberOfTests", loopModeNumberOfTests)
+        set(value) = preferences.edit().putInt("savedNumberOfTests", value).apply()
+    var savedLoopModeWaitingTimeMin: Int
+        get() = preferences.getInt("savedWaitingTime", loopModeWaitingTimeMin)
+        set(value) = preferences.edit().putInt("savedWaitingTime", value).apply()
+    var savedLoopModeDistanceMeters: Int
+        get() = preferences.getInt("savedDistanceMeters", loopModeDistanceMeters)
+        set(value) = preferences.edit().putInt("savedDistanceMeters", value).apply()
 }

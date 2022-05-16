@@ -21,7 +21,7 @@ import javax.inject.Inject
 /**
  * LiveData that observes cellular signal strength changes
  */
-class SignalStrengthLiveData @Inject constructor(private val signalStrengthWatcher: SignalStrengthWatcher) : LiveData<DetailedNetworkInfo?>(),
+class SignalStrengthLiveData @Inject constructor(val signalStrengthWatcher: SignalStrengthWatcher) : LiveData<DetailedNetworkInfo?>(),
     SignalStrengthWatcher.SignalStrengthListener {
 
     override fun onActive() {
@@ -41,7 +41,7 @@ class SignalStrengthLiveData @Inject constructor(private val signalStrengthWatch
         } else {
             "SSP NOTIFY - SignalStrength: value: ${signalInfo.signalStrengthInfo?.value} \nmax: ${signalInfo.signalStrengthInfo?.max} \nmin: ${signalInfo.signalStrengthInfo?.min} \nrsrq: ${signalInfo.signalStrengthInfo?.rsrq} \ntransportType: ${signalInfo.signalStrengthInfo?.transport?.name} \nsignal level: ${signalInfo.signalStrengthInfo?.signalLevel} \n "
         }
-        Timber.v(message)
+        //Timber.v(message)
         postValue(signalInfo)
     }
 }

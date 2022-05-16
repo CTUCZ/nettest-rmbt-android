@@ -7,37 +7,37 @@
     },
     {
       "name": "CONTROL_SERVER_HOST",
-      "value": "sdev.example.com",
+      "value": "example.com",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PRIVATE_IPV4_HOST",
-      "value": "sdevv4.example.com",
+      "value": "example.com/RMBTControlServer",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PRIVATE_IPV6_HOST",
-      "value": "sdevv6.example.com",
+      "value": "example.com/RMBTControlServer",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PUBLIC_IPV4_URL",
-      "value": "sdevv4.example.com/RMBTControlServer/ip",
+      "value": "example.com/RMBTControlServer/ip",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PUBLIC_IPV6_URL",
-      "value": "sdevv6.example.com/RMBTControlServer/ip",
+      "value": "example.com/RMBTControlServer/ip",
       "visible": false
     },
     {
       "name": "CAPTIVE_PORTAL_WALLED_GARDEN_URL",
-      "value": "http://webtest.example.com/generate_204",
+      "value": "https://example.com/nocon",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_NEW_HOST",
-      "value": "api-test.example.org",
+      "value": "nope",
       "visible": false
     },
     {
@@ -72,7 +72,7 @@
     },
     {
       "name": "SKIP_QOS_TESTS",
-      "value": "false",
+      "value": "true",
       "visible": true
     },
     {
@@ -88,11 +88,11 @@
     {
       "name": "LOOP_MODE_ENABLED",
       "value": "false",
-      "visible": true
+      "visible": false
     },
     {
       "name": "LOOP_MODE_WAITING_TIME_MIN",
-      "value": "30",
+      "value": "10",
       "visible": true
     },
     {
@@ -122,7 +122,7 @@
     },
     {
       "name": "LOOP_MODE_MIN_WAITING_TIME_MIN",
-      "value": "15",
+      "value": "10",
       "visible": false
     },
     {
@@ -134,6 +134,11 @@
       "name": "LOOP_MODE_MIN_DISTANCE_METERS",
       "value": "50",
       "visible": false
+    },
+    {
+      "name": "CERT_MODE_ENABLED",
+      "value": "false",
+      "visible": true
     },
     {
       "name": "CAPABILITIES_RMBT_HTTP",
@@ -192,7 +197,7 @@
     },
     {
       "name": "DEVELOPER_MODE_IS_ENABLED",
-      "value": "false",
+      "value": "true",
       "visible": false
     },
     {
@@ -247,22 +252,22 @@
     },
     {
       "name": "WEBSITE_URL",
-      "value": "https://www.example.com",
+      "value": "***REMOVED***",
       "visible": false
     },
     {
       "name": "EMAIL_ADDRESS",
-      "value": "RMBT Support <support@example.com>",
+      "value": "NetTest podpora <nettest@ctu.cz>",
       "visible": false
     },
     {
       "name": "DATA_PRIVACY_AND_TERMS_URL",
-      "value": "https://example.com/%s/tk/netztestterms",
+      "value": "***REMOVED***/%s/tk/netztestterms",
       "visible": true
     },
     {
       "name": "TERMS_FOR_ACCEPTANCE_URL",
-      "value": "https://example.com/%s/tc_android.html",
+      "value": "***REMOVED***/%s/tc_android.html",
       "visible": true
     },
     {
@@ -277,7 +282,7 @@
     },
     {
       "name": "MAP_SERVER_HOST",
-      "value": "sdev.example.com",
+      "value": "sdev.none.com",
       "visible": false
     },
     {

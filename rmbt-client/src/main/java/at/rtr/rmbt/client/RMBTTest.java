@@ -300,6 +300,8 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
             if (matcher.find()) {
                 version = matcher.group(1);
                 testResult.client_version = version;
+            } else {
+                testResult.client_version = "1.0.0";
             }
         } else {
             log(String.format(Locale.US, "thread %d: got '%s' expected '%s'", threadId, line, EXPECT_GREETING));

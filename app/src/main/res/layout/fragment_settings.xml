@@ -111,16 +111,27 @@
                 bind:title="@{@string/preferences_loop_mode}"
                 bind:value="@{state.loopModeEnabled}" />
 
+            <include
+                android:id="@+id/loopModeNumOfTests"
+                layout="@layout/item_setting_edittext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="@{state.loopModeEnabled || state.developerModeIsEnabled ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchLoopModeEnabled"
+                bind:title="@{@string/preferences_loop_mode_num_of_tests}"
+                bind:value="@{String.valueOf(state.loopModeNumberOfTests)}" />
 
             <include
                 android:id="@+id/loopModeWaitingTime"
                 layout="@layout/item_setting_edittext"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:visibility="@{state.loopModeEnabled ? View.VISIBLE : View.GONE}"
+                android:visibility="@{state.loopModeEnabled || state.developerModeIsEnabled ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchLoopModeEnabled"
+                app:layout_constraintTop_toBottomOf="@+id/loopModeNumOfTests"
                 bind:title="@{@string/preferences_loop_mode_min_delay}"
                 bind:value="@{String.valueOf(state.loopModeWaitingTimeMin)}" />
 
@@ -129,7 +140,7 @@
                 layout="@layout/item_setting_edittext"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:visibility="@{state.loopModeEnabled ? View.VISIBLE : View.GONE}"
+                android:visibility="@{state.loopModeEnabled || state.developerModeIsEnabled ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/loopModeWaitingTime"
@@ -497,7 +508,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/commitHash"
-                app:srcCompat="@drawable/ic_rtr" />
+                app:srcCompat="@drawable/ic_logo_blue" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

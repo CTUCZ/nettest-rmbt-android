@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />-->
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -93,6 +95,8 @@
 
         <activity android:name=".ui.activity.LoopInstructionsActivity" />
 
+        <activity android:name=".ui.activity.CertInstructionsActivity" />
+
         <activity android:name=".ui.activity.SignalMeasurementTermsActivity" />
 
         <activity android:name=".ui.activity.SignalMeasurementActivity" />
@@ -108,10 +112,18 @@
 
         <activity android:name=".ui.activity.TermsAcceptanceActivity"/>
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${googleMapsApiKey}" />
-
+<!--        <meta-data-->
+<!--            android:name="com.google.android.geo.API_KEY"-->
+<!--            android:value="${googleMapsApiKey}" />-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="cz.ctu.measurement.cert"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path"/>
+        </provider>
     </application>
 
 </manifest>

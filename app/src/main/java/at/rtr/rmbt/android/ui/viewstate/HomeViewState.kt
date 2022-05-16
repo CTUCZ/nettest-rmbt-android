@@ -32,10 +32,14 @@ class HomeViewState(
     val expertModeIsEnabled = ObservableField(config.expertModeEnabled)
     val developerModeIsEnabled = ObservableField(config.developerModeIsEnabled)
     val selectedMeasurementServer = ObservableField(measurementServers.selectedMeasurementServer)
+    val isCertModeActive = ObservableBoolean(config.certModeEnabled)
 
     init {
         isLoopModeActive.addOnPropertyChanged {
             config.loopModeEnabled = it.get()
+        }
+        isCertModeActive.addOnPropertyChanged {
+            config.certModeEnabled = it.get()
         }
     }
 
@@ -47,6 +51,7 @@ class HomeViewState(
 
     fun checkConfig() {
         isLoopModeActive.set(config.loopModeEnabled)
+        isCertModeActive.set(config.certModeEnabled)
         developerModeIsEnabled.set(config.developerModeIsEnabled)
         selectedMeasurementServer.set(measurementServers.selectedMeasurementServer)
         expertModeIsEnabled.set(config.expertModeEnabled)

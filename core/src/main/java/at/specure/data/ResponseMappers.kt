@@ -80,6 +80,7 @@ fun HistoryONTResponse.toModelList(): List<History> =
 
 fun HistoryItemONTResponse.toModel(): History {
     val dateTime = DateTime(measurementDate)
+// TODO v odpovědi serveru by nějak mělo byt zaznačeno cert měření
     return History(
         testUUID = testUUID,
         loopUUID = loopUUID,

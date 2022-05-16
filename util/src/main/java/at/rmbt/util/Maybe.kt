@@ -95,4 +95,8 @@ class Maybe<out S>(private val successValue: S?, private val exceptionValue: Han
             block.invoke(failure)
         }
     }
+
+    override fun toString(): String {
+        return "Maybe(successValue=$successValue, exceptionValue=$exceptionValue)"
+    }
 }

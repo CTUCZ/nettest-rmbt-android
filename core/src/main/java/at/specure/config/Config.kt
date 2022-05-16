@@ -105,6 +105,11 @@ interface Config {
     var loopModeMinTestsNumber: Int
 
     /**
+     * Cert mode is enabled
+     */
+    var certModeEnabled: Boolean
+
+    /**
      * Duration of the signal measurement activity time after user enable it, in minutes
      */
     var signalMeasurementDurationMin: Int

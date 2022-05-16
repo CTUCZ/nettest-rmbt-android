@@ -43,7 +43,7 @@
             android:gravity="center_vertical"
             android:paddingTop="@dimen/padding_medium"
             android:paddingBottom="@dimen/padding_medium"
-            android:text="@string/preferences_loop_mode"
+            android:text="@{state.isCertModeActive() ? @string/cert_measurement : @string/preferences_loop_mode}"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -257,6 +257,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/loop_measurement_next_test_minutes_label" />
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/loop_measurement_next_test_distance_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:visibleOrGone="@{!state.isCertModeActive() &amp;&amp; state.isLoopModeActive &amp;&amp; state.loopModeRecord.status == LoopModeState.IDLE &amp;&amp; state.measurementState == MeasurementState.FINISH}"
+            app:constraint_referenced_ids="loop_measurement_next_test_distance_label,loop_measurement_next_test_meters_progress,loop_measurement_next_test_meters_value,loop_measurement_next_test_or_label,next_test_separator_start,next_test_separator_end"/>
+
         <View
             android:id="@+id/next_test_separator_start"
             android:layout_width="0dp"
@@ -393,7 +401,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/labelMeasurementState"
             app:progress_fill_color="@color/speed_chart_progress_fill_color"
-            app:progress_line_color="@color/colorAccent"
+            app:progress_line_color="@color/speed_chart_progress_line_color"
             app:reset="@{state.measurementState}"
             app:visibleOrGone="@{((state.measurementState == MeasurementState.IDLE | state.measurementState == MeasurementState.INIT | state.measurementState == MeasurementState.PING | state.measurementState == MeasurementState.DOWNLOAD | state.measurementState == MeasurementState.UPLOAD) &amp;&amp; ((state.loopModeRecord.status == LoopModeState.RUNNING &amp;&amp; state.isLoopModeActive) || state.isLoopModeActive == false))}"
             app:xlabel_color="@color/text_gray"

@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="state"
+            type="at.rtr.rmbt.android.ui.viewstate.LoopFinishedState" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,10 +52,38 @@
             android:background="@drawable/button_green_background"
             android:text="@string/loop_continue_to_results"
             android:textColor="@android:color/white"
-            app:layout_constraintBottom_toTopOf="@+id/buttonRunAgain"
+            app:layout_constraintBottom_toTopOf="@+id/buttonDownloadPdf"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loopFinishedTitle" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonDownloadPdf"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/button_green_background"
+            android:text="@string/loop_download_pdf"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toTopOf="@+id/buttonDownloadPdfInBrowser"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonGoToResults" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonDownloadPdfInBrowser"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/button_green_background"
+            android:text="@string/loop_download_pdf_in_browser"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toTopOf="@+id/buttonRunAgain"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonDownloadPdf" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonRunAgain"
@@ -61,7 +97,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/buttonGoToResults" />
+            app:layout_constraintTop_toBottomOf="@id/buttonDownloadPdfInBrowser" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
