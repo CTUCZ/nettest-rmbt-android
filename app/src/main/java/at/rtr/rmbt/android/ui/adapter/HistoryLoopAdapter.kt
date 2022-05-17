@@ -15,10 +15,13 @@
  */
 package at.rtr.rmbt.android.ui.adapter
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewPropertyAnimator
+import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +45,8 @@ class HistoryLoopAdapter : PagedListAdapter<HistoryContainer, HistoryLoopAdapter
 
     var actionCallback: ((History) -> Unit)? = null
     var pendingAnimationCallback: (() -> Unit)? = null
+    var context: Context? = null
+    var downloadCallback: ((String) -> Unit)? = null
 
     override fun getItemViewType(position: Int): Int {
         val size = getItem(position)?.items?.size ?: 1
@@ -60,7 +65,7 @@ class HistoryLoopAdapter : PagedListAdapter<HistoryContainer, HistoryLoopAdapter
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         getItem(position)?.let { item ->
-            holder.bind(position, item, expandedItemsMap, actionCallback, pendingAnimationCallback)
+            holder.bind(position, item, expandedItemsMap, actionCallback, pendingAnimationCallback, context, downloadCallback)
         }
     }
 
@@ -97,7 +102,9 @@ class HistoryLoopAdapter : PagedListAdapter<HistoryContainer, HistoryLoopAdapter
             item: HistoryContainer,
             expandedItemsMap: MutableMap<Int, Boolean>,
             actionCallback: ((History) -> Unit)?,
-            pendingAnimationCallback: (() -> Unit)?
+            pendingAnimationCallback: (() -> Unit)?,
+            context: Context?,
+            downloadCallback: ((String) -> Unit)?
         ) {
             if (item.items.isEmpty()) {
                 return
@@ -119,7 +126,16 @@ class HistoryLoopAdapter : PagedListAdapter<HistoryContainer, HistoryLoopAdapter
                 binding.recyclerView.gone()
             }
 
-            binding.root.setOnClickListener {
+            binding.imageDownload.setOnClickListener {
+                it.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_click))
+                item.items.first().loopUUID?.let { loopUUID ->
+                    Toast.makeText(context, R.string.download_pdf_starting, Toast.LENGTH_SHORT).show()
+                    downloadCallback?.invoke(loopUUID)
+                }
+                    ?: Toast.makeText(context, R.string.loop_id_nonexistent, Toast.LENGTH_SHORT).show()
+            }
+
+            binding.imageExpand.setOnClickListener {
                 val expanded = expandedItemsMap[position] ?: false
                 expandedItemsMap[position] = !expanded
 
@@ -145,7 +161,9 @@ class HistoryLoopAdapter : PagedListAdapter<HistoryContainer, HistoryLoopAdapter
             item: HistoryContainer,
             expandedItemsMap: MutableMap<Int, Boolean>,
             actionCallback: ((History) -> Unit)?,
-            pendingAnimationCallback: (() -> Unit)?
+            pendingAnimationCallback: (() -> Unit)?,
+            context: Context?,
+            downloadCallback: ((String) -> Unit)?
         ) {
             binding.item = item.items.first()
             binding.root.setOnClickListener {
@@ -161,7 +179,9 @@ class HistoryLoopAdapter : PagedListAdapter<HistoryContainer, HistoryLoopAdapter
             item: HistoryContainer,
             expandedItemsMap: MutableMap<Int, Boolean>,
             actionCallback: ((History) -> Unit)?,
-            pendingAnimationCallback: (() -> Unit)?
+            pendingAnimationCallback: (() -> Unit)?,
+            context: Context?,
+            downloadCallback: ((String) -> Unit)?
         )
     }
 

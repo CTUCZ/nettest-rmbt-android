@@ -280,5 +280,6 @@
     <string name="download_pdf_title">NetTest výsledek certfiikovaného měření</string>
     <string name="download_pdf_description">Stahuji PDF s výsledkem testu</string>
     <string name="download_pdf_error">Chyba při získávání adresy pro stažení PDF</string>
-    <string name="download_pdf_starting">Výsledky měření se stahují...</string>
+    <string name="download_pdf_starting">Výsledky měření se stahují…</string>
+    <string name="loop_id_nonexistent">Neexistuje ID měření</string>
 </resources>

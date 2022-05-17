@@ -382,4 +382,5 @@
     <string name="download_pdf_description">Downloading result PDF</string>
     <string name="download_pdf_error">Error while retrieving PDF url</string>
     <string name="download_pdf_starting">Downloading measurement result...</string>
+    <string name="loop_id_nonexistent">Nonexistent measurement ID</string>
 </resources>

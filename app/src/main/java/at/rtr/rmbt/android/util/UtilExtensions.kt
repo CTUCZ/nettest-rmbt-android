@@ -18,15 +18,16 @@ import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.net.Uri
 import androidx.core.content.ContextCompat
+import at.rmbt.client.control.ControlEndpointProvider
 import at.rmbt.util.exception.HandledException
 import at.rtr.rmbt.android.R
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 fun HandledException.getStringTitle(context: Context): String {
@@ -96,4 +97,8 @@ fun Array<out String>.hasLocationPermissions(): Boolean {
         }
     }
     return false
+}
+
+fun getDownloadCertPdfUri(endpointProvider: ControlEndpointProvider, loopUUID: String): Uri {
+    return Uri.parse("${endpointProvider.getExportPdfUrl}?mobile=y&loop_uuid=${loopUUID}")
 }

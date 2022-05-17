@@ -1,10 +1,13 @@
 package at.rtr.rmbt.android.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
+import at.rmbt.client.control.ControlEndpointProvider
 import at.rmbt.util.exception.HandledException
 import at.rtr.rmbt.android.ui.viewstate.HistoryViewState
+import at.rtr.rmbt.android.util.getDownloadCertPdfUri
 import at.specure.data.entity.HistoryContainer
 import at.specure.data.repository.HistoryLoader
 import at.specure.data.repository.HistoryRepository
@@ -15,7 +18,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class HistoryViewModel @Inject constructor(private val repository: HistoryRepository, private val loader: HistoryLoader) : BaseViewModel() {
+class HistoryViewModel @Inject constructor(private val repository: HistoryRepository, private val loader: HistoryLoader, private val endpointProvider: ControlEndpointProvider) : BaseViewModel() {
 
     private val _isLoadingLiveData = MutableLiveData<Boolean>()
 
@@ -64,5 +67,9 @@ class HistoryViewModel @Inject constructor(private val repository: HistoryReposi
     fun removeFromFilters(value: String) {
         repository.removeFromFilters(value)
         refreshHistory()
+    }
+
+    fun genDownloadUrl(loopUUID: String): Uri {
+        return getDownloadCertPdfUri(endpointProvider, loopUUID)
     }
 }

@@ -1,21 +1,14 @@
 package at.rtr.rmbt.android.viewmodel
 
 import android.net.Uri
-import android.os.Bundle
-import androidx.databinding.ObservableBoolean
-import androidx.lifecycle.viewModelScope
 import at.rmbt.client.control.ControlEndpointProvider
 import at.rmbt.client.control.ControlServerClient
 import at.rmbt.client.control.ExportPdfResponse
 import at.rmbt.client.control.ExportRequestBody
 import at.rtr.rmbt.android.config.AppConfig
 import at.rtr.rmbt.android.ui.viewstate.LoopFinishedState
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import retrofit2.Call
+import at.rtr.rmbt.android.util.getDownloadCertPdfUri
 import retrofit2.Callback
-import retrofit2.Response
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -67,7 +60,7 @@ class LoopFinishedViewModel @Inject constructor(
     }
 
     fun genDownloadUrl(loopUUID: String): Uri {
-        return Uri.parse("${endpointProvider.getExportPdfUrl}?mobile=y&loop_uuid=${loopUUID}")
+        return getDownloadCertPdfUri(endpointProvider, loopUUID)
     }
 
     fun resetLoopMode() {

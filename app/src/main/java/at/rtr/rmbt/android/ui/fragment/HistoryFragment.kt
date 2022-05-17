@@ -1,5 +1,6 @@
 package at.rtr.rmbt.android.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -47,6 +48,13 @@ class HistoryFragment : BaseFragment(), SyncDevicesDialog.Callback, HistoryFilte
 
         adapter.pendingAnimationCallback = {
             TransitionManager.beginDelayedTransition(binding.recyclerViewHistoryItems, TransitionSet().apply { addTransition(ChangeBounds()) })
+        }
+
+        adapter.context = requireContext()
+
+        adapter.downloadCallback = {
+            val downloadUri = historyViewModel.genDownloadUrl(it)
+            startActivity(Intent(Intent.ACTION_VIEW, downloadUri))
         }
 
         binding.recyclerViewHistoryItems.apply {
