@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.huawei.agconnect'
 
+apply plugin: 'idea'
+
 apply from: "$project.rootDir/tools/utils.gradle"
 apply from: "$project.rootDir/tools/script-lint.gradle"
 apply from: "$project.rootDir/tools/script-ktlint.gradle"
@@ -66,6 +68,10 @@ android {
 }
 
 dependencies {
+    implementation "ch.acra:acra-http:$versions.acra"
+//    implementation "ch.acra:acra-mail:$versions.acra"
+//    implementation "ch.acra:acra-dialog:$versions.acra"
+
     implementation project(path: ':core')
     implementation project(path: ':location')
 //    implementation project(path: ':location-fused')

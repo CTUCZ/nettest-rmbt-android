@@ -11,6 +11,11 @@ import at.specure.info.Network5GSimulator
 import at.specure.worker.WorkLauncher
 import com.huawei.agconnect.config.AGConnectServicesConfig
 import com.huawei.hms.maps.MapsInitializer
+import org.acra.ACRA
+import org.acra.config.httpSender
+import org.acra.data.StringFormat
+import org.acra.ktx.initAcra
+import org.acra.sender.HttpSender
 import java.io.File
 import javax.inject.Inject
 
@@ -37,7 +42,8 @@ class App : CoreApp() {
         Injector.inject(this)
         Network5GSimulator.config = config
 
-        WorkLauncher.enqueueSettingsRequest(this)
+        if(!ACRA.isACRASenderServiceProcess())
+            WorkLauncher.enqueueSettingsRequest(this)
 
         // https://issuetracker.google.com/issues/154855417#comment367 Workaround
         try {
@@ -58,5 +64,48 @@ class App : CoreApp() {
 
         val config = AGConnectServicesConfig.fromContext(this)
         MapsInitializer.setApiKey(config.getString("client/api_key"))
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+
+        initAcra {
+
+            reportFormat = StringFormat.JSON
+            alsoReportToAndroidFramework = true
+
+//            mailSender {
+//                //required
+//                mailTo = "furmanekd@gmail.com"
+//                //defaults to true
+//                reportAsFile = true
+//                //defaults to ACRA-report.stacktrace
+//                reportFileName = "crash-stacktrace.txt"
+//                //defaults to "<applicationId> Crash Report"
+//                subject = "NetTest crash report"
+//                //defaults to empty
+//                body = ""
+//            }
+
+            httpSender {
+                uri = "http://example.com/report"
+                basicAuthLogin = "U3oAC18pTaIPGYUY"
+                basicAuthPassword = "***REMOVED***"
+                httpMethod = HttpSender.Method.POST
+            }
+
+//            dialog {
+//                //required
+//                text = "Chyba v aplikaci NetTest. Pošlete prosím logy."
+//                //optional, enables the dialog title
+//                title = "Chyba"
+//                //defaults to android.R.string.ok
+//                positiveButtonText = "Poslat emailem"
+//                //defaults to android.R.string.cancel
+//                negativeButtonText = "Zrušit"
+//                //optional, enables the comment input
+//                commentPrompt = "Komentář"
+//            }
+        }
     }
 }
