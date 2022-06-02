@@ -33,8 +33,9 @@ import at.specure.info.network.WifiNetworkInfo
 import at.specure.location.LocationState
 import at.specure.measurement.MeasurementService
 import at.specure.util.toast
-import cz.mroczis.netmonster.core.model.connection.SecondaryConnection
 import timber.log.Timber
+import java.lang.IndexOutOfBoundsException
+import cz.mroczis.netmonster.core.model.connection.SecondaryConnection
 
 class HomeFragment : BaseFragment(), SimpleDialog.Callback {
 
@@ -231,14 +232,12 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
                 val latestNewsShown: Long = homeViewModel.getLatestNewsShown() ?: -1
                 newItem.text?.let { text ->
                     newItem.title?.let { title ->
-                        if (newItem.uid ?: -1 > latestNewsShown) {
-                            SimpleDialog.Builder()
-                                .messageText(text)
-                                .titleText(title)
-                                .positiveText(android.R.string.ok)
-                                .cancelable(false)
-                                .show(this.childFragmentManager, CODE_DIALOG_NEWS)
-                        }
+                        SimpleDialog.Builder()
+                            .messageText(text)
+                            .titleText(title)
+                            .positiveText(android.R.string.ok)
+                            .cancelable(false)
+                            .show(this.childFragmentManager, CODE_DIALOG_NEWS)
                     }
                 }
                 homeViewModel.setNewsShown(newItem)
@@ -349,19 +348,30 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
     override fun onResume() {
         super.onResume()
         homeViewModel.signalStrengthLiveData.listen(this) {
-            homeViewModel.state.signalStrength.set(it?.signalStrengthInfo)
-            homeViewModel.state.activeNetworkInfo.set(it)
+            val networkInfo = it?.copy()
+            homeViewModel.state.signalStrength.set(networkInfo?.signalStrengthInfo)
+            homeViewModel.state.activeNetworkInfo.set(networkInfo)
             homeViewModel.state.secondary5GActiveNetworkInfo.set(
-                if (it?.secondary5GActiveCellNetworks?.isNotEmpty() == true) {
-                    it.secondary5GActiveCellNetworks?.get(0)
-                } else {
+                try {
+                    if (networkInfo?.secondary5GActiveCellNetworks?.isNotEmpty() == true) {
+                        networkInfo.secondary5GActiveCellNetworks?.get(0)
+                    } else {
+                        null
+                    }
+                } catch (ex: IndexOutOfBoundsException) {
+                    Timber.e(ex)
                     null
                 }
             )
             homeViewModel.state.secondary5GSignalStrength.set(
-                if (it?.secondary5GActiveSignalStrengthInfos?.isNotEmpty() == true) {
-                    it.secondary5GActiveSignalStrengthInfos?.get(0)
-                } else {
+                try{
+                    if (networkInfo?.secondary5GActiveSignalStrengthInfos?.isNotEmpty() == true) {
+                        networkInfo.secondary5GActiveSignalStrengthInfos?.get(0)
+                    } else {
+                        null
+                    }
+                } catch (ex: IndexOutOfBoundsException) {
+                    Timber.e(ex)
                     null
                 }
             )

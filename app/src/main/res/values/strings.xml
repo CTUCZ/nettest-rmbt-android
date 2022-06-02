@@ -97,9 +97,6 @@
     <string name="preferences_all_disabled">Deactivated.</string>
     <string name="preferences_server_selection">Server selection</string>
     <string name="preferences_default_server_selection">Default</string>
-    <string name="preferences_5g_simulation_title">xG network debug(experimental)</string>
-    <string name="preferences_5g_simulation">Simulate xG</string>
-    <string name="preferences_5g_simulation_sum">Replaces networks with xG simulation</string>
     <string name="label_server_selection">Server selection</string>
     <string name="preferences_tag">Tag</string>
 
@@ -194,7 +191,7 @@
     <string name="test_dialog_error_text">Test failed. Please try again later.</string>
 
     <!-- History -->
-    <string name="history_item_header_test">Test</string>
+    <string name="history_item_header_test">Date</string>
     <string name="history_item_header_down">Down</string>
     <string name="history_item_header_up">Up</string>
     <string name="history_item_header_ping">Ping</string>
@@ -329,8 +326,13 @@
     <string name="signal_measurement_terms_content">The signal-only loop mode option for technically interested users allows the automatic repetition of signal measurements - without any speed- or quality tests being carried out. The signal-only loop-modus can be stopped at any time respectively it stops automatically after 48 hours. The signal-only loop-modus is (only) intended for use within the EU and the EEA. The battery is quickly drained by the signal-only measurements. In the pauses between tests, the GPS and the display remain active and signal measurements continue, which means that the energy is used up much faster than in stand-by mode. The loop-modus should therefore only be used if an external power supply is available. It needs to be explicitly pointed out that due to the signal-only loop mode it cannot be excluded that the tester is identified.</string>
     <string name="home_ethernet" translatable="false">Ethernet</string>
 
-    <string name="cell_info_ssrsrp" translatable="false">SSRSRP</string>
-    <string name="cell_info_ssrsrq" translatable="false">SSRSRQ</string>
+    <string name="preferences_design_by">Design von Feinblick</string>
+    <string name="preferences_network_info_by">Network information from NetMonster Core</string>
+
+    <!-- Signal details -->
+    <string name="cell_info_nr_arfcn" translatable="false">ARFCN</string>
+    <string name="cell_info_ssrsrp" translatable="false">RSRP</string>
+    <string name="cell_info_ssrsrq" translatable="false">RSRQ</string>
     <string name="cell_info_earfcn" translatable="false">EARFCN</string>
     <string name="cell_info_ci" translatable="false">CI</string>
     <string name="cell_info_subscriptionId" translatable="false">SubId</string>
