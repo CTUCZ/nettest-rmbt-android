@@ -69,7 +69,7 @@
             android:contentDescription="@null"
             android:paddingStart="@dimen/padding_large"
             android:paddingEnd="@dimen/padding_large"
-            android:src="@drawable/ic_arrow_down_green"
+            android:src="@drawable/ic_arrow_down_blue"
             app:layout_constraintBottom_toBottomOf="@+id/labelLoop"
             app:layout_constraintEnd_toStartOf="@id/imageExpand"
             app:layout_constraintTop_toTopOf="@+id/textTime"

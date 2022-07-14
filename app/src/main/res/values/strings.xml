@@ -372,7 +372,7 @@
     <string name="permissions_dialog_title">Permissions</string>
     <string name="permissions_dialog_text">Application will require permissions</string>
     <string name="loop_download_pdf">Download result as PDF</string>
-    <string name="loop_download_pdf_in_browser">Open result in browser</string>
+    <string name="loop_download_pdf_in_browser">Download result as PDF in browser</string>
 
     <string name="cert_location_permission_text_1">The certified measurement function requires access to location while in the background. Permission is necessary for precise location of your device while in the process of certifies measurement. It is then possible to prove that your device was in the specified location during the entire process of certified measurement and there was no movement outside the tolerated distance.\n\nChoose the \"Allow all the time\" option.</string>
     <string name="cert_location_permission_text_2">The certified measurement function requires access to location while in the background. Permission is necessary for precise location of your device while in the process of certifies measurement. It is then possible to prove that your device was in the specified location during the entire process of certified measurement and there was no movement outside the tolerated distance.\n\nYou have probably declined this permission in the past. In the application settings, open Permissions->Location and select the \"Allow all the time\" option.</string>

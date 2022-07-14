@@ -16,7 +16,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <color name="colorPrimary">@android:color/white</color>
     <color name="colorPrimaryDark">@android:color/white</color>
-    <color name="colorAccent">#59b200</color>
+    <color name="colorAccent">#0071D7</color>
 
     <!-- Theme colors -->
     <color name="toolbar_blue">#0071D7</color>

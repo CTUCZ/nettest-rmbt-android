@@ -267,8 +267,8 @@
 
     <string name="permissions_dialog_title">Oprávnění</string>
     <string name="permissions_dialog_text">Aplikace bude požadovat oprávnění</string>
-    <string name="loop_download_pdf">Stáhnout výsledky (PDF)</string>
-    <string name="loop_download_pdf_in_browser">Stáhnout výsledky (prohlížeč)</string>
+    <string name="loop_download_pdf">Stáhnout výsledky v PDF</string>
+    <string name="loop_download_pdf_in_browser">Stáhnout výsledky v PDF (prohlížeč)</string>
     <string name="cert_measurement">Certifikované měření</string>
     <string name="cert_mode_finished">Certifikované měření dokončeno!</string>
     <string name="preferences_loop_mode_num_of_tests">Počet testů</string>

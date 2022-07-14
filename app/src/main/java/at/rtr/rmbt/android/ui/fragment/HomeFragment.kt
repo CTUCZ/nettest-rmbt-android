@@ -190,17 +190,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
 
                         binding.spinMode?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//                                Toast.makeText(activity, "Clicked! "+binding.spinMode?.selectedItem.toString(), Toast.LENGTH_SHORT)
-//                                        .show()
-//                                val status = measurementViewModel.state.loopModeRecord.get()?.status
-//                                val loopUUID = measurementViewModel.state.loopLocalUUID.get()
-//                                val testsPerformed = measurementViewModel.state.loopModeRecord.get()?.testsPerformed
-//                                val numberOfTests = measurementViewModel.config.loopModeNumberOfTests
-//                                val isLoopRunning = measurementViewModel.state.loopModeRecord.get()?.status != LoopModeState.FINISHED &&
-//                                        measurementViewModel.state.loopModeRecord.get()?.status != LoopModeState.CANCELLED &&
-//                                        measurementViewModel.state.loopLocalUUID.get() != null &&
-//                                        (measurementViewModel.state.loopModeRecord.get()?.testsPerformed != measurementViewModel.config.loopModeNumberOfTests)
-
                                 if(measurementViewModel.isTestsRunningLiveData.value != true) {
                                     val loopIsChecked = binding.btnLoop?.isChecked
                                     when(position) {
@@ -210,9 +199,10 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
 
                                     when(position) {
                                         2 -> {
-                                            homeViewModel.state.isCertModeActive.set(true)
-                                            val intent = CertInstructionsActivity.start(requireContext())
-                                            startActivityForResult(intent, CODE_CERT_INSTRUCTIONS)
+                                            if(!homeViewModel.state.isCertModeActive.get()) {
+                                                val intent = CertInstructionsActivity.start(requireContext())
+                                                startActivityForResult(intent, CODE_CERT_INSTRUCTIONS)
+                                            }
                                         }
                                         else -> homeViewModel.state.isCertModeActive.set(false)
                                     }
