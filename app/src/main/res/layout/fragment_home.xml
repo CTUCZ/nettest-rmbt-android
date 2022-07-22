@@ -445,7 +445,8 @@
             app:layout_constraintBottom_toTopOf="@id/tvFrequency"
             app:layout_constraintRight_toRightOf="@id/tvFrequency"
             android:layout_marginEnd="@dimen/margin_24"
-            android:layout_marginBottom="@dimen/margin_24"/>
+            android:layout_marginBottom="@dimen/margin_24"
+            android:visibility="@{state.expertModeIsEnabled ? View.VISIBLE : View.GONE}"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
