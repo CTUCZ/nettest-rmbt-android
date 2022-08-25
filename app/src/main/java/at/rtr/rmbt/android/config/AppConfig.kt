@@ -445,4 +445,7 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
     var savedLoopModeDistanceMeters: Int
         get() = preferences.getInt("savedDistanceMeters", loopModeDistanceMeters)
         set(value) = preferences.edit().putInt("savedDistanceMeters", value).apply()
+    var savedSkipQoSTests: Boolean
+        get() = preferences.getBoolean("savedSkipQoSTests", skipQoSTests)
+        set(value) = preferences.edit().putBoolean("savedSkipQoSTests", value).apply()
 }

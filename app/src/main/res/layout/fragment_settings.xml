@@ -456,8 +456,28 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dataPrivacyAndTerms"
+                app:layout_constraintTop_toBottomOf="@+id/designedBy"
                 bind:title="@{@string/preferences_developed_by}" />
+
+            <include
+                android:id="@+id/designedBy"
+                layout="@layout/item_setting_more_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/netmonster_core"
+                bind:title="@{@string/preferences_designed_by}" />
+
+            <include
+                android:id="@+id/netmonster_core"
+                layout="@layout/item_setting_more_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dataPrivacyAndTerms"
+                bind:title="@{@string/netmonster_core_text}" />
 
             <include
                 android:id="@+id/version"

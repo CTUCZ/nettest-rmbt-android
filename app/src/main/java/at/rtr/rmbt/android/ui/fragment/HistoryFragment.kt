@@ -1,6 +1,7 @@
 package at.rtr.rmbt.android.ui.fragment
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -34,7 +35,9 @@ class HistoryFragment : BaseFragment(), SyncDevicesDialog.Callback, HistoryFilte
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        //return to previous screen orientation
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        
         savedInstanceState?.let {
             adapter.onRestoreState(it)
         }

@@ -252,6 +252,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/loop_measurement_next_test_minutes_label" />
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/loop_measurement_next_test_distance_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:visibleOrGone="@{!state.isCertModeActive() &amp;&amp; state.isLoopModeActive &amp;&amp; state.loopModeRecord.status == LoopModeState.IDLE &amp;&amp; state.measurementState == MeasurementState.FINISH}"
+            app:constraint_referenced_ids="loop_measurement_next_test_distance_label,loop_measurement_next_test_meters_progress,loop_measurement_next_test_meters_value,loop_measurement_next_test_or_label,next_test_separator_start,next_test_separator_end"/>
+
         <View
             android:id="@+id/next_test_separator_start"
             android:layout_width="0dp"

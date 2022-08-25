@@ -71,6 +71,8 @@
     <string name="preferences_data_protection">Privacy policy and terms of use</string>
     <string name="preferences_developed_by">Developed by Specure GmbH</string>
     <string name="preferences_developer_page" translatable="false">https://specure.com/</string>
+    <string name="preferences_designed_by">Designed by Feinblick</string>
+    <string name="preferences_designer_page" translatable="false">https://www.feinblick.com/</string>
     <string name="preferences_version">Version</string>
     <string name="preferences_commit_hash">Commit hash</string>
     <string name="preferences_enter_code">Please enter the code</string>
@@ -385,4 +387,8 @@
     <string name="download_pdf_error">Error while retrieving PDF url</string>
     <string name="download_pdf_starting">Downloading measurement result...</string>
     <string name="loop_id_nonexistent">Nonexistent measurement ID</string>
+    <string name="unsupported_network_title">Unsupported network detected</string>
+    <string name="unsupported_network_text">Certified measurement can be started only on mobile network. Switch device to mobile data network.</string>
+    <string name="netmonster_core_text">Network information by Netmonster core</string>
+    <string name="netmonster_link" translatable="false">https://netmonster.app/</string>
 </resources>

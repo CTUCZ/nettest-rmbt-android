@@ -197,7 +197,7 @@
     },
     {
       "name": "DEVELOPER_MODE_IS_ENABLED",
-      "value": "true",
+      "value": "false",
       "visible": false
     },
     {
@@ -247,7 +247,7 @@
     },
     {
       "name": "SOURCE_CODE_URL",
-      "value": "https://github.com/rtr-nettest",
+      "value": "https://github.com/rtr-nettest/open-rmbt-android",
       "visible": false
     },
     {

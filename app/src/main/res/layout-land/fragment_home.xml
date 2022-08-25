@@ -47,6 +47,7 @@
             android:layout_marginStart="@dimen/margin_medium"
             android:button="@drawable/selector_loop_mode"
             android:checked="@{state.isLoopModeActive}"
+            android:visibility="@{View.INVISIBLE}"
             android:thumb="@null"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -49,6 +50,9 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //return to previous screen orientation
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
         binding.state = homeViewModel.state
 
         homeViewModel.isConnected.listen(this) {
@@ -127,8 +131,8 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
                             val networkType = homeViewModel.activeNetworkLiveData.activeNetworkWatcher.currentNetworkInfo?.type
                             if(networkType != TransportType.CELLULAR) {
                                 SimpleDialog.Builder()
-                                    .titleText("Detekována nepodporovaná síť")
-                                    .messageText("Jste připojení na wifi nebo jinou síť než mobilní data. Certifikované měření je určeno pro mobilní síť.")
+                                    .titleText(R.string.unsupported_network_title)
+                                    .messageText(R.string.unsupported_network_text)
                                     .positiveText(android.R.string.ok)
                                     .cancelable(true)
                                     .show(childFragmentManager, CODE_NO_CELLULAR_NETWORK)
@@ -545,18 +549,17 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
     }
 
     private fun startCertMeasurement() {
-        Timber.d("Cert measurement can run")
+        Timber.d("Starting cert measurement")
         homeViewModel.state.isLoopModeActive.set(true)
         homeViewModel.appConfig.savedLoopModeNumberOfTests = homeViewModel.appConfig.loopModeNumberOfTests
         homeViewModel.appConfig.savedLoopModeWaitingTimeMin = homeViewModel.appConfig.loopModeWaitingTimeMin
         homeViewModel.appConfig.savedLoopModeDistanceMeters = homeViewModel.appConfig.loopModeDistanceMeters
+        homeViewModel.appConfig.savedSkipQoSTests = homeViewModel.appConfig.skipQoSTests
 
-//        homeViewModel.appConfig.loopModeNumberOfTests = 6 // TODO přepnout na pevno při releasu
-        //homeViewModel.appConfig.loopModeWaitingTimeMin = 10
-
-//        homeViewModel.appConfig.loopModeNumberOfTests = 4
-//        homeViewModel.appConfig.loopModeWaitingTimeMin = 1
+        homeViewModel.appConfig.loopModeNumberOfTests = 6
+        homeViewModel.appConfig.loopModeWaitingTimeMin = 11
         homeViewModel.appConfig.loopModeDistanceMeters = 100000
+        homeViewModel.appConfig.skipQoSTests = true
 
         MeasurementService.startTests(requireContext())
         MeasurementActivity.start(requireContext())
@@ -600,10 +603,10 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
             i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             activityLauncher.launch(i)
         }
-
-        if(code == CODE_NO_CELLULAR_NETWORK) {
-            startCertMeasurement()
-        }
+// cant start cert measurement if not cellular
+//        if(code == CODE_NO_CELLULAR_NETWORK) {
+//            startCertMeasurement()
+//        }
     }
 
     private val permRequestLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->

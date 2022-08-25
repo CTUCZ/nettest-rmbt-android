@@ -1,6 +1,7 @@
 package at.rtr.rmbt.android.ui.fragment
 
 import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.KeyEvent
@@ -35,6 +36,8 @@ class StatisticsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //force landscape orientation
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         activity?.window?.changeStatusBarColor(ToolbarTheme.WHITE)
 

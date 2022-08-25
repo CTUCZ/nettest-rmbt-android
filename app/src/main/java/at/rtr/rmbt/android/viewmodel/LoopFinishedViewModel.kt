@@ -25,34 +25,6 @@ class LoopFinishedViewModel @Inject constructor(
 
     fun getExportPdf(body: ExportRequestBody, callback: Callback<ExportPdfResponse>) {
         client.getExportPdf(body, callback)
-
-
-//        if(state.exportPdfFileName.get().isNullOrBlank()) {
-//            return viewModelScope.launch {
-//                client.getExportPdf(body, object : Callback<ExportPdfResponse> {
-//                    override fun onResponse(
-//                        call: Call<ExportPdfResponse>,
-//                        response: Response<ExportPdfResponse>
-//                    ) {
-//                        if (response.isSuccessful) {
-//                            Timber.d("Export response OK, file: %s", response.body()?.file)
-//                            state.exportPdfFileName.set(response.body()?.file)
-//                        } else {
-//                            Timber.d("Export response failed, msg: %s", response.message())
-//                        }
-//
-//                    }
-//
-//                    override fun onFailure(call: Call<ExportPdfResponse>, t: Throwable) {
-//                        Timber.d("Export response failed, exception: %s", t.message)
-//                        Timber.d(t)
-//                    }
-//
-//                })
-//            }
-
-//        }
-//        return null
     }
 
     fun getDownloadFileUrl(filename: String): Uri {
@@ -67,5 +39,6 @@ class LoopFinishedViewModel @Inject constructor(
         config.loopModeNumberOfTests = config.savedLoopModeNumberOfTests
         config.loopModeWaitingTimeMin = config.savedLoopModeWaitingTimeMin
         config.loopModeDistanceMeters = config.savedLoopModeDistanceMeters
+        config.skipQoSTests = config.savedSkipQoSTests
     }
 }

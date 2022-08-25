@@ -190,6 +190,12 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
         binding.developedBy.root.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.preferences_developer_page))))
         }
+        binding.designedBy.root.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.preferences_designer_page))))
+        }
+        binding.netmonsterCore.root.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.netmonster_link))))
+        }
         binding.goToWebsite.root.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(settingsViewModel.state.webPageUrl.get())))
         }
