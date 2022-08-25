@@ -34,9 +34,9 @@ class CertInstructionsActivity : BaseActivity(), CertInstructionsCallback {
     private inner class InstructionsAdapter(context: Context, private val callback: CertInstructionsCallback) : PagerAdapter() {
 
         private var items = listOf(
-            Html.fromHtml(context.getString(R.string.text_cert_instruction_1)),
-            Html.fromHtml(context.getString(R.string.text_cert_instruction_2)),
-            Html.fromHtml(context.getString(R.string.text_cert_instruction_3))
+            Html.fromHtml(context.getString(R.string.text_cert_instruction_1), Html.FROM_HTML_SEPARATOR_LINE_BREAK_LIST),
+            Html.fromHtml(context.getString(R.string.text_cert_instruction_2), Html.FROM_HTML_SEPARATOR_LINE_BREAK_LIST),
+            Html.fromHtml(context.getString(R.string.text_cert_instruction_3), Html.FROM_HTML_SEPARATOR_LINE_BREAK_LIST)
         )
 
         override fun isViewFromObject(view: View, o: Any) = view == o
