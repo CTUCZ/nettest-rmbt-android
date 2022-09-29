@@ -520,15 +520,15 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
                 SimpleDialog.Builder()
                     .titleText(R.string.permissions_dialog_title)
                     .messageText(R.string.cert_location_permission_text_1)
-                    .positiveText(android.R.string.ok)
-                    .cancelable(false)
+                    .positiveText(R.string.text_button_accept)
+                    .negativeText(R.string.text_button_decline)
                     .show(this.childFragmentManager, CODE_BACKGROUND_PERM_INFO)
             } else {
                 SimpleDialog.Builder()
                     .titleText(R.string.permissions_dialog_title)
                     .messageText(R.string.cert_location_permission_text_2)
-                    .positiveText(android.R.string.ok)
-                    .cancelable(false)
+                    .positiveText(R.string.text_button_accept)
+                    .negativeText(R.string.text_button_decline)
                     .show(this.childFragmentManager, CODE_BACKGROUND_BACKUP_PERM_INFO)
             }
         }
@@ -623,7 +623,7 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
     }
 
     override fun onDialogNegativeClicked(code: Int) {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
     companion object {

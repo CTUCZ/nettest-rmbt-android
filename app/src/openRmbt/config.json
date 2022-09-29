@@ -57,7 +57,7 @@
     },
     {
       "name": "QOS_SSL",
-      "value": "true",
+      "value": "false",
       "visible": false
     },
     {
