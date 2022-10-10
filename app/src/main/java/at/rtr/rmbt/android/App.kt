@@ -60,24 +60,14 @@ class App : CoreApp() {
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
+        //initAcra();
+    }
 
+    private fun initAcra() {
         initAcra {
 
             reportFormat = StringFormat.JSON
             alsoReportToAndroidFramework = true
-
-//            mailSender {
-//                //required
-//                mailTo = "furmanekd@gmail.com"
-//                //defaults to true
-//                reportAsFile = true
-//                //defaults to ACRA-report.stacktrace
-//                reportFileName = "crash-stacktrace.txt"
-//                //defaults to "<applicationId> Crash Report"
-//                subject = "NetTest crash report"
-//                //defaults to empty
-//                body = ""
-//            }
 
             httpSender {
                 uri = "http://example.com/report"
@@ -85,19 +75,6 @@ class App : CoreApp() {
                 basicAuthPassword = "***REMOVED***"
                 httpMethod = HttpSender.Method.POST
             }
-
-//            dialog {
-//                //required
-//                text = "Chyba v aplikaci NetTest. Pošlete prosím logy."
-//                //optional, enables the dialog title
-//                title = "Chyba"
-//                //defaults to android.R.string.ok
-//                positiveButtonText = "Poslat emailem"
-//                //defaults to android.R.string.cancel
-//                negativeButtonText = "Zrušit"
-//                //optional, enables the comment input
-//                commentPrompt = "Komentář"
-//            }
         }
     }
 }

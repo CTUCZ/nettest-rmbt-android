@@ -502,7 +502,7 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         if(!fineLocation || !phone) {
             SimpleDialog.Builder()
                 .titleText(R.string.permissions_dialog_title)
-                .messageText("Aplikace vyžaduje oprávnění pro polohu a informace o telefoním signálu")
+                .messageText(R.string.permissions_dialog_text)
                 .positiveText(android.R.string.ok)
                 .cancelable(false)
                 .show(this.childFragmentManager, CODE_PERM_INFO)

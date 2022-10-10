@@ -266,7 +266,7 @@
     <string name="signal_measurement_terms_title">Aktivace a použití</string>
 
     <string name="permissions_dialog_title">Oprávnění</string>
-    <string name="permissions_dialog_text">Aplikace bude požadovat oprávnění</string>
+    <string name="permissions_dialog_text">Měřící funkce vyžadují pro zaznamenání hodnot signálu a polohy zařízení přístup k poloze na pozadí. Pokud si přejete, aby Váš výsledek obsahoval údaje o mobilním signálu a také údaje o poloze zařízení v průběhu testu, povolte prosím přístup k poloze.\n\nUdělení souhlasu s přístupem k poloze na pozadí není pro režim běžného měření povinné.</string>
     <string name="loop_download_pdf">Stáhnout výsledky v PDF</string>
     <string name="loop_download_pdf_in_browser">Stáhnout výsledky v PDF (prohlížeč)</string>
     <string name="cert_measurement">Certifikované měření</string>

@@ -372,7 +372,7 @@
     <string name="text_cert_instruction_2">Certified measurement instructions page 2</string>
     <string name="text_cert_instruction_3">Certified measurement instructions page 3</string>
     <string name="permissions_dialog_title">Permissions</string>
-    <string name="permissions_dialog_text">Application will require permissions</string>
+    <string name="permissions_dialog_text">Measurement functions require access to background location to record signal values  and device position. If you wish your result to include mobile signal data  as well as device location data during the test, please enable location access.\n\nGiving permission to access location on the background is not mandatory for the basic measurement mode.</string>
     <string name="loop_download_pdf">Download result as PDF</string>
     <string name="loop_download_pdf_in_browser">Download result as PDF in browser</string>
 
