@@ -127,7 +127,6 @@ class StateRecorder @Inject constructor(
             lastMeasurementSignalStrength = signalStrengthInfo
         }
         signalStrengthLiveData.observe(lifecycle, Observer { info ->
-            Timber.d("Signal change detection: $info")
             if ((loopModeRecord != null) && (loopModeRecord?.status == LoopModeState.RUNNING)) {
                 lastMeasurementSignalStrength = signalStrengthInfo
             }
