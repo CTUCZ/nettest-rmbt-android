@@ -285,4 +285,9 @@
     <string name="unsupported_network_title">Detekována nepodporovaná síť</string>
     <string name="unsupported_network_text">Certifikované měření lze provádět pouze v mobilních sítích. Přepněte zařízení na mobilní data.</string>
     <string name="netmonster_core_text">Síťové informace Netmonster core</string>
+    <string name="preferences_acra_enabled_title">Reportování chyb</string>
+    <string name="preferences_acra_enabled_summary">Odesílat pády aplikace do ČTÚ</string>
+    <string name="acra_dialog_title">ČTÚ-NetTest aplikace spadla</string>
+    <string name="acra_dialog_text">Aplikace bohužel spadla, odešlete prosím report vývojářům.</string>
+    <string name="acra_dialog_comment_prompt">Můžete připojit komentář (např. co jste dělali v aplikaci před pádem):</string>
 </resources>

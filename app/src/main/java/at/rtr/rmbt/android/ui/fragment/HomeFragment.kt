@@ -262,7 +262,7 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         }
     }
 
-    @SuppressLint("MissingPermission")
+//    @SuppressLint("MissingPermission")
     private fun debugData(): String {
         val signalWatcher = homeViewModel.signalStrengthLiveData.signalStrengthWatcher
         val networkWatcher = homeViewModel.activeNetworkLiveData.activeNetworkWatcher

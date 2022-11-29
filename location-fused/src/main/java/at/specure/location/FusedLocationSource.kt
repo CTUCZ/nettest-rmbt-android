@@ -55,8 +55,8 @@ class FusedLocationSource(context: Context) : LocationSource {
     }
 
     private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult?) {
-            val location = result?.let { LocationInfo(result.lastLocation) }
+        override fun onLocationResult(result: LocationResult) {
+            val location = result.lastLocation?.let { LocationInfo(it) }
             latestLocation = location
 
             Timber.d("location update: fused location result ${result.toString()}")
