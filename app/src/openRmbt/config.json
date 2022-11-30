@@ -12,22 +12,22 @@
     },
     {
       "name": "CONTROL_SERVER_CHECK_PRIVATE_IPV4_HOST",
-      "value": "example.com/RMBTControlServer",
+      "value": "v4.example.com",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PRIVATE_IPV6_HOST",
-      "value": "example.com/RMBTControlServer",
+      "value": "v6.example.com",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PUBLIC_IPV4_URL",
-      "value": "example.com/RMBTControlServer/ip",
+      "value": "v4.example.com/RMBTControlServer/ip",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PUBLIC_IPV6_URL",
-      "value": "example.com/RMBTControlServer/ip",
+      "value": "v6.example.com/RMBTControlServer/ip",
       "visible": false
     },
     {
@@ -262,7 +262,7 @@
     },
     {
       "name": "DATA_PRIVACY_AND_TERMS_URL",
-      "value": "***REMOVED***/%s/tk/netztestterms",
+      "value": "***REMOVED***/%s/PrivacyAndroid",
       "visible": true
     },
     {

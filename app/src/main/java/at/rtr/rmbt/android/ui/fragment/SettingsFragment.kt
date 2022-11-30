@@ -216,7 +216,7 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
                 DataPrivacyAndTermsOfUseActivity.start(
                     requireContext(),
                     when (Locale.getDefault().language) {
-                        "de" -> String.format(url, "de")
+                        "cs" -> String.format(url, "cs")
                         else -> String.format(url, "en")
                     }
                 )

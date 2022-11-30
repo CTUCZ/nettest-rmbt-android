@@ -9,7 +9,7 @@ private const val KEY_IS_LOADING = "KEY_IS_LOADING"
 class StatisticsViewState(private val controlServerSettings: ControlServerSettings) : ViewState {
 
     val statisticsURL: String?
-        get() = "***REMOVED***/cs/Opentests#noMMenu"
+        get() = controlServerSettings.statisticsUrl
     val isLoading = ObservableBoolean(true)
 
     override fun onRestoreState(bundle: Bundle?) {
