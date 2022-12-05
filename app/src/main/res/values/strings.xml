@@ -365,12 +365,45 @@
         <item>Cert measurement</item>
     </string-array>
 
-    <string name="title_cert_instruction_1">Certified measurement title 1</string>
-    <string name="title_cert_instruction_2">Certified measurement title 2</string>
-    <string name="title_cert_instruction_3">Certified measurement title 3</string>
-    <string name="text_cert_instruction_1">Certified measurement instructions page 1</string>
-    <string name="text_cert_instruction_2">Certified measurement instructions page 2</string>
-    <string name="text_cert_instruction_3">Certified measurement instructions page 3</string>
+    <string name="title_cert_instruction_1">Certified measurement</string>
+    <string name="title_cert_instruction_2">Conditions of measurement</string>
+    <string name="title_cert_instruction_3">Process of measurement</string>
+    <string name="text_cert_instruction_1"><![CDATA[<p>The measurement can be used by the end-users to:<ol>
+    <li>
+        Determine the coverage level (covered/not covered) at a particular location according to the conditions defined in a decision on granting of rights to use radio
+        frequencies for the provision of electronic communications networks, issued by CTU. If the result of the certified measurement is in contradiction with the coverage
+        map (published by the operator at its website), the user can submit a claim to the operator and support it by the protocol which is the certified measurement
+        outcome;
+    </li>
+    <li>
+        Determine the download/upload speed and to compare it with the speed stated in the contract on the service provision. If the result of the certified measurement is
+        in contradiction with the contract, the user can submit a claim to the operator and support it by the protocol which is the certified measurement outcome.
+    </li>
+</ol></p>]]></string>
+    <string name="text_cert_instruction_2"><![CDATA[<p>Conditions for carrying out the certified measurement.</p><p><ul>
+    <li>
+        <strong>Outdoors in open spaces (outside buildings, cars etc.).</strong>
+    </li>
+    <li>
+        <strong>Without movement during the whole measurement (60 minutes).</strong>
+    </li>
+    <li>
+        <strong>At the hight of about 1,5 m (values of the signal levels have been defined for such hight).</strong>
+    </li>
+    <li>
+        <strong>All data-consuming apps switched off (those which require data connection).</strong>
+    </li>
+    <li>
+        <strong>Connected solely via mobile data network (LTE, 5G) and Wi-Fi switched off.</strong>
+    </li>
+    <li>
+        <strong>GPS turned on (location identification function).</strong>
+    </li>
+    <li>
+        <strong>Sufficient amount of data available (the measurement will consume about 200 MB – depending on speed).</strong>
+    </li>
+</ul></p>]]></string>
+    <string name="text_cert_instruction_3"><![CDATA[<p>The certified measurement is a cycle composed of 6 time-diversified tests within 1 hour.</p><p>Each of the 6 tests takes approximately 1 minute and time spacing between individual tests is 10 minutes.</p><p>Each test is composed of initialization, measurement of remote server response/round-trip delay (ping) and data transmission test having duration of 10 seconds for each direction of data communication (download and upload).</p><p>Certified measurement regime may cause high data consumption. When combined with high-speed Internet access service, 6 tests may consume 200 MB or more. We highly recommend using the regime of repeated measurements only with tariffs without FUP limit where you do not risk additional financial costs by exceeding your FUP limit.</p><p>Any questions related to certified measurement can be sent to nettest@ctu.cz.</p>]]></string>
     <string name="permissions_dialog_title">Permissions</string>
     <string name="permissions_dialog_text">Measurement functions require access to background location to record signal values  and device position. If you wish your result to include mobile signal data  as well as device location data during the test, please enable location access.\n\nGiving permission to access location on the background is not mandatory for the basic measurement mode.</string>
     <string name="loop_download_pdf">Download result as PDF</string>
