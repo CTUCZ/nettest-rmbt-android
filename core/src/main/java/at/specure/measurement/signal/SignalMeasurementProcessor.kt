@@ -451,7 +451,7 @@ class SignalMeasurementProcessor @Inject constructor(
                 Timber.v("Process chunk primary cell data end with: $signalsSavedCount")
                 active5GNetworkInfos?.forEachIndexed { index, cellNetworkInfo ->
                     otherCells.remove(cellNetworkInfo?.rawCellInfo)
-                    signalsSavedCount += saveNetworkInformation(cellNetworkInfo, detailedNetworkInfo.secondary5GActiveSignalStrengthInfos?.get(index), uuid, it.dataSubscriptionId, testStartTimeNanos)
+                    signalsSavedCount += saveNetworkInformation(cellNetworkInfo, detailedNetworkInfo.secondary5GActiveSignalStrengthInfos?.getOrNull(index), uuid, it.dataSubscriptionId, testStartTimeNanos)
                     Timber.v("Process chunk 5G cell data end with: $signalsSavedCount")
                 }
 

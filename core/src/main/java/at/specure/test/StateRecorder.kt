@@ -346,7 +346,7 @@ class StateRecorder @Inject constructor(
                         saveNetworkInformation(cellNetworkInfo, detailedNetworkInfo.signalStrengthInfo, uuid, testStartTimeNanos)
                         active5GNetworkInfos?.forEachIndexed { index, cellNetworkInfo ->
                             otherCells?.remove(cellNetworkInfo?.rawCellInfo)
-                            saveNetworkInformation(cellNetworkInfo, detailedNetworkInfo.secondary5GActiveSignalStrengthInfos?.get(index), uuid, testStartTimeNanos)
+                            saveNetworkInformation(cellNetworkInfo, detailedNetworkInfo.secondary5GActiveSignalStrengthInfos?.getOrNull(index), uuid, testStartTimeNanos)
                         }
 
                         if (config.headerValue.isNullOrEmpty()) {

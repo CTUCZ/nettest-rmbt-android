@@ -7,8 +7,8 @@ buildscript {
                 applicationId    : "cz.ctu.rmbt.android.prod",
                 minSdkVersion    : 23,
                 targetSdkVersion : 31,
-                versionCode      : (project.hasProperty('buildVersionCode') ? Integer.parseInt(buildVersionCode) : 21),
-                versionName      : (project.hasProperty('buildVersionName') ? buildVersionName : 'beta-21')
+                versionCode      : (project.hasProperty('buildVersionCode') ? Integer.parseInt(buildVersionCode) : 22),
+                versionName      : (project.hasProperty('buildVersionName') ? buildVersionName : 'beta-22')
         ]
 
         // All project modules dependency versions should be in versions map
