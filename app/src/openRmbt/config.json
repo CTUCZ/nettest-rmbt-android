@@ -32,7 +32,7 @@
     },
     {
       "name": "CAPTIVE_PORTAL_WALLED_GARDEN_URL",
-      "value": "***REMOVED***/nocon",
+      "value": "https://example.com/nocon",
       "visible": false
     },
     {
@@ -187,8 +187,8 @@
     },
     {
       "name": "USER_SERVER_SELECTION_ENABLED",
-      "value": "false",
-      "visible": false
+      "value": "true",
+      "visible": true
     },
     {
       "line1": "=======================================",

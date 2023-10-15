@@ -118,8 +118,8 @@ class CellInfoWatcherImpl(
                 val dataSubscriptionId = subscriptionManager.getCurrentDataSubscriptionId()
                 _dataSubscriptionId = dataSubscriptionId
 
-                val primaryCells = cells?.filterOnlyPrimaryActiveDataCell(dataSubscriptionId)
-                val secondaryCells = cells?.filterOnlySecondaryActiveDataCell(dataSubscriptionId)
+                val primaryCells = cells.filterOnlyPrimaryActiveDataCell(dataSubscriptionId)
+                val secondaryCells = cells.filterOnlySecondaryActiveDataCell(dataSubscriptionId)
 //                val inactiveCells = cells?.filterOnlyNoneConnectionDataCell(dataSubscriptionId)
                 val secondary5GCells = secondaryCells.filter5GCells()
 

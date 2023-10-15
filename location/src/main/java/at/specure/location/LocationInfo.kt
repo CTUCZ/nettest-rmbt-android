@@ -153,7 +153,7 @@ class LocationInfo {
 
         satellites = formatSatellites(location.extras)
 
-        provider = location.provider
+        provider = location.provider.toString()
         providerRaw = location.provider
         locationIsMocked = location.isFromMockProvider
 

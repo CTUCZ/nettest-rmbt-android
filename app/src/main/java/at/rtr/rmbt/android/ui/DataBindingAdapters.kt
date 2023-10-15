@@ -421,9 +421,6 @@ fun AppCompatImageView.setTechnologyIcon(networkInfo: NetworkInfo?) {
         is CellNetworkInfo -> {
             visibility = View.VISIBLE
             when (CellTechnology.fromMobileNetworkType(networkInfo.networkType)) {
-                null -> {
-                    setImageDrawable(null)
-                }
                 CellTechnology.CONNECTION_2G -> {
                     setImageResource(R.drawable.ic_2g)
                 }
@@ -438,6 +435,9 @@ fun AppCompatImageView.setTechnologyIcon(networkInfo: NetworkInfo?) {
                 }
                 CellTechnology.CONNECTION_5G -> {
                     setImageResource(R.drawable.ic_5g)
+                }
+                else -> {
+                    setImageDrawable(null)
                 }
             }
         }

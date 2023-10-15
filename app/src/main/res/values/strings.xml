@@ -429,4 +429,7 @@
     <string name="acra_dialog_title">ČTÚ-NetTest Crashed</string>
     <string name="acra_dialog_text">Sorry, application crashed. Please send report to developers.</string>
     <string name="acra_dialog_comment_prompt">You can add a comment here:</string>
+    <string name="preferences_5g_simulation_title">xG network debug(experimental)</string>
+    <string name="preferences_5g_simulation">Simulate xG</string>
+    <string name="preferences_5g_simulation_sum">Replaces networks with xG simulation</string>
 </resources>

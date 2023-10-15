@@ -4,12 +4,11 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 
-apply from: "$project.rootDir/tools/script-lint.gradle"
 apply from: "$project.rootDir/tools/script-ktlint.gradle"
 apply from: "$project.rootDir/tools/utils.gradle"
 
 android {
-
+    namespace 'at.specure.core'
     compileSdkVersion config.targetSdkVersion
 
     defaultConfig {
@@ -37,12 +36,21 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
+    }
+
+    lint {
+        abortOnError true
+        htmlOutput file("$rootDir/build_results/lint-result.html")
+        lintConfig file("$rootDir/tools/rules-lint.xml")
+        warningsAsErrors true
+        xmlOutput file("$rootDir/build_results/lint-result.xml")
+        xmlReport true
     }
 }
 

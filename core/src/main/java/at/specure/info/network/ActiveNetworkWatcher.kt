@@ -139,7 +139,7 @@ class ActiveNetworkWatcher(
 
                 val dataSubscriptionId = subscriptionManager.getCurrentDataSubscriptionId()
 
-                val primaryCells = cells?.filterOnlyPrimaryActiveDataCell(dataSubscriptionId)
+                val primaryCells = cells.filterOnlyPrimaryActiveDataCell(dataSubscriptionId)
 
                 // changed to check if it is not empty because some devices report more than one
                 // PrimaryConnection cells but with same operator details, only with different

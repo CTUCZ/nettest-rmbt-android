@@ -174,14 +174,14 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
             homeViewModel.state.isSignalMeasurementActive.set(it)
         }
 
-        binding.btnLoop?.setOnClickListener {
+        binding.btnLoop.setOnClickListener {
             if (this.isResumed) {
-                if (binding.btnLoop?.isChecked == true) {
+                if (binding.btnLoop.isChecked == true) {
                     val intent = LoopInstructionsActivity.start(requireContext())
                     startActivityForResult(intent, CODE_LOOP_INSTRUCTIONS)
                 } else {
                     homeViewModel.state.isLoopModeActive.set(false)
-                    binding.btnLoop?.isChecked = false
+                    binding.btnLoop.isChecked = false
                 }
             }
         }
@@ -190,15 +190,15 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
             ArrayAdapter.createFromResource(it, R.array.spin_modes, R.layout.measurement_mode_spinner_item)
                     .also { adapter ->
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        binding.spinMode?.adapter = adapter
+                        binding.spinMode.adapter = adapter
 
-                        binding.spinMode?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        binding.spinMode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                                 if(measurementViewModel.isTestsRunningLiveData.value != true) {
-                                    val loopIsChecked = binding.btnLoop?.isChecked
+                                    val loopIsChecked = binding.btnLoop.isChecked
                                     when(position) {
-                                        1 -> if(!loopIsChecked) binding.btnLoop?.performClick()
-                                        else -> if(loopIsChecked) binding.btnLoop?.performClick()
+                                        1 -> if(!loopIsChecked) binding.btnLoop.performClick()
+                                        else -> if(loopIsChecked) binding.btnLoop.performClick()
                                     }
 
                                     when(position) {

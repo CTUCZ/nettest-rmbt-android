@@ -81,7 +81,7 @@ class HistoryRepositoryImpl(
         )
         val response = client.getHistory(body)
         return response.map {
-            val items = it?.toModelList()
+            val items = it.toModelList()
             if (offset == 0) {
                 settingsRepository.refreshSettings()
                 historyDao.clear()
