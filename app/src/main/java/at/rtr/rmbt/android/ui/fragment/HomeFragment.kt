@@ -16,7 +16,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat.checkSelfPermission
 import at.rmbt.client.control.IpProtocol
 import at.rtr.rmbt.android.R
@@ -650,44 +649,40 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         homeViewModel.detach(requireContext())
     }
 
+    @Deprecated("TODO transform to current solution")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
-            CODE_LOOP_INSTRUCTIONS -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    homeViewModel.state.isLoopModeActive.set(true)
-                    binding.btnLoop?.isChecked = true
-
-                    binding.spinMode?.setSelection(1)
-                    homeViewModel.state.isCertModeActive.set(false)
-                } else {
-                    homeViewModel.state.isLoopModeActive.set(false)
-                    binding.btnLoop?.isChecked = false
-                    binding.spinMode?.setSelection(0)
-                }
-            }
-            CODE_SIGNAL_MEASUREMENT_TERMS -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    homeViewModel.toggleSignalMeasurementService()
-                    requireContext().toast(R.string.toast_signal_measurement_enabled)
-                }
-            }
+            // TODO FIX CERT MEASUREMENT
+//            CODE_LOOP_INSTRUCTIONS -> {
+//                if (resultCode == Activity.RESULT_OK) {
+//                    homeViewModel.state.isLoopModeActive.set(true)
+//                    binding.btnLoop?.isChecked = true
+//
+//                    binding.spinMode?.setSelection(1)
+//                    homeViewModel.state.isCertModeActive.set(false)
+//                } else {
+//                    homeViewModel.state.isLoopModeActive.set(false)
+//                    binding.btnLoop?.isChecked = false
+//                    binding.spinMode?.setSelection(0)
+//                }
+//            }
             CODE_CERT_INSTRUCTIONS -> {
                 if (resultCode == Activity.RESULT_OK) {
                     homeViewModel.state.isCertModeActive.set(true)
-                    binding.spinMode?.setSelection(2)
+                    binding.spinMode.setSelection(2)
 
                     homeViewModel.state.isLoopModeActive.set(false)
-                    binding.btnLoop?.isChecked = false
+                    binding.btnLoop.isChecked = false
 
                     //showDialog()
                 } else {
                     homeViewModel.state.isCertModeActive.set(false)
 
                     homeViewModel.state.isLoopModeActive.set(false)
-                    binding.btnLoop?.isChecked = false
-                    binding.spinMode?.setSelection(0)
+                    binding.btnLoop.isChecked = false
+                    binding.spinMode.setSelection(0)
                 }
             }
         }

@@ -204,7 +204,7 @@ class ResultsActivity : BaseActivity() {
     }
 
     override fun onHandledException(exception: HandledException?) {
-        android.util.Log.d(TAG, "onHandledException: ", exception)
+        Timber.d("onHandledException", exception)
     }
 
     override fun onStart() {

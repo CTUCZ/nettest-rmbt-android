@@ -488,7 +488,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/netmonster_core"
-                bind:title="@{@string/preferences_designed_by}" />
+                bind:title="@{@string/preferences_design_by}" />
 
             <include
                 android:id="@+id/netmonster_core"
