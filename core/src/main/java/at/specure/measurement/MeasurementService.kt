@@ -5,12 +5,15 @@ import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.content.BroadcastReceiver
 import android.content.ServiceConnection
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.wifi.WifiManager
 import android.os.Binder
 import android.os.Build
+import android.os.BatteryManager
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.IBinder
@@ -49,7 +52,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.zip
@@ -68,6 +70,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
     private var elapsedTime: Long = 0
     private var startTime: Long = 0
     private var inactivityTimer: Timer = Timer()
+    private var batteryInfo = BatteryInfoReceiver()
 
     private fun isRMBTClientResponding(): Boolean {
         val clientLastResponseDurationMillis = System.currentTimeMillis() - measurementLastUpdate
@@ -469,6 +472,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
         stateRecorder.bind(this)
 
+        registerBatteryInfoReceiver(batteryInfo)
         val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "$packageName:RMBTWifiLock")
         val powerManager = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -480,7 +484,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
             loopCountdownTimer?.cancel()
 
             if (((stateRecorder.loopTestCount < config.loopModeNumberOfTests) || config.loopModeNumberOfTests == 0 && config.developerModeIsEnabled) && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED) {
-                if (runner.isRunning) {
+                if (runner.isRunning || startPendingTest) {
                     startPendingTest = true
                     Timber.d("LOOP STARTING PENDING TEST set to true onCreate due to distance")
                 } else {
@@ -520,6 +524,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
     override fun onDestroy() {
         resumeSignalMeasurement(false)
+        unregisterBatteryInfoReceiver(batteryInfo)
         signalMeasurementConnection.onServiceDisconnected(null)
         unbindService(signalMeasurementConnection)
         super.onDestroy()
@@ -556,7 +561,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
                     override fun onFinish() {
                         Timber.i("CountDownTimer finished - ${this.hashCode()}")
-                        if (runner.isRunning) {
+                        if (runner.isRunning || startPendingTest) {
                             Timber.d("LOOP STARTING PENDING TEST set to true")
                             startPendingTest = true
                         } else {
@@ -620,13 +625,6 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
     private fun runTest() {
         notificationManager.cancel(NOTIFICATION_LOOP_FINISHED_ID)
-        startPendingTest = false
-        if (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < config.loopModeNumberOfTests || (config.loopModeNumberOfTests == 0 && config.developerModeIsEnabled))) {
-            scheduleNextLoopTest()
-            stopSignalMeasurement()
-        } else {
-            pauseSignalMeasurement()
-        }
 
         Timber.d("LOOP MODE: runner is running: ${runner.isRunning}")
         if (!runner.isRunning) {
@@ -649,7 +647,8 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
         val deviceInfo = DeviceInfo(
             context = this,
-            location = location
+            location = location,
+            temperature = batteryInfo.getTemp()
         )
 
         qosTasksPassed = 0
@@ -666,6 +665,18 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
             testListener,
             stateRecorder
         )
+        startPendingTest = false
+        if (isBetweenTwoLoopTests()) {
+            scheduleNextLoopTest()
+            stopSignalMeasurement()
+        } else {
+            pauseSignalMeasurement()
+        }
+        Timber.d("RUNNER IS RUNNING: ${runner.isRunning}")
+    }
+
+    private fun isBetweenTwoLoopTests() : Boolean {
+        return (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < config.loopModeNumberOfTests || (config.loopModeNumberOfTests == 0 && config.developerModeIsEnabled)))
     }
 
     private fun attachToForeground() {
@@ -699,8 +710,12 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
         runner.stop()
         Timber.d("TIMER: cancelling 2: ${loopCountdownTimer?.hashCode()}")
         loopCountdownTimer?.cancel()
-        config.previousTestStatus = TestFinishReason.ABORTED.name // cannot be handled in TestController
-        stateRecorder.onUnsuccessTest(TestFinishReason.ABORTED)
+        Timber.e("LOOP_MODE_STATE: $previousLoopModeState measurement state: $measurementState" )
+        if (measurementState != MeasurementState.FINISH) {
+            config.previousTestStatus =
+                TestFinishReason.ABORTED.name // cannot be handled in TestController
+            stateRecorder.onUnsuccessTest(TestFinishReason.ABORTED)
+        }
         measurementState = MeasurementState.ABORTED
         stateRecorder.finish()
         clientAggregator.onMeasurementCancelled()
@@ -767,7 +782,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                 io {
                     delay(1000) // added because of BE QOS part processing performance issue
                     historyRepository.loadHistoryItems(0, 100, true).onSuccess {
-                        if (it.isNotEmpty()) {
+                        if (it?.isNotEmpty() == true) {
                             Timber.d("History Successfully loaded: ${it[0]?.loopUUID} ${it[0]?.speedDownload}  from size: ${it.size}")
                         } else {
                             Timber.d("History is empty")
@@ -1032,4 +1047,42 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
     }
 
     override val coroutineContext = EmptyCoroutineContext + coroutineExceptionHandler
+
+    private fun registerBatteryInfoReceiver(batteryInfoReceiver: BatteryInfoReceiver) {
+        Timber.d("REGISTERING TEMPERATURE")
+        this.registerReceiver(
+            batteryInfoReceiver,
+            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        )
+    }
+
+    private fun unregisterBatteryInfoReceiver(batteryInfoReceiver: BatteryInfoReceiver) {
+        try {
+            Timber.d("UNREGISTERING TEMPERATURE")
+            this.unregisterReceiver(
+                batteryInfoReceiver
+            )
+        } catch (e: java.lang.Exception) {
+            Timber.e("Error during unregistering battery info receiver: ${e.localizedMessage}")
+        }
+    }
+
+    class BatteryInfoReceiver : BroadcastReceiver() {
+        // temperature in Celzius units in XXY format as XX.Y
+        private var temp: Int? = null
+
+        /**
+         * temperature in Celzius or null if not acquired yet
+         */
+        fun getTemp(): Float? {
+            temp?.let { temperature ->
+                return (temperature.toFloat() / 10f)
+            }
+            return null
+        }
+
+        override fun onReceive(arg0: Context?, intent: Intent) {
+            temp = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)
+        }
+    }
 }

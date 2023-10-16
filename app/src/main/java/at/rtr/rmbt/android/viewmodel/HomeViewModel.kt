@@ -28,7 +28,6 @@ import at.specure.measurement.signal.SignalMeasurementService
 import at.specure.test.SignalMeasurementType
 import at.specure.util.permission.PermissionsWatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -81,6 +80,9 @@ class HomeViewModel @Inject constructor(
 
     val isExpertModeOn: Boolean
         get() = appConfig.expertModeEnabled
+
+    val isalwaysAllowCellInfosOn: Boolean
+        get() = appConfig.alwaysAllowCellInfos
 
     private val serviceConnection = object : ServiceConnection {
 
@@ -197,6 +199,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun shouldDisplayNetworkDetails(): Boolean {
-        return ((isExpertModeOn) && (state.activeNetworkInfo.get()?.networkInfo?.type == TransportType.WIFI || state.activeNetworkInfo.get()?.networkInfo?.type == TransportType.CELLULAR))
+        // allow cell infos is expert mode is enabled or if always enabled by configuration
+        return ((isExpertModeOn || isalwaysAllowCellInfosOn ) && (state.activeNetworkInfo.get()?.networkInfo?.type == TransportType.WIFI || state.activeNetworkInfo.get()?.networkInfo?.type == TransportType.CELLULAR))
     }
 }

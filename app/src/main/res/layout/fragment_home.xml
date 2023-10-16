@@ -70,6 +70,7 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnSetting"
+            android:contentDescription="@{@string/home_settings}"
             style="@style/NavigationButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -146,6 +147,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/icon_loop_mode"
+            android:contentDescription="@{@string/home_loop_mode_active}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/white"
@@ -200,6 +202,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_info"
+            android:minHeight="48dp"
             style="@style/RobotoRegularStyle.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -218,6 +221,7 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/ivSignalLevel"
+            android:contentDescription="@{@string/home_signal}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:src="@drawable/ic_mobile_3"
@@ -288,6 +292,20 @@
             app:layout_constraintTop_toBottomOf="@+id/tvNetworkName"
             app:visibleOrGone="@{!state.isConnected}" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvLblCoverageMode"
+            style="@style/RobotoRegularStyle.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/home_coverage_mode"
+            android:textColor="@color/text_green"
+            app:layout_constraintBottom_toTopOf="@+id/waveView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvLblNoConnection"
+            app:visibleOrGone="@{state.coverageModeIsEnabled}" />
+
         <at.rtr.rmbt.android.ui.view.WaveView
             android:id="@+id/waveView"
             android:layout_width="0dp"
@@ -310,6 +328,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSignal"
+            android:minHeight="48dp"
             style="@style/RobotoMediumStyle.ExtraLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -325,6 +344,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvFrequency"
+            android:minHeight="48dp"
             style="@style/RobotoMediumStyle.ExtraLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -375,6 +395,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tvLblSignal" />
 
+        <include
+            android:id="@+id/panel_permissions_problems"
+            layout="@layout/view_permissions_problems"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/vBottomDivider"
+            app:layout_constraintTop_toBottomOf="@+id/waveView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="24dp"
+            app:visibleOrGone="@{state.informationAccessProblem != InformationAccessProblem.NO_PROBLEM}" />
+
         <View
             android:id="@+id/vBottomDivider"
             android:layout_width="match_parent"
@@ -388,6 +420,7 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnIpv4"
+            android:contentDescription="@{@string/home_ipv4}"
             android:layout_width="0dp"
             android:layout_height="?android:attr/actionBarSize"
             android:background="?android:attr/selectableItemBackground"
@@ -400,6 +433,7 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnIpv6"
+            android:contentDescription="@{@string/home_ipv6}"
             android:layout_width="0dp"
             android:layout_height="?android:attr/actionBarSize"
             android:background="?android:attr/selectableItemBackground"
@@ -412,6 +446,7 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnLocation"
+            android:contentDescription="@{@string/home_location}"
             android:layout_width="0dp"
             android:layout_height="?android:attr/actionBarSize"
             android:background="?android:attr/selectableItemBackground"

@@ -172,8 +172,9 @@ class MapRepositoryImpl @Inject constructor(
                                     storage.titleStatistics = filterItem.title
                                     statistics = filterItem.toStatisticMap()
                                 }
-
-                                else -> {}
+                                else -> {
+                                    // do nothing
+                                }
                             }
                         }
                     }

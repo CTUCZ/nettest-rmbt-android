@@ -61,8 +61,6 @@ fun <T> LiveData<T>.singleResult(lifecycleOwner: LifecycleOwner, block: (T) -> (
 @Keep
 private data class LifecycleHolder<T>(var observer: Observer<T>? = null)
 
-//fun <X, Y> LiveData<X>.map(transform: (X) -> Y): LiveData<Y> = Transformations.map(this, transform)
-
 fun <T> liveDataOf(block: (liveData: MutableLiveData<T>) -> (Unit)): LiveData<T> = MutableLiveData<T>().also {
     block.invoke(it)
 }

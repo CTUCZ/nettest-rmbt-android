@@ -30,7 +30,8 @@ class MapViewModel @Inject constructor(
 
     var providerLiveData: MutableLiveData<RetrofitTileProvider> = MutableLiveData()
 
-    var markersLiveData: LiveData<List<MarkerMeasurementRecord>> = state.coordinatesLiveData.switchMap { repository.getMarkers(it?.latitude, it?.longitude, state.zoom.toInt()) }
+    var markersLiveData: LiveData<List<MarkerMeasurementRecord>> =
+        state.coordinatesLiveData.switchMap { repository.getMarkers(it?.latitude, it?.longitude, state.zoom.toInt()) }
 
     init {
         addStateSaveHandler(state)

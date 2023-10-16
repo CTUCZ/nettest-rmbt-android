@@ -19,6 +19,7 @@ import at.rtr.rmbt.android.ui.view.SpeedLineChart
 import at.rtr.rmbt.android.ui.view.WaveView
 import at.rtr.rmbt.android.ui.view.curve.MeasurementCurveLayout
 import at.rtr.rmbt.android.util.InfoWindowStatus
+import at.rtr.rmbt.android.util.expertFormat
 import at.rtr.rmbt.android.util.format
 import at.specure.data.Classification
 import at.specure.data.NetworkTypeCompat
@@ -29,11 +30,7 @@ import at.specure.info.cell.CellNetworkInfo
 import at.specure.info.cell.CellTechnology
 import at.specure.info.ip.IpInfo
 import at.specure.info.ip.IpStatus
-import at.specure.info.network.NetworkInfo
-import at.specure.info.network.DetailedNetworkInfo
-import at.specure.info.network.EthernetNetworkInfo
-import at.specure.info.network.MobileNetworkType
-import at.specure.info.network.WifiNetworkInfo
+import at.specure.info.network.*
 import at.specure.info.strength.SignalStrengthInfo
 import at.specure.measurement.MeasurementState
 import at.specure.result.QoECategory
@@ -209,7 +206,7 @@ fun AppCompatTextView.setSignal(
     text = if (signal != null) {
         String.format(context.getString(R.string.home_signal_value), signal)
     } else {
-        "-"
+        ""
     }
 }
 
@@ -240,7 +237,7 @@ private fun extractSignalValues(
     } else if (signal != null) {
         String.format(context.getString(R.string.home_signal_value), signal)
     } else {
-        "-"
+        ""
     }
 
 /**
@@ -255,7 +252,7 @@ fun AppCompatTextView.setFrequency(networkInfo: NetworkInfo?, secondaryNetworkIn
             // we display secondary signal only for NR_NSA type of the network
             extractFrequency(networkInfo, secondaryNetworkInfo, this.context)
         }
-        else -> "-"
+        else -> ""
     }
 }
 
@@ -278,14 +275,14 @@ private fun extractFrequency(
         if (networkInfo.band?.name?.contains("MHz") == true) {
             builder.append(networkInfo.band?.name?.removeSuffix("MHz"))
         } else {
-            builder.append(if (networkInfo.band?.name.isNullOrEmpty()) "-" else networkInfo.band?.name)
+            builder.append(if (networkInfo.band?.name.isNullOrEmpty()) "" else networkInfo.band?.name)
         }
         if ((secondaryNetworkInfo is CellNetworkInfo) && secondaryNetworkInfo.band?.name?.isNullOrEmpty() == false) {
             builder.append("/")
             if (secondaryNetworkInfo.band?.name?.contains("MHz") == true) {
                 builder.append(secondaryNetworkInfo.band?.name?.removeSuffix("MHz"))
             } else {
-                builder.append(if (secondaryNetworkInfo.band?.name.isNullOrEmpty()) "-" else secondaryNetworkInfo.band?.name)
+                builder.append(if (secondaryNetworkInfo.band?.name.isNullOrEmpty()) "" else secondaryNetworkInfo.band?.name)
             }
         }
         String.format(context.getString(R.string.home_frequency_value), builder.toString())
@@ -398,6 +395,8 @@ private fun AppCompatTextView.extractTechnologyString(
 ) = when (detailedNetworkInfo?.networkInfo) {
     is EthernetNetworkInfo -> context.getString(R.string.home_ethernet)
     is WifiNetworkInfo -> context.getString(R.string.home_wifi)
+    is VpnNetworkInfo -> context.getString(R.string.home_vpn)
+    is BluetoothNetworkInfo -> context.getString(R.string.home_bluetooth)
     is CellNetworkInfo -> {
         val technology =
             CellTechnology.fromMobileNetworkType((detailedNetworkInfo.networkInfo as CellNetworkInfo).networkType)?.displayName
@@ -436,15 +435,14 @@ fun AppCompatImageView.setTechnologyIcon(networkInfo: NetworkInfo?) {
                 CellTechnology.CONNECTION_5G -> {
                     setImageResource(R.drawable.ic_5g)
                 }
-                else -> {
-                    setImageDrawable(null)
-                }
+                else -> {setImageDrawable(null)}
             }
         }
         is EthernetNetworkInfo -> {
             visibility = View.VISIBLE
             setImageResource(R.drawable.ic_label_ethernet)
         }
+        // todo: add resources for VPN and Bluetooth
         else -> visibility = View.GONE
     }
 }
@@ -820,6 +818,12 @@ private fun getSignalImageResource(networkType: NetworkTypeCompat, signalStrengt
         NetworkTypeCompat.TYPE_UNKNOWN -> {
             R.drawable.ic_signal_unknown_small
         }
+        NetworkTypeCompat.TYPE_BLUETOOTH -> {
+            R.drawable.ic_bluetooth
+        }
+        NetworkTypeCompat.TYPE_VPN -> {
+            R.drawable.ic_vpn
+        }
         NetworkTypeCompat.TYPE_LAN -> {
             R.drawable.ic_ethernet
         }
@@ -864,11 +868,20 @@ fun AppCompatTextView.setDownload(speedDownloadClassification: Classification) {
 /**
  * A binding adapter that is used for show download speed with classification icon in results
  */
-@BindingAdapter("speedDownloadResult", "speedDownloadClassificationResult", requireAll = true)
-fun AppCompatTextView.speedDownloadResult(speedDownloadResult: Long, speedDownloadClassificationResult: Classification) {
+@BindingAdapter("speedDownloadResult", "speedDownloadClassificationResult","isExpert", requireAll = true)
+fun AppCompatTextView.speedDownloadResult(speedDownloadResult: Long, speedDownloadClassificationResult: Classification,isExpert: Boolean) {
 
     text = if (speedDownloadResult > 0) {
-        context.getString(R.string.measurement_download_upload_speed, ((speedDownloadResult.toFloat() / 1000f).format()))
+        if (isExpert) { //do not format for experts
+            context.getString(
+                R.string.measurement_download_upload_speed,
+                ((speedDownloadResult.toFloat() / 1000f).expertFormat())
+            )
+        } else
+            context.getString(
+                R.string.measurement_download_upload_speed,
+                ((speedDownloadResult.toFloat() / 1000f).format())
+            )
     } else {
         context.getString(R.string.measurement_dash)
     }
@@ -898,10 +911,33 @@ fun getSpeedDownloadClassification(speedDownloadClassification: Classification):
 /**
  * A binding adapter that is used for show upload speed with classification icon in results
  */
-@BindingAdapter("speedUploadResult", "speedUploadClassificationResult", requireAll = true)
-fun AppCompatTextView.speedUploadResult(speedUploadResult: Long, speedUploadClassificationResult: Classification) {
+@BindingAdapter("speedUploadResult", "speedUploadClassificationResult","isExpert", requireAll = true)
+fun AppCompatTextView.speedUploadResult(speedUploadResult: Long, speedUploadClassificationResult: Classification, isExpert: Boolean) {
     text = if (speedUploadResult > 0) {
-        context.getString(R.string.measurement_download_upload_speed, ((speedUploadResult.toFloat() / 1000f).format()))
+        if (isExpert) { //do not format for experts
+            context.getString(
+                R.string.measurement_download_upload_speed,
+                ((speedUploadResult.toFloat() / 1000f).expertFormat())
+            )
+        } else
+            context.getString(
+                R.string.measurement_download_upload_speed,
+                ((speedUploadResult.toFloat() / 1000f).format())
+            )
+    } else {
+        context.getString(R.string.measurement_dash)
+    }
+    setCompoundDrawablesWithIntrinsicBounds(getSpeedUploadClassificationIcon(speedUploadClassificationResult), 0, 0, 0)
+}
+
+/**
+ * A binding adapter that is used to show expert upload speed with classification icon in results
+ */
+
+@BindingAdapter("expertSpeedUploadResult", "expertSpeedUploadClassificationResult", requireAll = true)
+fun AppCompatTextView.expertSpeedUploadResult(speedUploadResult: Long, speedUploadClassificationResult: Classification) {
+    text = if (speedUploadResult > 0) {
+        context.getString(R.string.measurement_download_upload_speed, ((speedUploadResult.toFloat() / 1000f)).toString())
     } else {
         context.getString(R.string.measurement_dash)
     }
@@ -1103,6 +1139,12 @@ fun ImageView.setNetworkType(networkType: String, signalStrength: Classification
                 }
                 NetworkTypeCompat.TYPE_UNKNOWN -> {
                     R.drawable.ic_history_no_internet
+                }
+                NetworkTypeCompat.TYPE_BLUETOOTH -> {
+                    R.drawable.ic_bluetooth
+                }
+                NetworkTypeCompat.TYPE_VPN -> {
+                    R.drawable.ic_vpn
                 }
                 NetworkTypeCompat.TYPE_LAN,
                 NetworkTypeCompat.TYPE_BROWSER -> {

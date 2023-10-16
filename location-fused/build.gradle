@@ -11,8 +11,6 @@ android {
     defaultConfig {
         minSdkVersion config.minSdkVersion
         targetSdkVersion config.targetSdkVersion
-        versionCode config.versionCode
-        versionName config.versionName
 
         consumerProguardFiles 'consumer-rules.pro'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -34,6 +32,15 @@ android {
         jvmTarget = "17"
     }
 
+    lint {
+        abortOnError true
+        htmlOutput file("$rootDir/build_results/lint-result.html")
+        lintConfig file("$rootDir/tools/rules-lint.xml")
+        warningsAsErrors true
+        xmlOutput file("$rootDir/build_results/lint-result.xml")
+        xmlReport true
+    }
+    namespace 'at.specure.location.fused'
     lint {
         abortOnError true
         htmlOutput file("$rootDir/build_results/lint-result.html")

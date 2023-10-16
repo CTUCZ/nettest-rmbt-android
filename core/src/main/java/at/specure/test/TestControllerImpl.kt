@@ -41,6 +41,8 @@ private const val KEY_SERVER_PREFERRED = "prefer_server"
 private const val KEY_DEVELOPER_MODE_ENABLED = "developer_mode"
 private const val KEY_LOOP_MODE_ENABLED = "user_loop_mode"
 private const val KEY_MEASUREMENT_TYPE = "measurement_type_flag" // used on the control server to determine type for signal measurement
+private const val KEY_TEMPERATURE = "temperature"
+private const val KEY_COVERAGE = "coverage"
 
 private const val TEST_MAX_TIME = 3000
 private const val MAX_VALUE_UNFINISHED_TEST = 0.9f
@@ -163,6 +165,13 @@ class TestControllerImpl(
                 .put(KEY_TEST_COUNTER, config.testCounter)
                 .put(KEY_PREVIOUS_TEST_STATUS, config.previousTestStatus)
 
+            additionalValues.put(KEY_TEMPERATURE, deviceInfo.temperature)
+
+            //add flag for coverage mode only when it is enabled
+            if (config.coverageModeEnabled == true) {
+                additionalValues.put(KEY_COVERAGE, config.coverageModeEnabled)
+            }
+
             loopSettings?.let {
                 additionalValues.put(KEY_LOOP_MODE_SETTINGS, JSONObject(gson.toJson(it, LoopModeSettings::class.java)))
             }
@@ -240,7 +249,7 @@ class TestControllerImpl(
                     finalUploadValuePosted = true
                 }
 
-                clientCallback.onTestCompleted(result, !skipQoSTests)
+                // clientCallback.onTestCompleted(result, !skipQoSTests)
                 if (!skipQoSTests) { // needs to prevent calling onTestCompleted and finishing before unimplemented QoS phase
                     val qosTestSettings = TestSettings()
                     qosTestSettings.cacheFolder = context.cacheDir
@@ -280,11 +289,11 @@ class TestControllerImpl(
                     TestStatus.PACKET_LOSS_AND_JITTER -> handleJitterAndPacketLoss(client)
                     TestStatus.INIT_UP -> handleInitUp()
                     TestStatus.UP -> handleUp(client)
-                    TestStatus.SPEEDTEST_END -> handleSpeedTestEnd(skipQoSTests)
+                    TestStatus.SPEEDTEST_END -> handleSpeedTestEnd(client, clientCallback, skipQoSTests)
                     TestStatus.QOS_TEST_RUNNING -> handleQoSRunning(qosTest)
-                    TestStatus.QOS_END -> handleQoSEnd()
+                    TestStatus.QOS_END -> handleQoSEnd(client, clientCallback)
                     TestStatus.ERROR -> handleError(client)
-                    TestStatus.END -> handleEnd()
+                    TestStatus.END -> handleEnd(client, clientCallback)
                     TestStatus.ABORTED -> handleAbort(client)
                 }
 
@@ -415,9 +424,10 @@ class TestControllerImpl(
         }
     }
 
-    private fun handleSpeedTestEnd(skipQoSTest: Boolean) {
+    private fun handleSpeedTestEnd(client: RMBTClient, callback: RMBTClientCallback, skipQoSTest: Boolean) {
         if (skipQoSTest) {
             setState(MeasurementState.FINISH, 0)
+            callback.onTestCompleted(client.totalTestResult, false)
         }
     }
 
@@ -504,8 +514,9 @@ class TestControllerImpl(
         }
     }
 
-    private fun handleQoSEnd() {
+    private fun handleQoSEnd(client: RMBTClient, clientCallback: RMBTClientCallback) {
         setState(MeasurementState.FINISH, 0)
+        clientCallback.onTestCompleted(client.totalTestResult, false)
         _testUUID = null
     }
 
@@ -520,8 +531,9 @@ class TestControllerImpl(
         _testUUID = null
     }
 
-    private fun handleEnd() {
+    private fun handleEnd(client: RMBTClient, clientCallback: RMBTClientCallback) {
         setState(MeasurementState.FINISH, 0)
+        clientCallback.onTestCompleted(client.totalTestResult, false)
         _testUUID = null
     }
 

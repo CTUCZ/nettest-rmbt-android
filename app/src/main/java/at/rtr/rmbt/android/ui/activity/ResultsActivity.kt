@@ -3,10 +3,12 @@ package at.rtr.rmbt.android.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
+import at.rmbt.util.exception.HandledException
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.ActivityResultsBinding
 import at.rtr.rmbt.android.di.viewModelLazy
@@ -21,6 +23,8 @@ import at.rtr.rmbt.android.viewmodel.ResultViewModel
 import at.specure.data.NetworkTypeCompat
 import at.specure.data.entity.TestResultRecord
 import timber.log.Timber
+import java.util.Timer
+import kotlin.concurrent.timerTask
 
 class ResultsActivity : BaseActivity() {
 
@@ -31,6 +35,7 @@ class ResultsActivity : BaseActivity() {
     private lateinit var resultChartFragmentPagerAdapter: ResultChartFragmentPagerAdapter
 
     private var mapLoadRequested: Boolean = false
+    private val timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +60,16 @@ class ResultsActivity : BaseActivity() {
         viewModel.state.testUUID = testUUID
         viewModel.state.returnPoint = returnPoint?.let { ReturnPoint.valueOf(returnPoint) } ?: ReturnPoint.HOME
         viewModel.testServerResultLiveData.listen(this) { result ->
-            viewModel.state.testResult.set(result)
+
+            // show local results if no results from server after 2000 ms
+             if (result?.isLocalOnly == true) {
+                timer.schedule(timerTask {
+                    viewModel.state.testResult.set(result)
+                }, 2000)
+            } else {
+                timer.cancel()
+                viewModel.state.testResult.set(result)
+            }
 
             result?.testOpenUUID?.let {
                 resultChartFragmentPagerAdapter = ResultChartFragmentPagerAdapter(supportFragmentManager, testUUID, result.networkType)
@@ -111,9 +125,9 @@ class ResultsActivity : BaseActivity() {
         viewModel.loadingLiveData.listen(this) {
             binding.swipeRefreshLayout.isRefreshing = false
             if (viewModel.state.testResult.get() == null) {
-                binding.textFailedToLoad.visibility = if (it) View.GONE else View.VISIBLE
+                binding.textWaitLoading.visibility = if (it) View.GONE else View.VISIBLE
             } else {
-                binding.textFailedToLoad.visibility = View.GONE
+                binding.textWaitLoading.visibility = View.GONE
             }
         }
 
@@ -147,6 +161,8 @@ class ResultsActivity : BaseActivity() {
 //            val latLngW = LatLngW(result.latitude!!, result.longitude!!)
 //
 //            val icon = when (result.networkType) {
+//                NetworkTypeCompat.TYPE_BLUETOOTH,
+//                NetworkTypeCompat.TYPE_VPN,
 //                NetworkTypeCompat.TYPE_UNKNOWN -> R.drawable.ic_marker_empty
 //                NetworkTypeCompat.TYPE_LAN -> R.drawable.ic_marker_ethernet
 //                NetworkTypeCompat.TYPE_BROWSER -> R.drawable.ic_marker_browser
@@ -171,20 +187,24 @@ class ResultsActivity : BaseActivity() {
 //                setOnMapClickListener {
 //                    DetailedFullscreenMapActivity.start(
 //                        this@ResultsActivity,
-//                        it.latitude,
-//                        it.longitude,
+//                        latLngW.latitude,
+//                        latLngW.longitude,
 //                        result.networkType
 //                    )
 //                }
 //            }
 //        }
 //    }
-
+//
 //    private fun mapW(): MapWrapper = binding.map.mapWrapper
 
     private fun refreshResults() {
         viewModel.loadTestResults()
         binding.swipeRefreshLayout.isRefreshing = true
+    }
+
+    override fun onHandledException(exception: HandledException?) {
+        android.util.Log.d(TAG, "onHandledException: ", exception)
     }
 
     override fun onStart() {

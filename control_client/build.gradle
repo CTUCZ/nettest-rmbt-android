@@ -12,8 +12,6 @@ android {
     defaultConfig {
         minSdkVersion config.minSdkVersion
         targetSdkVersion config.targetSdkVersion
-        versionCode config.versionCode
-        versionName config.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -23,6 +21,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    namespace 'at.rmbt.client.control'
+    lint {
+        abortOnError true
+        htmlOutput file("$rootDir/build_results/lint-result.html")
+        lintConfig file("$rootDir/tools/rules-lint.xml")
+        warningsAsErrors true
+        xmlOutput file("$rootDir/build_results/lint-result.xml")
+        xmlReport true
     }
 
     compileOptions {

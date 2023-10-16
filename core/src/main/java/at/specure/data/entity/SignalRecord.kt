@@ -11,16 +11,19 @@ import at.specure.info.strength.SignalSource
 
 @Entity(
     tableName = Tables.SIGNAL,
-    primaryKeys = ["timeNanos", "testUUID", "cellUuid"]
+    primaryKeys = ["timeNanos", "cellUuid"],
+    foreignKeys = [
+        ForeignKey(
+            entity = TestRecord::class,
+            parentColumns = [Columns.TEST_UUID_PARENT_COLUMN],
+            childColumns = ["testUUID"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 data class SignalRecord(
-    @ForeignKey(
-        entity = TestRecord::class,
-        parentColumns = [Columns.TEST_UUID_PARENT_COLUMN],
-        childColumns = ["testUUID"],
-        onDelete = ForeignKey.CASCADE
-    )
-    val testUUID: String,
+    val testUUID: String?,
+    val signalChunkId: String?,
     val cellUuid: String,
     /**
      * difference between this update of the signal during the test and start time of the test

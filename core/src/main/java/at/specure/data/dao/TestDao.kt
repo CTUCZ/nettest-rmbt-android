@@ -6,7 +6,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import androidx.room.Upsert
 import at.specure.data.Tables
 import at.specure.data.entity.LoopModeRecord
 import at.specure.data.entity.QoSResultRecord
@@ -17,13 +19,13 @@ import at.specure.data.entity.TestWlanRecord
 @Dao
 interface TestDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Upsert
     fun insert(test: TestRecord)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     fun insert(test: TestTelephonyRecord)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Upsert
     fun insert(test: TestWlanRecord)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -32,11 +34,29 @@ interface TestDao {
     @Update
     fun update(test: TestRecord)
 
+    @Transaction
+    fun deleteAll() {
+        deleteAllTest()
+        deleteAllWLAN()
+        deleteAllTelephony()
+    }
     @Query("DELETE FROM ${Tables.TEST}")
-    fun deleteAll(): Int
+    fun deleteAllTest(): Int
 
+    @Query("DELETE FROM ${Tables.TEST_WLAN_RECORD}")
+    fun deleteAllWLAN(): Int
+
+    @Query("DELETE FROM ${Tables.TEST_TELEPHONY_RECORD}")
+    fun deleteAllTelephony(): Int
+
+    @Transaction
+    fun deleteTest(test: TestRecord) {
+        deleteTestRecord(test)
+        removeWlanRecord(test.uuid)
+        removeTelephonyInfo(test.uuid)
+    }
     @Delete
-    fun deleteTest(test: TestRecord): Int
+    fun deleteTestRecord(test: TestRecord): Int
 
     @Query("SELECT * FROM ${Tables.TEST} WHERE uuid == :uuid")
     fun get(uuid: String): TestRecord?

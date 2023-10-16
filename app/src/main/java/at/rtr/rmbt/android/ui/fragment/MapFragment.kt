@@ -313,7 +313,9 @@ class MapFragment : BaseFragment(), MapMarkerDetailsAdapter.MarkerDetailsCallbac
         if (record.networkTypeLabel != ServerNetworkType.TYPE_UNKNOWN.stringValue) {
             record.networkTypeLabel?.let {
                 val icon = when (NetworkTypeCompat.fromString(it)) {
-                    NetworkTypeCompat.TYPE_MOBILE,
+                    NetworkTypeCompat.TYPE_BLUETOOTH,
+                    NetworkTypeCompat.TYPE_VPN,
+                    NetworkTypeCompat.TYPE_MOBILE,//TODO check mobile
                     NetworkTypeCompat.TYPE_UNKNOWN -> R.drawable.ic_marker_empty
                     NetworkTypeCompat.TYPE_LAN -> R.drawable.ic_marker_ethernet
                     NetworkTypeCompat.TYPE_BROWSER -> R.drawable.ic_marker_browser

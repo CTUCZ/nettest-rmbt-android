@@ -9,8 +9,6 @@ android {
     defaultConfig {
         minSdkVersion config.minSdkVersion
         targetSdkVersion config.targetSdkVersion
-        versionCode config.versionCode
-        versionName config.versionName
     }
 
     buildTypes {
@@ -19,6 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'at.rtr.rmbt.client'
 }
 
 dependencies {
@@ -28,5 +27,5 @@ dependencies {
     implementation "com.google.code.gson:gson:$versions.gson"
     implementation "com.google.guava:guava:$versions.guava"
     implementation "com.jakewharton.timber:timber:$versions.timber"
-    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.annotation:annotation:1.6.0'
 }

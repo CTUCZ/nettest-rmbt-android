@@ -14,8 +14,8 @@ android {
     defaultConfig {
         minSdkVersion config.minSdkVersion
         targetSdkVersion config.targetSdkVersion
-        versionCode config.versionCode
-        versionName config.versionName
+        versionCode = config.versionCode
+        versionName = config.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -34,6 +34,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -72,6 +73,7 @@ dependencies {
     api "androidx.paging:paging-runtime-ktx:$versions.paging"
     implementation "androidx.lifecycle:lifecycle-service:$versions.lifecycle_service"
 
+    kapt "org.xerial:sqlite-jdbc:3.34.0"
     api "androidx.room:room-runtime:$versions.room"
     implementation "androidx.room:room-ktx:$versions.room"
 

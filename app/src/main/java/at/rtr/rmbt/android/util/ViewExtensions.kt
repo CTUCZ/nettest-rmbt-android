@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowInsetsController
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -84,6 +85,11 @@ fun Paint.calcTextHeight(demoText: String): Float {
  * This function is used for format value up-to 2 decimal
  */
 fun Float.format(): String = DecimalFormat("@@").format(this)
+
+/**
+ * This function is used for format for experts
+ */
+fun Float.expertFormat(): String = DecimalFormat("####0.000").format(this)
 
 /**
  * This function is used for format value up-to 2 decimal

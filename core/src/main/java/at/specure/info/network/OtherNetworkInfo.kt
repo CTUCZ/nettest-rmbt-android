@@ -14,13 +14,11 @@
 
 package at.specure.info.network
 
-import android.net.NetworkCapabilities
-import at.specure.info.NetworkCapability
 import at.specure.info.TransportType
 import java.util.UUID
 
 /**
- * Data object that contains information about WiFi network
+ * Data object that contains information about other network
  */
 open class OtherNetworkInfo(
 

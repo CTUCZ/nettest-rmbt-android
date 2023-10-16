@@ -107,7 +107,8 @@ fun List<ICell>.filter5GCells(): List<ICell> {
 }
 
 fun ISignal.toSignalRecord(
-    testUUID: String,
+    testUUID: String?,
+    signalChunkId: String?,
     cellUUID: String,
     mobileNetworkType: MobileNetworkType,
     testStartTimeNanos: Long,
@@ -166,6 +167,7 @@ fun ISignal.toSignalRecord(
 
     return SignalRecord(
         testUUID = testUUID,
+        signalChunkId = signalChunkId,
         cellUuid = cellUUID,
         signal = signal,
         wifiLinkSpeed = wifiLinkSpeed,
@@ -348,7 +350,8 @@ fun ICell.toCellNetworkInfo(
         cellUUID = this.uuid(),
         rawCellInfo = this,
         isPrimaryDataSubscription = PrimaryDataSubscription.resolvePrimaryDataSubscriptionID(dataSubscriptionId, this.subscriptionId),
-        capabilitiesRaw = "HARDCODED Capabilities netmonster ${NetworkCapabilities.TRANSPORT_CELLULAR} networkType = $mobileNetworkType"
+        capabilitiesRaw = "HARDCODED Capabilities netmonster ${NetworkCapabilities.TRANSPORT_CELLULAR} networkType = $mobileNetworkType",
+        cellState = resolveConnectionState()
     )
 }
 
@@ -436,10 +439,11 @@ fun BandGsm.toCellBand(): CellBand {
     )
 }
 
-fun ICell.toCellLocation(testUUID: String, timestampMillis: Long, timestampNanos: Long, startTimeNanos: Long): CellLocationRecord? {
+fun ICell.toCellLocation(testUUID: String?, signalChunkId: String?, timestampMillis: Long, timestampNanos: Long, startTimeNanos: Long): CellLocationRecord? {
     primaryScramblingCode()?.let {
         return CellLocationRecord(
             testUUID = testUUID,
+            signalChunkId = signalChunkId,
             scramblingCode = it,
             areaCode = this.areaCode(),
             locationId = this.locationId(),
@@ -469,7 +473,8 @@ fun ICell.isInformationCorrect(cellTechnology: CellTechnology): Boolean {
 }
 
 fun ICell.toRecords(
-    testUUID: String,
+    testUUID: String?,
+    signalChunkId: String?,
     mobileNetworkType: MobileNetworkType,
     testStartTimeNanos: Long,
     dataSubscriptionId: Int,
@@ -492,6 +497,7 @@ fun ICell.toRecords(
         if (isInformationCorrect(cellTechnology)) {
             cellInfoRecord = CellInfoRecord(
                 testUUID = testUUID,
+                signalChunkId = signalChunkId,
                 uuid = uuid,
                 isActive = this.connectionStatus is PrimaryConnection,
                 cellTechnology = toTechnologyClass(),
@@ -505,10 +511,12 @@ fun ICell.toRecords(
                 mnc = this.network?.mnc?.toIntOrNull(),
                 primaryScramblingCode = primaryScramblingCode(),
                 isPrimaryDataSubscription = PrimaryDataSubscription.resolvePrimaryDataSubscriptionID(dataSubscriptionId, this.subscriptionId).value,
-                dualSimDetectionMethod = "NOT_AVAILABLE" // local purpose only
+                dualSimDetectionMethod = "NOT_AVAILABLE", // local purpose only
+                cellState = resolveConnectionState()
             )
             signalRecord = this.signal?.toSignalRecord(
                 testUUID,
+                signalChunkId,
                 uuid,
                 mobileNetworkType,
                 testStartTimeNanos,
@@ -519,6 +527,15 @@ fun ICell.toRecords(
         return map
     }
     return map
+}
+
+fun ICell.resolveConnectionState(): String? {
+    return when (this.connectionStatus) {
+        is PrimaryConnection -> "primary"
+        is SecondaryConnection -> "secondary"
+        is NoneConnection -> "none"
+        else -> null
+    }
 }
 
 fun ICell.channelNumber(): Int? {
@@ -591,9 +608,9 @@ fun NetworkType.mapToMobileNetworkType(): MobileNetworkType {
                     }
                 }
                 is NetworkType.Nr.Sa -> {
-                    MobileNetworkType.NR
+                    MobileNetworkType.NR_SA
                 }
-                else -> MobileNetworkType.NR_NSA // but this should not happen
+                else -> MobileNetworkType.NR_SA // default to NR SA if neither NSA nor SA are detected
             }
         }
         else -> MobileNetworkType.UNKNOWN
@@ -624,14 +641,14 @@ fun ICell.primaryScramblingCode(): Int? {
     }
 }
 
-fun ICell.locationId(): Int? {
+fun ICell.locationId(): Long? {
     return when (this) {
-        is CellNr -> null
-        is CellTdscdma -> this.cid
-        is CellLte -> this.eci
-        is CellCdma -> this.bid
-        is CellWcdma -> this.ci
-        is CellGsm -> this.cid
+        is CellNr -> this.nci
+        is CellTdscdma -> this.cid?.toLong()
+        is CellLte -> this.eci?.toLong()
+        is CellCdma -> this.bid?.toLong()
+        is CellWcdma -> this.ci?.toLong()
+        is CellGsm -> this.cid?.toLong()
         else -> null
     }
 }
@@ -785,7 +802,7 @@ fun BandNr.getEuBand(): BandNrEU? {
         BandEuNrIdentity(514_000..524_000, "2600", 38, 0),
         BandEuNrIdentity(524_000..538_000, "2600", 7, 0),
         BandEuNrIdentity(620_000..680_000, "3700", 77, 0),
-        BandEuNrIdentity(620_000..653_333, "3500", 78, 1),
+        BandEuNrIdentity(620_000..653_333, "3600", 78, 1),
         BandEuNrIdentity(636_667..646_666, "3600", 48, 0),
         BandEuNrIdentity(693_334..733_333, "4500", 79, 0)
     )
