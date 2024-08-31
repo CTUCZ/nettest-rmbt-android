@@ -107,6 +107,7 @@ class SettingsRepositoryImpl(
             controlServerSettings.openDataPrefix = urls.openDataPrefixUrl
             controlServerSettings.shareUrl = urls.shareUrl
             controlServerSettings.statisticsUrl = urls.statisticsUrl
+            controlServerSettings.statisticsMasterServerUrl = urls.statisticsMasterServerUrl
         }
         val mapServer = settingsResponse.settings.first().mapServerSettings
         if (mapServer != null && !config.mapServerOverrideEnabled) {
@@ -139,7 +140,8 @@ class SettingsRepositoryImpl(
             termsAndConditions.tacVersion = terms.version
             termsAndConditions.tacAccepted = false
             terms.url?.let { url ->
-                tacDao.deleteTermsAndCondition(url)
+                val count = tacDao.deleteTermsAndCondition(url)
+                Timber.d("DB: Deleting old TaC: $count")
             }
         }
     }

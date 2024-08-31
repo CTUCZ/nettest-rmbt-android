@@ -37,8 +37,14 @@ import at.specure.info.strength.SignalStrengthInfoGsm
 import at.specure.info.strength.SignalStrengthInfoLte
 import at.specure.info.strength.SignalStrengthInfoNr
 import cz.mroczis.netmonster.core.INetMonster
+import cz.mroczis.netmonster.core.db.NetworkTypeTable
 import cz.mroczis.netmonster.core.db.model.IBandEntity
 import cz.mroczis.netmonster.core.db.model.NetworkType
+import cz.mroczis.netmonster.core.feature.detect.DetectorAosp
+import cz.mroczis.netmonster.core.feature.detect.DetectorHspaDc
+import cz.mroczis.netmonster.core.feature.detect.DetectorLteAdvancedCellInfo
+import cz.mroczis.netmonster.core.feature.detect.DetectorLteAdvancedNrServiceState
+import cz.mroczis.netmonster.core.feature.detect.DetectorLteAdvancedPhysicalChannel
 import cz.mroczis.netmonster.core.model.band.BandGsm
 import cz.mroczis.netmonster.core.model.band.BandLte
 import cz.mroczis.netmonster.core.model.band.BandNr
@@ -157,7 +163,7 @@ fun ISignal.toSignalRecord(
         }
     }
 
-    Timber.e("Signal saving time 1: $currentTime  starting time: $testStartTimeNanos   current time: ${System.nanoTime()}")
+//    Timber.d("Signal saving time 1: $currentTime  starting time: $testStartTimeNanos   current time: ${System.nanoTime()}")
     val startTimestampNsSinceBoot = testStartTimeNanos + (SystemClock.elapsedRealtimeNanos() - System.nanoTime())
     val timeNanos = currentTime - testStartTimeNanos
     var timeNanosLast = if (currentTime < startTimestampNsSinceBoot) currentTime - startTimestampNsSinceBoot else null
@@ -563,7 +569,12 @@ fun ICell.frequency(): Double? {
 fun ICell.mobileNetworkType(netMonster: INetMonster): MobileNetworkType {
     var networkTypeFromNM: NetworkType? = null
     try {
-        networkTypeFromNM = netMonster.getNetworkType(this.subscriptionId)
+        networkTypeFromNM = netMonster.getNetworkType(this.subscriptionId,
+            DetectorLteAdvancedNrServiceState(),
+            DetectorLteAdvancedPhysicalChannel(),
+            DetectorLteAdvancedCellInfo(),
+            DetectorAosp() // best to keep last when all other strategies fail
+        ) ?: NetworkTypeTable.get(NetworkType.UNKNOWN)
 //        Timber.d("NM network type direct: ${networkTypeFromNM.technology}")
     } catch (e: SecurityException) {
         Timber.e("SecurityException: Not able to read network type")

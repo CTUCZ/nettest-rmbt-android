@@ -35,10 +35,12 @@ class LoopFinishedActivity : BaseActivity() {
         binding = bindContentView(R.layout.activity_loop_finished)
 
         binding.buttonGoToResults.setOnClickListener {
+            this.finishAffinity()
             HomeActivity.startWithFragment(this, HomeActivity.Companion.HomeNavigationTarget.HISTORY_FRAGMENT_TO_SHOW)
         }
 
         binding.buttonRunAgain.setOnClickListener {
+            this.finishAffinity()
             HomeActivity.startWithFragment(this, HomeActivity.Companion.HomeNavigationTarget.HOME_FRAGMENT_TO_SHOW)
             LoopConfigurationActivity.start(this)
         }
@@ -76,6 +78,7 @@ class LoopFinishedActivity : BaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        this.finishAffinity()
         HomeActivity.startWithFragment(this, HomeActivity.Companion.HomeNavigationTarget.HOME_FRAGMENT_TO_SHOW)
     }
 

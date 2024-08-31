@@ -8,14 +8,14 @@ apply from: "$project.rootDir/tools/script-ktlint.gradle"
 apply from: "$project.rootDir/tools/utils.gradle"
 
 android {
-    namespace 'at.specure.core'
+
     compileSdkVersion config.targetSdkVersion
 
     defaultConfig {
         minSdkVersion config.minSdkVersion
         targetSdkVersion config.targetSdkVersion
-        versionCode = config.versionCode
-        versionName = config.versionName
+        versionCode config.versionCode
+        versionName config.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -24,8 +24,12 @@ android {
         buildConfigField "String", "GIT_FULL_HASH", "\"${gitFullHash()}\""
         buildConfigField "int", "GIT_VERSION_CODE", gitVersionCode()
         buildConfigField "boolean", "GIT_IS_DIRTY", gitIsDirty()
-        buildConfigField "int", "VERSION_CODE", "${versionCode}"
+        buildConfigField "int", "VERSION_CODE", "${versionCode ?: 1}"
         buildConfigField "String", "VERSION_NAME", "\"${versionName}\""
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     buildTypes {
@@ -34,7 +38,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -45,6 +48,7 @@ android {
         jvmTarget = "17"
     }
 
+    namespace 'at.specure.core'
     lint {
         abortOnError true
         htmlOutput file("$rootDir/build_results/lint-result.html")

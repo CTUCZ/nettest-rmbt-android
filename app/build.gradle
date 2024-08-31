@@ -40,6 +40,7 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
+        buildConfig true
     }
 
     kapt { correctErrorTypes = true }
@@ -93,8 +94,6 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$versions.swiperefresh_layout"
     implementation "androidx.vectordrawable:vectordrawable:$versions.vectordrawable"
     implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigation_fragment"
-    implementation "androidx.navigation:navigation-ui-ktx:$versions.navigation_ui"
-    implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigation_fragment"
     implementation "androidx.navigation:navigation-ui-ktx:$versions.navigation_fragment"
     implementation "com.google.android.gms:play-services-maps:$versions.google_services"
 
@@ -110,6 +109,8 @@ dependencies {
 
     implementation "androidx.preference:preference-ktx:$versions.androidx_preference"
     implementation "com.github.zcweng:switch-button:$versions.switch_button"
+
+    implementation "androidx.core:core-splashscreen:$versions.splash_screen"
 
     debugImplementation "com.facebook.stetho:stetho:$versions.stetho"
 

@@ -51,8 +51,10 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import timber.log.Timber
+import java.lang.Exception
 import java.util.UUID
 import java.util.Collections
+import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.floor
@@ -135,7 +137,7 @@ class StateRecorder @Inject constructor(
                 lastMeasurementSignalStrength = signalStrengthInfo
             }
             signalStrengthInfo = info?.signalStrengthInfo
-            Timber.e("Signal saving time OBSERVER: starting time: $testStartTimeNanos   current time: ${System.nanoTime()}")
+//            Timber.d("Signal saving time OBSERVER: starting time: $testStartTimeNanos   current time: ${System.nanoTime()}")
             if (networkInfo?.type != TransportType.CELLULAR) {
                 saveSignalStrength(testUUID, signalStrengthInfo)
             }
@@ -162,7 +164,16 @@ class StateRecorder @Inject constructor(
                     saveTestInitialTestData(testUUID, loopUUID, testToken, testStartTimeNanos, threadNumber)
                                       },
             )
-            tasks.awaitAll()
+            try {
+                tasks.awaitAll()
+            } catch (e: Exception) {
+                if (e is CancellationException) {
+                    throw e
+                } else {
+                    Timber.e(e.localizedMessage)
+                }
+            }
+
         }
         cellLocation = cellLocationWatcher.getCellLocationFromTelephony()
         saveCellLocation()
@@ -181,6 +192,7 @@ class StateRecorder @Inject constructor(
         testUUID = null
         testToken = null
         qosRunning = false
+        testRecord = null
     }
 
     private fun saveTestInitialTestData(testUUID: String, loopUUID: String?, testToken: String, testStartTimeNanos: Long, threadNumber: Int): Unit {
@@ -240,7 +252,7 @@ class StateRecorder @Inject constructor(
 
     fun onLoopTestFinished() {
         _loopModeRecord?.let {
-            if (it.testsPerformed >= config.loopModeNumberOfTests) {
+            if (it.testsPerformed >= config.loopModeNumberOfTests && config.loopModeNumberOfTests > 0) {
                 it.status = LoopModeState.FINISHED
             } else {
                 it.status = LoopModeState.IDLE
@@ -330,7 +342,7 @@ class StateRecorder @Inject constructor(
 
             // saving only valid signal with associated cell (wifi and mobile connections)
             if (cellUUID.isNotEmpty() && isSignalValid) {
-                Timber.e("Signal saving time SR: starting time: $testStartTimeNanos   current time: ${System.nanoTime()}")
+//                Timber.d("Signal saving time SR: starting time: $testStartTimeNanos   current time: ${System.nanoTime()}")
                 repository.saveSignalStrength(uuid, null, cellUUID, mobileNetworkType, info, testStartTimeNanos, nrConnectionState)
             }
         }
@@ -612,9 +624,7 @@ class StateRecorder @Inject constructor(
 
         testRecord?.let {
             repository.update(it) {
-                if (!waitQosResults) {
-                    onReadyToSubmit?.invoke(true)
-                }
+                onReadyToSubmit?.invoke(true)
             }
         }
 
@@ -635,7 +645,7 @@ class StateRecorder @Inject constructor(
             repository.updateQoSTestStatus(uuid, TestStatus.QOS_END)
             Timber.d("QOSLOG: ${TestStatus.QOS_END}")
             repository.saveQoSResults(uuid, token, data) {
-                onReadyToSubmit?.invoke(true)
+                Timber.d("QOS test complete loaded")
             }
         }
         testUUID = null

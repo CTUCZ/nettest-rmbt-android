@@ -49,6 +49,7 @@ fun HistoryResponse.toModelList(): List<History?> = history?.map { it?.toModel()
 
 fun HistoryItemResponse.toModel() = History(
     testUUID = testUUID,
+    openTestUUID = openTestUUID,
     loopUUID = loopUUID,
     referenceUUID = if (loopUUID == null) testUUID else loopUUID!!,
     model = model,
@@ -83,6 +84,7 @@ fun HistoryItemONTResponse.toModel(): History {
     val dateTime = DateTime(measurementDate)
     return History(
         testUUID = testUUID,
+        openTestUUID = null,
         loopUUID = loopUUID,
         referenceUUID = loopUUID ?: testUUID,
         model = "",
@@ -385,7 +387,7 @@ fun QosTestResultDetailResponse.toModels(
         }
         successfulTests.clear()
 
-        if (failureCount != successCount && qosTestCategoryDescription != null) {
+        if ((successCount != 0 || failureCount != 0) && qosTestCategoryDescription != null) {
             categories.add(
                 QosCategoryRecord(
                     testUUID = testUUID,

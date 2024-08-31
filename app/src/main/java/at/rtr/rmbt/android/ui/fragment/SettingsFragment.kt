@@ -3,6 +3,7 @@ package at.rtr.rmbt.android.ui.fragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -33,20 +34,23 @@ import at.specure.util.openAppSettings
 import timber.log.Timber
 import java.util.Locale
 
-class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSelectionDialog.Callback, SimpleDialog.Callback {
+
+class SettingsFragment : BaseFragment(), InputSettingDialog.Callback,
+    ServerSelectionDialog.Callback, SimpleDialog.Callback {
 
     private val settingsViewModel: SettingsViewModel by viewModelLazy()
     private val binding: FragmentSettingsBinding by bindingLazy()
 
     override val layoutResId = R.layout.fragment_settings
 
-    private val startLoopModeInstructionForResult = registerForActivityResult(StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            settingsViewModel.state.loopModeEnabled.set(true)
-        } else {
-            settingsViewModel.state.loopModeEnabled.set(false)
+    private val startLoopModeInstructionForResult =
+        registerForActivityResult(StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                settingsViewModel.state.loopModeEnabled.set(true)
+            } else {
+                settingsViewModel.state.loopModeEnabled.set(false)
+            }
         }
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -98,7 +102,8 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
             val clientUUIDExists = !binding.clientUUID.value.isNullOrEmpty()
             if (clientUUIDExists) {
                 context?.copyToClipboard(binding.clientUUID.value)
-                Toast.makeText(context, R.string.about_client_uuid_copied, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.about_client_uuid_copied, Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 
@@ -117,7 +122,9 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
             settingsViewModel.state.isLocationEnabled.get()?.let {
                 when (it) {
                     LocationState.ENABLED -> requireContext().openAppSettings()
-                    LocationState.DISABLED_APP -> OpenLocationPermissionDialog.instance().show(activity)
+                    LocationState.DISABLED_APP -> OpenLocationPermissionDialog.instance()
+                        .show(activity)
+
                     LocationState.DISABLED_DEVICE -> OpenGpsSettingDialog.instance().show(activity)
                 }
             }
@@ -194,30 +201,66 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
         binding.version.value = "${BuildConfig.VERSION_NAME} (${BuildConfig.BUILD_TIME})"
         binding.commitHash.value = BuildConfig.COMMIT_HASH
         binding.sourceCode.root.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(settingsViewModel.state.githubRepositoryUrl.get())))
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(settingsViewModel.state.githubRepositoryUrl.get())
+                )
+            )
         }
         binding.developedBy.root.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.preferences_developer_page))))
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(getString(R.string.preferences_developer_page))
+                )
+            )
         }
         binding.designBy.root.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.preferences_design_page))))
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(getString(R.string.preferences_design_page))
+                )
+            )
         }
         binding.networkBy.root.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.preferences_network_info_page))))
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(getString(R.string.preferences_network_info_page))
+                )
+            )
         }
         binding.goToWebsite.root.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(settingsViewModel.state.webPageUrl.get())))
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(settingsViewModel.state.webPageUrl.get())
+                )
+            )
         }
         binding.contactUs.root.setOnClickListener {
             val emailIntent = Intent(Intent.ACTION_SEND)
             emailIntent.type = "plain/text"
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(settingsViewModel.state.emailAddress.get()))
+            emailIntent.putExtra(
+                Intent.EXTRA_EMAIL,
+                arrayOf(settingsViewModel.state.emailAddress.get())
+            )
             emailIntent.putExtra(
                 Intent.EXTRA_SUBJECT,
                 "${getString(R.string.about_email_subject)}  ${getString(R.string.app_name)}  ${BuildConfig.VERSION_NAME}"
             )
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "") // to navigate cursor directly to the message body
-            startActivity(Intent.createChooser(emailIntent, getString(R.string.about_email_sending)))
+            emailIntent.putExtra(
+                Intent.EXTRA_TEXT,
+                ""
+            ) // to navigate cursor directly to the message body
+            startActivity(
+                Intent.createChooser(
+                    emailIntent,
+                    getString(R.string.about_email_sending)
+                )
+            )
         }
 
         binding.dataPrivacyAndTerms.root.setOnClickListener {
@@ -245,7 +288,8 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
         settingsViewModel.state.developerModeIsEnabled.addOnPropertyChanged {
             if (it.get() == false) {
                 if (!settingsViewModel.isLoopModeWaitingTimeValid(
-                        settingsViewModel.state.loopModeWaitingTimeMin.get() ?: settingsViewModel.state.appConfig.loopModeMinWaitingTimeMin,
+                        settingsViewModel.state.loopModeWaitingTimeMin.get()
+                            ?: settingsViewModel.state.appConfig.loopModeMinWaitingTimeMin,
                         settingsViewModel.state.appConfig.loopModeMaxWaitingTimeMin,
                         settingsViewModel.state.appConfig.loopModeMinWaitingTimeMin
                     )
@@ -253,7 +297,8 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
                     settingsViewModel.state.loopModeWaitingTimeMin.set(settingsViewModel.state.appConfig.loopModeMinWaitingTimeMin)
                 }
                 if (!settingsViewModel.isLoopModeDistanceMetersValid(
-                        settingsViewModel.state.loopModeDistanceMeters.get() ?: settingsViewModel.state.appConfig.loopModeMinDistanceMeters,
+                        settingsViewModel.state.loopModeDistanceMeters.get()
+                            ?: settingsViewModel.state.appConfig.loopModeMinDistanceMeters,
                         settingsViewModel.state.appConfig.loopModeMinDistanceMeters,
                         settingsViewModel.state.appConfig.loopModeMaxDistanceMeters
                     )
@@ -323,6 +368,7 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
                         .show(childFragmentManager, CODE_DIALOG_INVALID)
                 }
             }
+
             KEY_REQUEST_CODE_LOOP_MODE_DISTANCE -> {
                 if (!settingsViewModel.isLoopModeDistanceMetersValid(
                         value.toInt(),
@@ -343,9 +389,15 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
                         .show(childFragmentManager, CODE_DIALOG_INVALID)
                 }
             }
+
             KEY_REQUEST_CODE_ENTER_CODE -> {
-                Toast.makeText(activity, getString(settingsViewModel.isCodeValid(value)), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    activity,
+                    getString(settingsViewModel.isCodeValid(value)),
+                    Toast.LENGTH_LONG
+                ).show()
             }
+
             KEY_DEVELOPER_CONTROL_SERVER_HOST_CODE -> {
                 settingsViewModel.state.controlServerHost.set(value)
             }
@@ -353,6 +405,7 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
             KEY_DEVELOPER_CONTROL_SERVER_PORT_CODE -> {
                 settingsViewModel.state.controlServerPort.set(value)
             }
+
             KEY_DEVELOPER_MAP_SERVER_HOST_CODE -> {
                 settingsViewModel.state.mapServerHost.set(value)
             }
@@ -401,14 +454,20 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
     override fun onDialogPositiveClicked(code: Int) {
         when (code) {
             KEY_RADIO_INFO_CODE -> {
-                val i = Intent(Intent.ACTION_VIEW)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    i.setClassName("com.android.phone", "com.android.phone.settings.RadioInfo")
-                } else {
-                    i.setClassName("com.android.settings", "com.android.settings.RadioInfo")
-                }
                 try {
-                    startActivity(i)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        context?.let {
+                            openRadioInfoActivity(it)
+                        }
+                    } else {
+                        val i = Intent(Intent.ACTION_VIEW)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            i.setClassName("com.android.phone", "com.android.phone.settings.RadioInfo")
+                        } else {
+                            i.setClassName("com.android.settings", "com.android.settings.RadioInfo")
+                        }
+                        startActivity(i)
+                    }
                 } catch (e: ActivityNotFoundException) {
                     showNotSupportedToast()
                 } catch (e: SecurityException) {
@@ -418,11 +477,24 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback, ServerSele
         }
     }
 
+    private fun openRadioInfoActivity(context: Context) {
+        val radioInfoComponentName =
+            ComponentName("com.android.phone", "com.android.phone.settings.RadioInfo")
+        val radioInfoIntent = Intent().apply {
+            component = radioInfoComponentName
+        }
+        context.startActivity(radioInfoIntent)
+    }
+
     override fun onDialogNegativeClicked(code: Int) {
         // not needed
     }
 
     private fun showNotSupportedToast() {
-        Toast.makeText(activity, R.string.preferences_connection_details_not_supported, Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            activity,
+            R.string.preferences_connection_details_not_supported,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

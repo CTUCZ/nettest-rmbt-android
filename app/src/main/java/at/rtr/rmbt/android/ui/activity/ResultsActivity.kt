@@ -3,7 +3,6 @@ package at.rtr.rmbt.android.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -23,6 +22,7 @@ import at.rtr.rmbt.android.viewmodel.ResultViewModel
 import at.specure.data.NetworkTypeCompat
 import at.specure.data.entity.TestResultRecord
 import timber.log.Timber
+import java.lang.IllegalStateException
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
@@ -35,7 +35,7 @@ class ResultsActivity : BaseActivity() {
     private lateinit var resultChartFragmentPagerAdapter: ResultChartFragmentPagerAdapter
 
     private var mapLoadRequested: Boolean = false
-    private val timer = Timer()
+    private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,11 +63,13 @@ class ResultsActivity : BaseActivity() {
 
             // show local results if no results from server after 2000 ms
              if (result?.isLocalOnly == true) {
-                timer.schedule(timerTask {
+                cancelAnyPreviouslyRunningTimer()
+                timer = Timer()
+                timer?.schedule(timerTask {
                     viewModel.state.testResult.set(result)
                 }, 2000)
             } else {
-                timer.cancel()
+                cancelAnyPreviouslyRunningTimer()
                 viewModel.state.testResult.set(result)
             }
 
@@ -153,7 +155,54 @@ class ResultsActivity : BaseActivity() {
 
             QosTestsSummaryActivity.start(this, it)
         }
+
+        binding.buttonDownloadPdf.setOnClickListener {
+            downloadFile("pdf")
+        }
+
+        binding.buttonDownloadXlsx.setOnClickListener {
+            downloadFile("xlsx")
+        }
+
+        binding.buttonDownloadCsv.setOnClickListener {
+            downloadFile("csv")
+        }
+
+        viewModel.downloadFileLiveData.listen(this) {
+            if (it.error != null) {
+                binding.buttonDownloadCsv.isEnabled = true
+                binding.buttonDownloadXlsx.isEnabled = true
+                binding.buttonDownloadPdf.isEnabled = true
+                if (it.error == "ERROR_DOWNLOAD") {
+                    Toast.makeText(this, R.string.error_during_download, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, R.string.error_opening_file, Toast.LENGTH_SHORT).show()
+                }
+            }
+            if (it.progress != null && it.file == null) {
+                binding.buttonDownloadCsv.isEnabled = false
+                binding.buttonDownloadXlsx.isEnabled = false
+                binding.buttonDownloadPdf.isEnabled = false
+            } else {
+                binding.buttonDownloadCsv.isEnabled = true
+                binding.buttonDownloadXlsx.isEnabled = true
+                binding.buttonDownloadPdf.isEnabled = true
+            }
+        }
+
         refreshResults()
+    }
+
+    private fun downloadFile(format: String) {
+        viewModel.downloadFile(format)
+    }
+
+    private fun cancelAnyPreviouslyRunningTimer() {
+        try {
+            this.timer?.cancel()
+        } catch (e: IllegalStateException) {
+            Timber.e(e.localizedMessage)
+        }
     }
 
 //    private fun setUpMap(result: TestResultRecord) {

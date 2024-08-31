@@ -184,9 +184,11 @@
         <item>10M</item>
         <item>100M</item>
         <item>1G</item>
+        <item>10G</item>
     </string-array>
 
     <string name="strength_signal_value" translatable="false">%d dBm</string>
+    <string name="scale_value_10000" translatable="false">10G</string>
     <string name="scale_value_1000" translatable="false">1G</string>
     <string name="scale_value_100" translatable="false">100M</string>
     <string name="scale_value_10" translatable="false">10M</string>
@@ -403,7 +405,7 @@
     <string name="cell_info_BSSID" translatable="false">BSSID</string>
     <string name="cell_info_SSID" translatable="false">SSID</string>
     <string name="cell_info_NCI" translatable="false">NCI</string>
-
+    
     <string name="label_location_access_disabled">Location permission missing</string>
     <string name="label_location_access_disabled_explanation">Grant location permission in settings.</string>
     <string name="label_some_permission_denied">App permissions missing</string>
@@ -415,9 +417,20 @@
     <string name="phone_permission_explanation">ČTÚ-NetTest does not make phone calls. The telephone permission is necessary to identify the provider.</string>
     <string name="location_permission_explanation">The location permission is necessary to identify the measurement location and to display it on the map. Without precise location permission, signal strength is unavailable on many devices. Use of loop mode while on the move is only possible with location permission.</string>
     <string name="location_permissions_disclaimer">RTR-NetTest uses the location permission only during the measurement, the background permission is required to allow to run the loop mode in background.</string>
-
+    <string name="PDF" translatable="false">PDF</string>
+    <string name="CSV" translatable="false">CSV</string>
+    <string name="XLSX" translatable="false">XLSX</string>
+    <string name="error_during_download">Download error</string>
+    <string name="error_opening_file">Error opening file</string>
+    <string name="download_complete">Download completed</string>
+    <string name="download_complete_description">File %1$s downloaded successfully. Tap to open it.</string>
+    <string name="downloading">Downloading</string>
+    <string name="download_progress">Downloaded %1$d%%</string>
+    <string name="history_filename">NetztestHistoryExport</string>
     <!-- Signal details - content labeling -->
 
+    <string name="notification_permission_title">3. Notification permission</string>
+    <string name="notification_permission_explanation">The notification permission is necessary to keep app alive during measurements executed on the background. Without notification permission, you will be not able to track measurement progress when app is on the background. The notification permission is required to allow to run the loop mode in background.</string>
     <!-- CTU customization -->
 
     <string-array name="spin_modes">

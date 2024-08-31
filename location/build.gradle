@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply from: "$project.rootDir/tools/script-ktlint.gradle"
 
 android {
-    namespace 'at.specure.location'
+
     compileSdkVersion config.targetSdkVersion
 
     defaultConfig {
@@ -31,15 +31,6 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
-    lint {
-        abortOnError true
-        htmlOutput file("$rootDir/build_results/lint-result.html")
-        lintConfig file("$rootDir/tools/rules-lint.xml")
-        warningsAsErrors true
-        xmlOutput file("$rootDir/build_results/lint-result.xml")
-        xmlReport true
-    }
     namespace 'at.specure.location'
     lint {
         abortOnError true
@@ -56,4 +47,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
     implementation "com.jakewharton.timber:timber:$versions.timber"
     implementation "androidx.appcompat:appcompat:$versions.appcompat"
+    implementation "androidx.test.ext:junit-ktx:$versions.kotlin_junit"
 }

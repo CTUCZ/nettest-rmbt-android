@@ -134,12 +134,15 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
     }
 
     private fun finishActivity(measurementFinished: Boolean) {
+        Timber.d("Finish activity with measurement finished: $measurementFinished, testUUID: ${viewModel.testUUID}, measurementState: ${viewModel.state.measurementState.get()}, LoopModeActive: ${viewModel.state.isLoopModeActive.get()}, LoopModeState: ${viewModel.state.loopModeRecord.get()?.status}")
         if (measurementFinished) {
             if (viewModel.state.isLoopModeActive.get()) {
                 if (viewModel.state.loopModeRecord.get()?.status == LoopModeState.FINISHED) {
                     val certMode = viewModel.state.loopModeRecord.get()?.certMode ?: false
                     // TODO předat do loop finished pro zobrazení možného exportu
                     val loopUUID = viewModel.state.loopModeRecord.get()?.uuid
+
+                    this.finishAffinity()
                     if(certMode && !loopUUID.isNullOrBlank()) {
                         LoopFinishedActivity.startForCertMode(this, loopUUID)
                     } else {
@@ -147,17 +150,22 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
                     }
                 }
             } else {
-                finish()
                 viewModel.testUUID?.let {
-                    if (viewModel.state.measurementState.get() == MeasurementState.FINISH)
+                    if (viewModel.state.measurementState.get() == MeasurementState.FINISH) {
                         ResultsActivity.start(this, it, ResultsActivity.ReturnPoint.HOME)
+                        finish()
+                        return
+                    }
                 }
+                finish()
+                HomeActivity.start(this)
             }
         }
     }
 
     private fun cancelMeasurement() {
         if (viewModel.state.isLoopModeActive.get()) {
+            finishAffinity()
             LoopFinishedActivity.start(this)
         } else {
             finishAffinity()
@@ -167,33 +175,40 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
 
     private fun onLoopRecordChanged(loopRecord: LoopModeRecord?) {
         Timber.d(
-            "TestPerformed: ${loopRecord?.testsPerformed} \nloop mode status: ${loopRecord?.status} \nLoop local uuid: ${loopRecord?.localUuid}\nLoop remote uuid: ${loopRecord?.uuid}\nviewModel: ${viewModel.state.measurementState.get()}"
+            "TestPerformed: ${loopRecord?.testsPerformed} \nloop mode status: ${loopRecord?.status} \nLoop local uuid: ${loopRecord?.localUuid}\nLoop remote uuid: ${loopRecord?.uuid}\nmeasurement state: ${viewModel.state.measurementState.get()}"
         )
         Timber.d("local loop UUID to read loop data: ${viewModel.loopUuidLiveData.value}")
         binding.curveLayout?.setLoopState(loopRecord?.status ?: LoopModeState.RUNNING)
+        Timber.d("curve updated")
         viewModel.state.setLoopRecord(loopRecord)
+        Timber.d("setting loop record in view model state")
         loopRecord?.testsPerformed?.let { testsPerformed ->
             viewModel.state.setLoopProgress(
                 testsPerformed,
                 viewModel.config.loopModeNumberOfTests
             )
+            Timber.d("setting loop record test performed: $testsPerformed")
         }
         binding.measurementBottomView?.loopMeasurementNextTestMetersProgress?.progress =
             viewModel.state.loopNextTestPercent.get()
+        Timber.d("setting next test progress")
         loopRecord?.status?.let { status ->
             if ((status == LoopModeState.IDLE) || (status == LoopModeState.FINISHED)) {
                 binding.measurementBottomView?.speedChartDownloadUpload?.reset()
                 binding.measurementBottomView?.qosProgressContainer?.reset()
             }
         }
-
+        Timber.d("qos and speed chart containers reset check / done")
         binding.buttonSignal?.setOnClickListener {
             startActivity(Intent(this, SignalMeasurementActivity::class.java))
+            Timber.d("setting signal measurement activity to run")
         }
 
         if (loopRecord?.status == LoopModeState.FINISHED || loopRecord?.status == LoopModeState.CANCELLED) {
+            Timber.d("finishing activity because loop mode has ended")
             finishActivity(true)
         }
+        Timber.d("updating loop mode after loop mode record change ended")
     }
 
     override fun onDialogPositiveClicked(code: Int) {

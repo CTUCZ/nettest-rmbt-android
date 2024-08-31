@@ -1,13 +1,18 @@
 package at.rtr.rmbt.android.ui.activity
 
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.window.OnBackInvokedDispatcher
+import androidx.activity.OnBackPressedCallback
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.ActivityTermsAcceptanceBinding
 import at.rtr.rmbt.android.di.viewModelLazy
@@ -17,6 +22,7 @@ import at.rtr.rmbt.android.util.changeStatusBarColor
 import at.rtr.rmbt.android.util.listen
 import at.rtr.rmbt.android.viewmodel.TermsAcceptanceViewModel
 import at.specure.worker.WorkLauncher
+import timber.log.Timber
 
 class TermsAcceptanceActivity : BaseActivity() {
 
@@ -27,6 +33,25 @@ class TermsAcceptanceActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = bindContentView(R.layout.activity_terms_acceptance)
         window?.changeStatusBarColor(ToolbarTheme.WHITE)
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            onBackInvokedDispatcher.registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT
+            ) {
+                Timber.d("ON back pressed")
+                // do nothing
+            }
+        } else {
+            onBackPressedDispatcher.addCallback(
+                this,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        // do nothing
+                        Timber.d("ON back pressed")
+                    }
+                })
+        }
+
 
         binding.content.webViewClient = TermsClient()
         viewModel.tacContentLiveData.listen(this) {
@@ -57,8 +82,8 @@ class TermsAcceptanceActivity : BaseActivity() {
             if (binding.checkbox.isChecked) {
                 viewModel.updateTermsAcceptance(true)
                 WorkLauncher.enqueueSettingsRequest(this)
-                setResult(Activity.RESULT_OK)
-                finish()
+                finishAffinity()
+                HomeActivity.start(this)
             } else {
                 SimpleDialog.Builder()
                     .messageText(R.string.text_terms_agree_empty)
@@ -89,8 +114,6 @@ class TermsAcceptanceActivity : BaseActivity() {
         binding.checkbox.requestFocus()
     }
 
-    override fun onBackPressed() {}
-
     inner class TermsClient : WebViewClient() {
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
@@ -100,14 +123,25 @@ class TermsAcceptanceActivity : BaseActivity() {
             binding.scrollView.visibility = View.VISIBLE
             binding.checkbox.requestFocus()
         }
-
+        @Deprecated("Deprecated in Java")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             // always open links in new intent on terms/conditions/privacy
+            url?.let {webUrl ->
+                openUrl(webUrl)
+            }
+            return true
+        }
+        @TargetApi(Build.VERSION_CODES.N)
+        override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+            // always open links in new intent on terms/conditions/privacy
+            openUrl(request.url.toString())
+            return true
+        }
+
+        private fun openUrl(url: String) {
             Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
                 startActivity(this)
             }
-
-            return true
         }
     }
 
@@ -115,6 +149,6 @@ class TermsAcceptanceActivity : BaseActivity() {
 
         private const val CODE_DIALOG = 12
 
-        fun start(activity: Activity, code: Int) = activity.startActivityForResult(Intent(activity, TermsAcceptanceActivity::class.java), code)
+        fun start(activity: Activity) = activity.startActivity(Intent(activity, TermsAcceptanceActivity::class.java))
     }
 }
