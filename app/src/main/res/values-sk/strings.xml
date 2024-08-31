@@ -219,6 +219,11 @@
         <item>Opakované měření</item>
         <item>Certifikované měření</item>
     </string-array>
+    <string name="label_location_access_disabled">Chybí oprávnění polohy</string>
+    <string name="label_some_permission_denied">Chybí oprávnění</string>
+    <string name="phone_permission_title">Oprávnění - Telefon</string>
+    <string name="location_permission_title">Oprávnění - Poloha</string>
+    <string name="phone_permission_explanation">ČTÚ-NetTest neprovádí žádné telefonní hovory.\n\nOprávnění na telefon je nutné pro identifikování telefonního operátora a měření síly signálu.</string>
     <string name="title_cert_instruction_1">Certifikované měření</string>
     <string name="text_cert_instruction_1"><![CDATA[<p>Měření slouží koncovým uživatelům k <ol><li>Zjištění úrovně pokrytí (pokryto/nepokryto) konkrétního místa podle podmínek v udělení práv k využívání rádiových kmitočtů pro zajištění sítí elektronických komunikací, vydaných ČTÚ. Pokud je výsledek certifikovaného měření v rozporu s mapou pokrytí (uváděnou operátorem na jejich stránkách), může uživatel podat stížnost operátorovi a doložit ji protokolem, který je výstupem certifikovaného měření.</li><li>Zjištění rychlosti downloadu / uploadu a porovnání s rychlostí uvedenou ve smlouvě o poskytování služby. Pokud je výsledek certifikovaného měření v rozporu se smlouvou, může uživatel podat reklamaci operátorovi a doložit ji protokolem, který je výstupem certifikovaného měření.</li><ol></p>]]></string>
     <string name="title_cert_instruction_2">Podmínky měření</string>

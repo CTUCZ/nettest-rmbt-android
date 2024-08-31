@@ -37,13 +37,11 @@ import at.rtr.rmbt.android.util.changeStatusBarColor
 import at.rtr.rmbt.android.util.listen
 import at.rtr.rmbt.android.viewmodel.HomeViewModel
 import at.rtr.rmbt.android.viewmodel.MeasurementViewModel
-import at.specure.data.entity.LoopModeState
 import at.specure.info.TransportType
 import at.specure.info.network.WifiNetworkInfo
 import at.specure.location.LocationState
 import at.specure.measurement.MeasurementService
 import at.specure.util.hasPermission
-import at.specure.util.openAppSettings
 import at.specure.util.toast
 import timber.log.Timber
 import java.lang.IndexOutOfBoundsException
@@ -479,7 +477,8 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
             InformationAccessProblem.MISSING_PRECISE_LOCATION_PERMISSION,
             InformationAccessProblem.MISSING_BACKGROUND_LOCATION_PERMISSION -> {
                 binding.panelPermissionsProblems.cardPP.setOnClickListener {
-                    requireContext().openAppSettings()
+                    requirePermissions()
+//                    requireContext().openAppSettings()
                 }
             }
             InformationAccessProblem.NO_PROBLEM -> {
@@ -570,7 +569,7 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
                 .messageText(R.string.permissions_dialog_text)
                 .positiveText(android.R.string.ok)
                 .cancelable(false)
-                .show(this.childFragmentManager, CODE_PERM_INFO)
+                .show(this.childFragmentManager, CODE_PERM_LOCATION_INFO)
         }
     }
 
@@ -578,13 +577,20 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         val fineLocation = checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         val phone = checkSelfPermission(requireContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
 
-        if(!fineLocation || !phone) {
+        if(!fineLocation) {
             SimpleDialog.Builder()
-                .titleText(R.string.permissions_dialog_title)
+                .titleText(R.string.location_permission_title)
                 .messageText(R.string.permissions_dialog_text)
                 .positiveText(android.R.string.ok)
                 .cancelable(false)
-                .show(this.childFragmentManager, CODE_PERM_INFO)
+                .show(this.childFragmentManager, CODE_PERM_LOCATION_INFO)
+        } else if(!phone) {
+            SimpleDialog.Builder()
+                .titleText(R.string.phone_permission_title)
+                .messageText(R.string.phone_permission_explanation)
+                .positiveText(android.R.string.ok)
+                .cancelable(false)
+                .show(this.childFragmentManager, CODE_PERM_PHONE_INFO)
         } else if (forceBackgroundLocation){
             requireBackgroundLocationPermission()
         }
@@ -703,8 +709,12 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
     override fun onDialogPositiveClicked(code: Int) {
 
 
-        if(code == CODE_PERM_INFO) {
-            permRequestLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE))
+        if(code == CODE_PERM_LOCATION_INFO) {
+            permRequestLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
+        }
+
+        if(code == CODE_PERM_PHONE_INFO) {
+            permRequestLauncher.launch(arrayOf(Manifest.permission.READ_PHONE_STATE))
         }
 
         if (code == CODE_BACKGROUND_PERM_INFO && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -732,6 +742,9 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         if(permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true && homeViewModel.state.isCertModeActive.get()) {
             requireBackgroundLocationPermission()
         }
+        else if(permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
+            requirePermissions()
+        }
         homeViewModel.permissionsWereAsked()
         homeViewModel.permissionsWatcher.notifyPermissionsUpdated()
     }
@@ -748,7 +761,8 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         private const val INFO_WINDOW_TIME_MS: Long = 2000
         private const val CODE_DIALOG_NEWS = 14
         private const val CODE_CERT_INSTRUCTIONS = 15
-        private const val CODE_PERM_INFO = 16
+        private const val CODE_PERM_LOCATION_INFO = 16
+        private const val CODE_PERM_PHONE_INFO = 20
         private const val CODE_BACKGROUND_PERM_INFO = 17
         private const val CODE_BACKGROUND_BACKUP_PERM_INFO = 18
         private const val CODE_NO_CELLULAR_NETWORK = 19
