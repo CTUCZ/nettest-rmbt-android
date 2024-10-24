@@ -220,7 +220,9 @@
         <item>Certifikované měření</item>
     </string-array>
     <string name="label_location_access_disabled">Chybí oprávnění polohy</string>
+    <string name="label_location_access_disabled_explanation">Udělte oprávnění pro polohu v nastavení</string>
     <string name="label_some_permission_denied">Chybí oprávnění</string>
+    <string name="label_some_permission_denied_explanation">Udělte oprávnění v nastavení</string>
     <string name="phone_permission_title">Oprávnění - Telefon</string>
     <string name="location_permission_title">Oprávnění - Poloha</string>
     <string name="phone_permission_explanation">ČTÚ-NetTest neprovádí žádné telefonní hovory.\n\nOprávnění na telefon je nutné pro identifikování telefonního operátora a měření síly signálu.</string>
@@ -280,6 +282,8 @@
     <string name="loop_mode_max_num_of_tests_invalid">Vyberte hodnotu mezi %1$d a %2$d.</string>
 
     <string name="toast_signal_measurement_enabled">Zahájeno měření signálu.</string>
+    <string name="hint_sync_code">Kód</string>
+    <string name="error_sync_code_short">Kód musí mít dvanáct znaků.</string>
     <string name="notification_signal_test_title">Spuštěno měření signálu</string>
     <string name="notification_signal_test_text">NetTest Měření signálu běží na pozadí</string>
     <string name="download_pdf_title">NetTest výsledek certfiikovaného měření</string>
@@ -295,4 +299,23 @@
     <string name="acra_dialog_title">ČTÚ-NetTest aplikace spadla</string>
     <string name="acra_dialog_text">Aplikace bohužel spadla, odešlete prosím report vývojářům.</string>
     <string name="acra_dialog_comment_prompt">Můžete připojit komentář (např. co jste dělali v aplikaci před pádem):</string>
+    <string name="title_sync">Synchronizace</string>
+    <string name="text_sync_info">Máte možnost spojit výsledky z různých zařízení. K tomu musíte zadat již požadovaný synchronizační kód nebo požádat o nový.</string>
+    <string name="button_sync_request_code">Požádat o kód</string>
+    <string name="button_sync_enter_code">Zadat kód</string>
+    <string name="text_sync_code_received">Zadejte prosím kód uvedený níže na druhém zařízení, abyste synchronizovali výsledky.</string>
+    <string name="text_sync_enter_code_desc">Zadejte prosím kód, který jste obdrželi na svém druhém zařízení.</string>
+    <string name="text_filter_confirm">Přijmout</string>
+    <string name="text_filter_continue">Pokračovat</string>
+    <string name="text_filter_devices">Zařízení</string>
+    <string name="text_filter_networks">Sítě</string>
+    <string name="text_wait_loading">Načítání výsledků</string>
+    <string name="button_close">Zavřít</string>
+    <string name="toast_sync_code_copied_to_clipboard">Zkopírováno</string>
+    <string name="content_label_close">Zavřít</string>
+    <string name="error_opening_file">Chyba při otevírání souboru.</string>
+    <string name="download_complete">Stahování dokončeno</string>
+    <string name="download_complete_description">Soubor %1$s byl úspěšně stažen. Klepněte na něj pro otevření.</string>
+    <string name="error_no_connection">Není k dispozici připojení k internetu. Nelze načíst data.</string>
+    <string name="preferences_network_info_by">Síťové informace díky Netmonster core</string>
 </resources>

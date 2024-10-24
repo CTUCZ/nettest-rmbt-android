@@ -104,7 +104,7 @@ class HistoryDownloadViewModel @Inject constructor(
             }
             val languageCode = Locale.getDefault().toLanguageTag().split("-")[0]
             val statisticServerUrl = controlServerSettings.statisticsMasterServerUrl
-                ?: "https://m-cloud.netztest.at/RMBTStatisticServer"
+                ?: "https://***REMOVED***/RMBTStatisticServer"
             val url =
                 if (format == "pdf") "$statisticServerUrl/export/pdf/$languageCode"
                 else "$statisticServerUrl/opentests/search"

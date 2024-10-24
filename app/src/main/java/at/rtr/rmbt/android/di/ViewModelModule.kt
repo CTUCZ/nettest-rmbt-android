@@ -9,6 +9,7 @@ import at.rtr.rmbt.android.viewmodel.HistoryViewModel
 import at.rtr.rmbt.android.viewmodel.HomeViewModel
 import at.rtr.rmbt.android.viewmodel.LocationViewModel
 import at.rtr.rmbt.android.viewmodel.LoopConfigurationViewModel
+import at.rtr.rmbt.android.viewmodel.LoopFinishedViewModel
 import at.rtr.rmbt.android.viewmodel.MapFiltersViewModel
 import at.rtr.rmbt.android.viewmodel.MapViewModel
 import at.rtr.rmbt.android.viewmodel.MeasurementViewModel

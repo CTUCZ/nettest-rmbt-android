@@ -55,6 +55,7 @@
             android:paddingBottom="@dimen/padding_large"
             android:src="@drawable/ic_download_24"
             visibleOrGone="@{state.isHistoryEmpty() == false}"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/labelTitle"
             app:layout_constraintEnd_toStartOf="@+id/buttonSync"
             app:layout_constraintTop_toTopOf="@+id/labelTitle" />

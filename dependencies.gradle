@@ -5,15 +5,15 @@ buildscript {
         // All project module configs should be in config map
         config = [
                 applicationId    : "cz.ctu.rmbt.android.prod",
-                minSdkVersion    : 23,
+                minSdkVersion    : 26,
                 targetSdkVersion : 34,
-                versionCode      : (project.hasProperty('buildVersionCode') ? Integer.parseInt(buildVersionCode) : 26),
-                versionName      : (project.hasProperty('buildVersionName') ? buildVersionName : '1.4')
+                versionCode      : (project.hasProperty('buildVersionCode') ? Integer.parseInt(buildVersionCode) : 29),
+                versionName      : (project.hasProperty('buildVersionName') ? buildVersionName : '1.5')
         ]
 
         // All project modules dependency versions should be in versions map
         versions = [
-                kotlin              : '1.9.20',
+                kotlin              : '1.9.22',
                 coroutines          : '1.8.0',
                 appcompat           : '1.6.1',
                 androidx_core       : '1.13.1',
