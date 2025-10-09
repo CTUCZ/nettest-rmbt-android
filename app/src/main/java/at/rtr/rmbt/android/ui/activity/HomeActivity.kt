@@ -18,8 +18,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.view.ViewGroup
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
@@ -105,8 +111,21 @@ class HomeActivity : BaseActivity() {
             }
         }
 
+        binding.navView.menu.findItem(R.id.navigation_home).setContentDescription(getString(R.string.home_home))
+        binding.navView.menu.findItem(R.id.navigation_history).setContentDescription(getString(R.string.home_history))
+        binding.navView.menu.findItem(R.id.navigation_statistics).setContentDescription(getString(R.string.home_statistics))
+        binding.navView.menu.findItem(R.id.navigation_map).setContentDescription(getString(R.string.home_map))
+
         configCheckViewModel.incorrectValuesLiveData.listen(this) {
             ConfigCheckDialog.show(supportFragmentManager, it)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                binding.navView.updatePadding(bottom = insets.bottom)
+//            WindowInsetsCompat.CONSUMED
+                windowInsets
+            }
         }
     }
 

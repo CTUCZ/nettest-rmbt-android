@@ -1,6 +1,7 @@
 package at.specure.test
 
 import android.content.Context
+import android.location.Location
 import android.os.Build
 import androidx.annotation.Keep
 import at.rmbt.client.control.PermissionStatusBody
@@ -26,11 +27,11 @@ class DeviceInfo(context: Context, val location: Location? = null, val temperatu
 
     @SerializedName("api_level")
     val apiLevel = Build.VERSION.SDK_INT.toString()
-    val device = Build.DEVICE
-    val model = Build.MODEL
-    val product = Build.PRODUCT
-    val language = Locale.getDefault().language
-    val timezone = TimeZone.getDefault().id
+    val device: String? = Build.DEVICE
+    val model: String? = Build.MODEL
+    val product: String? = Build.PRODUCT
+    val language: String? = Locale.getDefault().language
+    val timezone: String? = TimeZone.getDefault().id
 
     val softwareRevision = buildString {
         append(BuildConfig.GIT_BRANCH_NAME)
@@ -117,4 +118,36 @@ fun LocationInfo?.toDeviceInfoLocation(): DeviceInfo.Location? = if (this == nul
         altitude = altitude,
         satellites = satellites
     )
+}
+
+fun DeviceInfo.Location.toLocation(): Location {
+    val location = Location(this.provider)
+    location.latitude = this.lat
+    location.longitude = this.long
+    location.speed = this.speed
+    location.bearing = this.bearing
+    location.time = this.time
+    location.accuracy = this.accuracy
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        location.isMock = this.mock_location
+    }
+    location.altitude = this.altitude
+    return location
+}
+
+fun LocationInfo.toLocation(): Location {
+    val location = Location(provider)
+    location.latitude = latitude
+    location.longitude = longitude
+    location.time = time
+    location.accuracy = accuracy
+    location.bearing = bearing
+    location.bearingAccuracyDegrees = bearingAccuracy
+    location.elapsedRealtimeNanos = elapsedRealtimeNanos
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        location.isMock = this.locationIsMocked
+    }
+    location.speed = speed
+    location.altitude = this.altitude
+    return location
 }

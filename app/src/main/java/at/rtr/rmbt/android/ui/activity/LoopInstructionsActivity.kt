@@ -11,6 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.viewpager.widget.PagerAdapter
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.ActivityLoopInstructionsBinding
@@ -19,8 +22,7 @@ import at.rtr.rmbt.android.di.viewModelLazy
 import at.rtr.rmbt.android.util.ToolbarTheme
 import at.rtr.rmbt.android.util.changeStatusBarColor
 import at.rtr.rmbt.android.viewmodel.LoopConfigurationViewModel
-
-private const val PAGE_COUNT = 2
+import kotlin.math.max
 
 class LoopInstructionsActivity : BaseActivity(), Callback {
 
@@ -30,6 +32,25 @@ class LoopInstructionsActivity : BaseActivity(), Callback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = bindContentView(R.layout.activity_loop_instructions)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+                val insetsSystemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val insetsDisplayCutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+                val topSafe = max(insetsSystemBars.top, insetsDisplayCutout.top)
+                val leftSafe = max(insetsSystemBars.left, insetsDisplayCutout.left)
+                val rightSafe = max(insetsSystemBars.right, insetsDisplayCutout.right)
+                val bottomSafe = max(insetsSystemBars.bottom, insetsDisplayCutout.bottom)
+
+                v.updatePadding(
+                    right = rightSafe,
+                    left = leftSafe,
+                    top = topSafe,
+                    bottom = bottomSafe
+                )
+                WindowInsetsCompat.CONSUMED
+            }
+        }
+
         window?.changeStatusBarColor(ToolbarTheme.WHITE)
 
         binding.title.text = getString(R.string.title_loop_instruction_1)
@@ -49,6 +70,11 @@ class LoopInstructionsActivity : BaseActivity(), Callback {
     }
 
     override fun onSecondPageAccepted() {
+        binding.title.text = getString(R.string.title_loop_instruction_3)
+        binding.pager.setCurrentItem(2, true)
+    }
+
+    override fun onThirdPageAccepted() {
         setResult(Activity.RESULT_OK)
         if (isNeedToAskForNotificationPermission()) {
             checkNotificationPermission()
@@ -137,10 +163,14 @@ class LoopInstructionsActivity : BaseActivity(), Callback {
 
     inner class InstructionsAdapter(context: Context, private val callback: Callback) : PagerAdapter() {
 
-        private var items = listOf(context.getString(R.string.text_loop_instruction_1), context.getString(R.string.text_loop_instruction_2))
+        private var items = listOf(
+            context.getString(R.string.text_loop_instruction_1),
+            context.getString(R.string.text_loop_instruction_2),
+            context.getString(R.string.text_loop_instruction_3),
+        )
 
         override fun isViewFromObject(view: View, o: Any) = view == o
-        override fun getCount() = PAGE_COUNT
+        override fun getCount() = items.size
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val binding = ViewLoopModeInstructionBinding.inflate(LayoutInflater.from(container.context))
@@ -148,7 +178,13 @@ class LoopInstructionsActivity : BaseActivity(), Callback {
             binding.content.text = items[position]
 
             binding.decline.setOnClickListener { callback.onDeclined() }
-            binding.accept.setOnClickListener { if (position == PAGE_COUNT - 1) callback.onSecondPageAccepted() else callback.onFirstPageAccepted() }
+            binding.accept.setOnClickListener {
+                when (position) {
+                    0 -> callback.onFirstPageAccepted()
+                    1 -> callback.onSecondPageAccepted()
+                    else -> callback.onThirdPageAccepted()
+                }
+            }
             container.addView(binding.root)
             return binding.root
         }
@@ -169,4 +205,5 @@ interface Callback {
     fun onDeclined()
     fun onFirstPageAccepted()
     fun onSecondPageAccepted()
+    fun onThirdPageAccepted()
 }

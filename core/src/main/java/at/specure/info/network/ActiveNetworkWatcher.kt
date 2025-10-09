@@ -33,6 +33,7 @@ import at.specure.info.wifi.WifiInfoWatcher
 import at.specure.location.LocationState
 import at.specure.location.LocationStateWatcher
 import at.specure.util.filterOnlyPrimaryActiveDataCell
+import at.specure.util.isDualSim
 import at.specure.util.isFineLocationPermitted
 import at.specure.util.isLocationServiceEnabled
 import at.specure.util.isReadPhoneStatePermitted
@@ -45,6 +46,7 @@ import cz.mroczis.netmonster.core.factory.NetMonsterFactory
 import cz.mroczis.netmonster.core.model.cell.CellLte
 import cz.mroczis.netmonster.core.model.cell.CellNr
 import cz.mroczis.netmonster.core.model.cell.ICell
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -101,6 +103,9 @@ class ActiveNetworkWatcher(
     private val connectivityCallback = object : ConnectivityWatcher.ConnectivityChangeListener {
 
         override fun onConnectivityChanged(connectivityInfo: ConnectivityInfo?, network: Network?) {
+
+
+
             lastConnectivityInfo = connectivityInfo
             Timber.d("NIFU: \n\n $connectivityInfo \n\n $network")
             handler?.removeCallbacks(signalUpdateRunnable)
@@ -129,7 +134,7 @@ class ActiveNetworkWatcher(
                     }
                 }
             }
-            GlobalScope.launch {
+            GlobalScope.launch((CoroutineName("captivePortalChecks"))) {
                 captivePortal.resetCaptivePortalStatus()
                 captivePortal.checkForCaptivePortal()
             }
@@ -144,6 +149,11 @@ class ActiveNetworkWatcher(
                 var activeCellNetwork: CellNetworkInfo? = null
                 cells = netMonster.getCells()
 
+                // all of the methods above returns 2 on samsung dual sim no matter of how many sims are activated or inserted so only this is viable but it can return 1 when signal is lost
+                Timber.d("subscription manager - active subscriptions count: ${subscriptionManager.activeSubscriptionInfoCount}")
+
+                val simCount = subscriptionManager.activeSubscriptionInfoCount
+
                 val dataSubscriptionId = subscriptionManager.getCurrentDataSubscriptionId()
 
                 val primaryCells = cells.filterOnlyPrimaryActiveDataCell(dataSubscriptionId)
@@ -156,7 +166,15 @@ class ActiveNetworkWatcher(
                 var primaryCellsCorrected = mutableListOf<ICell>()
                 when (primaryCells?.size) {
                     2 -> {
-                        if (primaryCells[0] is CellNr && primaryCells[0].mobileNetworkType(
+                        if (primaryCells[0] is CellNr && (primaryCells[0].mobileNetworkType(
+                                netMonster
+                            ) == MobileNetworkType.NR_SA)) {
+                            primaryCellsCorrected.add(primaryCells[0])
+                        } else if (primaryCells[1] is CellNr && (primaryCells[1].mobileNetworkType(
+                                netMonster
+                            ) == MobileNetworkType.NR_SA)) {
+                            primaryCellsCorrected.add(primaryCells[1])
+                        } else if (primaryCells[0] is CellNr && primaryCells[0].mobileNetworkType(
                                 netMonster
                             ) == MobileNetworkType.NR_NSA && primaryCells[1] is CellLte
                         ) {
@@ -191,7 +209,8 @@ class ActiveNetworkWatcher(
                             primaryCellsCorrected[0].subscriptionId
                         ),
                         primaryCellsCorrected[0].mobileNetworkType(netMonster),
-                        dataSubscriptionId
+                        dataSubscriptionId,
+                        simCount
                     )
                     // more than one primary cell for data subscription
                 } else {

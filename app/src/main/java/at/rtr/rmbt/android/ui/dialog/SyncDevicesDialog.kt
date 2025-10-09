@@ -1,11 +1,17 @@
 package at.rtr.rmbt.android.ui.dialog
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import at.rtr.rmbt.android.R
@@ -19,8 +25,10 @@ import at.rtr.rmbt.android.util.showKeyboard
 import at.rtr.rmbt.android.viewmodel.SyncDevicesViewModel
 import at.specure.util.copyToClipboard
 import at.specure.util.toast
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.max
 
 private const val CODE_LENGTH = 12
 
@@ -54,11 +62,32 @@ class SyncDevicesDialog : FullscreenDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_sync_devices, container, false)
         binding.state = viewModel.state
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+                val insetsSystemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val insetsDisplayCutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+                val topSafe = max(insetsSystemBars.top, insetsDisplayCutout.top)
+                val leftSafe = max(insetsSystemBars.left, insetsDisplayCutout.left)
+                val rightSafe = max(insetsSystemBars.right, insetsDisplayCutout.right)
+                val bottomSafe = max(insetsSystemBars.bottom, insetsDisplayCutout.bottom)
+                v.updateLayoutParams<MarginLayoutParams> {
+                    topMargin = topSafe
+                    leftMargin = leftSafe
+                    rightMargin = rightSafe
+                    bottomMargin = bottomSafe
+                }
+                WindowInsetsCompat.CONSUMED
+            }
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.iconClose.setOnClickListener {
+            this@SyncDevicesDialog.dismiss()
+        }
 
         binding.buttonRequestCode.setOnClickListener {
             viewModel.getSyncCode()
@@ -88,7 +117,7 @@ class SyncDevicesDialog : FullscreenDialog() {
             onCodeEntered()
         }
 
-        launch {
+        launch(CoroutineName("syncDevicesDialog")) {
             binding.editCode.onTextChanged()
                 .collect {
                     binding.inputCode.error = null

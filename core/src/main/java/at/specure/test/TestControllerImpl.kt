@@ -21,6 +21,7 @@ import at.rtr.rmbt.util.model.shared.exception.ErrorStatus
 import at.specure.config.Config
 import at.specure.data.ClientUUID
 import at.specure.data.MeasurementServers
+import at.rmbt.client.control.data.SignalMeasurementType
 import at.specure.measurement.MeasurementState
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
@@ -235,7 +236,12 @@ class TestControllerImpl(
             _testStartTimeNanos = connection?.startTimeNs ?: 0
             _testUUID = connection.testUuid
 
-            _listener?.onClientReady(_testUUID!!, connection.loopUuid, loopLocalUUID, _testStartTimeNanos)
+            val loopUUIDFromBackend = if (connection.loopUuid == "null") {
+                null
+            } else {
+                connection.loopUuid
+            }
+            _listener?.onClientReady(_testUUID!!, loopUUIDFromBackend, loopLocalUUID, _testStartTimeNanos)
 
             var skipQoSTests = !config.shouldRunQosTest
 

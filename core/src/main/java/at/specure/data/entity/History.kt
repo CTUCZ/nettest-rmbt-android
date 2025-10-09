@@ -34,5 +34,7 @@ data class History(
     val packetLossPercents: String?,
     val packetLossClassification: Classification?,
     val jitterClassification: Classification?,
+    val isCoverageResult: Boolean?,
+    val fencesCount: Int?,
     val certMode: Boolean?
 )

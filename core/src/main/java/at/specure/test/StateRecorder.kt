@@ -57,13 +57,14 @@ import java.util.Collections
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Named
 import kotlin.math.floor
 
 class StateRecorder @Inject constructor(
     private val context: Context,
     private val netmonster: INetMonster,
     private val repository: TestDataRepository,
-    private val locationWatcher: LocationWatcher,
+    @Named("GPSAndFusedLocationProvider") private val locationWatcher: LocationWatcher,
     private val signalStrengthLiveData: SignalStrengthLiveData,
     private val signalStrengthWatcher: SignalStrengthWatcher,
     private val config: Config,
@@ -119,7 +120,7 @@ class StateRecorder @Inject constructor(
 
         updateLocationInfo()
 
-        locationWatcher.liveData.observe(lifecycle, Observer { info ->
+        locationWatcher.liveData.observe(lifecycle, Observer { info: LocationInfo? ->
             if (locationWatcher.state == LocationState.ENABLED) {
                 _locationInfo = info
                 saveLocationInfo()
@@ -153,15 +154,17 @@ class StateRecorder @Inject constructor(
     }
 
     override fun onClientReady(testUUID: String, loopUUID: String?, testToken: String, testStartTimeNanos: Long, threadNumber: Int) {
+        Timber.d("INITIAL DATA on client ready testUUID $testUUID, loopUUId $loopUUID, testToken: $testToken, start: $testStartTimeNanos, threadNumber $threadNumber")
         this.testUUID = testUUID
         this.testToken = testToken
         this.testStartTimeNanos = testStartTimeNanos
         qosRunning = false
-        Timber.d("Signal saving time OCR: starting time: $testStartTimeNanos   current time: ${System.nanoTime()}")
+        Timber.d("TRS Signal saving time OCR: starting time: $testStartTimeNanos   current time: ${System.nanoTime()}")
         runBlocking {
             val tasks = listOf(
                 async(Dispatchers.IO) {
                     saveTestInitialTestData(testUUID, loopUUID, testToken, testStartTimeNanos, threadNumber)
+                    saveCapabilities()
                                       },
             )
             try {
@@ -182,7 +185,6 @@ class StateRecorder @Inject constructor(
             saveSignalStrength(testUUID, signalStrengthInfo)
         }
         saveCellInfo()
-        saveCapabilities()
         savePermissionsStatus()
         saveTelephonyInfo()
         saveWlanInfo()
@@ -196,7 +198,7 @@ class StateRecorder @Inject constructor(
     }
 
     private fun saveTestInitialTestData(testUUID: String, loopUUID: String?, testToken: String, testStartTimeNanos: Long, threadNumber: Int): Unit {
-        Timber.d("testUUID $testUUID, loopUUId $loopUUID, testToken: $testToken, start: $testStartTimeNanos, threadNumber $threadNumber")
+        Timber.d("INITIAL DATA testUUID $testUUID, loopUUId $loopUUID, testToken: $testToken, start: $testStartTimeNanos, threadNumber $threadNumber")
         testRecord = TestRecord(
             uuid = testUUID,
             loopUUID = loopUUID,
@@ -352,29 +354,40 @@ class StateRecorder @Inject constructor(
     private fun saveCellInfo() = io {
         val uuid = testUUID
         val info = networkInfo
-        if (networkInfo?.type == TransportType.CELLULAR) {
+        if (info?.type == TransportType.CELLULAR) {
             if (context.isLocationServiceEnabled() && context.isFineLocationPermitted() && context.isReadPhoneStatePermitted()) {
                 try {
                     val detailedNetworkInfo = signalStrengthWatcher.lastDetailedNetworkInfo
                     detailedNetworkInfo?.let {
-
-                        val cellNetworkInfo = detailedNetworkInfo.networkInfo
-                        val active5GNetworkInfos = detailedNetworkInfo.secondary5GActiveCellNetworks
-                        val otherCells = detailedNetworkInfo.allCellInfos?.toMutableList()
+                        val cellNetworkInfo = it.networkInfo
+                        val active5GNetworkInfos = it.secondary5GActiveCellNetworks?.toList() ?: emptyList()
+                        val active5GSignals = it.secondary5GActiveSignalStrengthInfos?.toList() ?: emptyList()
+                        val otherCells = it.allCellInfos?.toMutableList()
                         val testStartTimeNanos = testStartTimeNanos ?: 0
 
-                        if (detailedNetworkInfo.networkInfo is CellNetworkInfo) {
-                            otherCells?.remove(detailedNetworkInfo.networkInfo.rawCellInfo)
+                        if (cellNetworkInfo is CellNetworkInfo) {
+                            otherCells?.remove(cellNetworkInfo.rawCellInfo)
                         }
 
-                        saveNetworkInformation(cellNetworkInfo, detailedNetworkInfo.signalStrengthInfo, uuid, testStartTimeNanos)
-                        active5GNetworkInfos?.forEachIndexed { index, cellNetworkInfo ->
-                            otherCells?.remove(cellNetworkInfo?.rawCellInfo)
-                            saveNetworkInformation(cellNetworkInfo, detailedNetworkInfo.secondary5GActiveSignalStrengthInfos?.getOrNull(index), uuid, testStartTimeNanos)
-                        }
+                        // Save primary cell info
+                        saveNetworkInformation(cellNetworkInfo, it.signalStrengthInfo, uuid, testStartTimeNanos)
 
-                        if (config.headerValue.isNullOrEmpty()) {
-                            saveOtherCellInfo(otherCells, uuid, testStartTimeNanos, detailedNetworkInfo.networkTypes, detailedNetworkInfo.dataSubscriptionId)
+                        // Save 5G secondary cell info safely using zip to fill missing values with null
+                        active5GNetworkInfos
+                            .zip(active5GSignals + List(active5GNetworkInfos.size - active5GSignals.size) { null })
+                            .forEach { (cellNetworkInfoInner, signalStrengthInfo) ->
+                                otherCells?.remove(cellNetworkInfoInner?.rawCellInfo)
+                                saveNetworkInformation(cellNetworkInfoInner, signalStrengthInfo, uuid, testStartTimeNanos)
+                            }
+
+                        if (config.headerValue.isEmpty()) {
+                            saveOtherCellInfo(
+                                otherCells,
+                                uuid,
+                                testStartTimeNanos,
+                                it.networkTypes,
+                                it.dataSubscriptionId
+                            )
                         }
                     }
                 } catch (e: SecurityException) {
@@ -385,28 +398,22 @@ class StateRecorder @Inject constructor(
                     Timber.e("NullPointerException: Not able to read telephonyManager.allCellInfo from other reason")
                 }
             }
-        } else if (networkInfo?.type == TransportType.WIFI) {
-            if (uuid != null && info != null) {
+        } else if (info?.type == TransportType.WIFI) {
+            uuid?.let { id ->
                 val infoList: List<NetworkInfo> = when (info) {
                     is WifiNetworkInfo -> listOf(info)
-                    is CellNetworkInfo -> listOf<NetworkInfo>()
+                    is CellNetworkInfo -> emptyList()
                     else -> throw IllegalArgumentException("Unknown cell info ${info.javaClass.simpleName}")
                 }
 
-                val copyInfoList = Collections.synchronizedList(infoList.toMutableList())
+                val onlyActiveCellInfoList = infoList.filter {
+                    it !is CellNetworkInfo || it.isActive
+                }
 
-                val onlyActiveCellInfoList = Collections.synchronizedList(copyInfoList.filter {
+                repository.saveCellInfo(id, null, onlyActiveCellInfoList, testStartTimeNanos ?: 0)
+                onlyActiveCellInfoList.forEach {
                     if (it is CellNetworkInfo) {
-                        it.isActive
-                    } else {
-                        true
-                    }
-                })
-
-                repository.saveCellInfo(uuid, null, onlyActiveCellInfoList.toList(), testStartTimeNanos)
-                onlyActiveCellInfoList.toList().forEach {
-                    if (it is CellNetworkInfo) {
-                        saveSignalStrength(uuid, it.signalStrength)
+                        saveSignalStrength(id, it.signalStrength)
                     }
                 }
             }
@@ -455,7 +462,7 @@ class StateRecorder @Inject constructor(
         }
         repository.saveCellLocationRecord(cellLocationsToSave.toMutableList())
         repository.saveCellInfoRecord(cellInfosToSave.toMutableList())
-        repository.saveSignalRecord(signalsToSave.toMutableList(), config.headerValue.isNullOrEmpty())
+        repository.saveSignalRecord(signalsToSave.toMutableList(), config.headerValue.isEmpty())
     }
 
     private fun saveNetworkInformation(cellNetworkInfo: NetworkInfo?, signalStrengthInfo: SignalStrengthInfo?, testUUID: String?, testStartTimeNanos: Long) {
@@ -574,6 +581,8 @@ class StateRecorder @Inject constructor(
     }
 
     override fun onTestCompleted(result: TotalTestResult, waitQosResults: Boolean) {
+        Timber.d("TRS test complete ${result.speed_download}")
+        Timber.d("onTestComplete client_version is ${result.client_version}")
         testRecord?.apply {
             threadCount = result.num_threads
             portRemote = result.port_remote
@@ -637,6 +646,7 @@ class StateRecorder @Inject constructor(
     }
 
     override fun onQoSTestCompleted(qosResult: QoSResultCollector?) {
+        Timber.d("TRS QOS test complete")
         val uuid = testUUID
         val token = testToken
         val data: JSONArray? = qosResult?.toJson()
@@ -644,6 +654,7 @@ class StateRecorder @Inject constructor(
             testRecord?.lastQoSStatus = TestStatus.QOS_END
             repository.updateQoSTestStatus(uuid, TestStatus.QOS_END)
             Timber.d("QOSLOG: ${TestStatus.QOS_END}")
+            Timber.d("TRS QOS test loading started")
             repository.saveQoSResults(uuid, token, data) {
                 Timber.d("QOS test complete loaded")
             }

@@ -357,6 +357,14 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
         get() = getString(BuildConfig.CONTROL_SERVER_SIGNAL_RESULT_ROUTE)
         set(value) = setString(BuildConfig.CONTROL_SERVER_SIGNAL_RESULT_ROUTE, value)
 
+    override var coverageRequestRoute: String
+        get() = getString(BuildConfig.CONTROL_SERVER_COVERAGE_REQUEST_ROUTE)
+        set(value) = setString(BuildConfig.CONTROL_SERVER_COVERAGE_REQUEST_ROUTE, value)
+
+    override var coverageResultRoute: String
+        get() = getString(BuildConfig.CONTROL_SERVER_COVERAGE_RESULT_ROUTE)
+        set(value) = setString(BuildConfig.CONTROL_SERVER_COVERAGE_RESULT_ROUTE, value)
+
     override var secretCodeDeveloperModeOn: String
         get() = getString(BuildConfig.DEVELOPER_ACTIVATE_CODE)
         set(value) {
@@ -456,7 +464,13 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
         get() = getBoolean(BuildConfig.COVERAGE_MODE_ENABLED)
         set(value) = setBoolean(BuildConfig.COVERAGE_MODE_ENABLED, value)
 
+    override var shouldCheckActiveSimsCount: Boolean
+        get() = getBoolean(BuildConfig.SHOULD_CHECK_ACTIVE_SIMS_COUNT)
+        set(value) = setBoolean(BuildConfig.SHOULD_CHECK_ACTIVE_SIMS_COUNT, value)
 
+    override var minDistanceMetersToLogNewLocationOnMapDuringSignalMeasurement: Int
+        get() = getInt(BuildConfig.MIN_LOCATION_DISTANCE_METERS_SIGNAL_MEASUREMENT)
+        set(value) = setInt(BuildConfig.MIN_LOCATION_DISTANCE_METERS_SIGNAL_MEASUREMENT, value)
 
 
     var savedLoopModeNumberOfTests: Int

@@ -16,6 +16,13 @@
         android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"
         android:minSdkVersion="34" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
+        android:minSdkVersion="34" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_LOCATION"
+        android:minSdkVersion="34" />
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -91,15 +98,20 @@
 
         <activity
             android:name=".ui.activity.LoopConfigurationActivity"
+            android:theme="@style/PreferenceTheme"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name=".ui.activity.LoopInstructionsActivity" />
+        <activity android:name=".ui.activity.LoopInstructionsActivity"
+            android:theme="@style/PreferenceTheme"/>
 
-        <activity android:name=".ui.activity.CertInstructionsActivity" />
+        <activity android:name=".ui.activity.CertInstructionsActivity"
+            android:theme="@style/PreferenceTheme"/>
 
-        <activity android:name=".ui.activity.SignalMeasurementTermsActivity" />
+        <activity android:name=".ui.activity.SignalMeasurementTermsActivity"
+            android:theme="@style/PreferenceTheme"/>
 
-        <activity android:name=".ui.activity.SignalMeasurementActivity" />
+        <activity android:name=".ui.activity.SignalMeasurementActivity"
+            android:theme="@style/PreferenceTheme"/>
 
         <activity
             android:name=".ui.activity.LoopFinishedActivity"
@@ -110,13 +122,24 @@
             android:name="at.rtr.rmbt.android.ui.activity.DataPrivacyAndTermsOfUseActivity"
             android:theme="@style/PreferenceTheme" />
 
-        <activity android:name=".ui.activity.TermsAcceptanceActivity"/>
+        <activity android:name=".ui.activity.TermsAcceptanceActivity"
+            android:theme="@style/PreferenceTheme"/>
 
-        <activity android:name=".ui.activity.PermissionsExplanationActivity"/>
+        <activity android:name=".ui.activity.PermissionsActivity"
+            android:theme="@style/PreferenceTheme"/>
+
+        <activity android:name=".ui.activity.PermissionsExplanationActivity"
+            android:theme="@style/PreferenceTheme"/>
 
 <!--        <meta-data-->
 <!--            android:name="com.google.android.geo.API_KEY"-->
 <!--            android:value="${googleMapsApiKey}" />-->
+
+        <!-- Disable WorkManager's default initializer -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
 
         <!-- CTU customization -->
         <provider

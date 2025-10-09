@@ -13,10 +13,16 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import at.rmbt.client.control.IpProtocol
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.FragmentHomeBinding
@@ -43,8 +49,10 @@ import at.specure.location.LocationState
 import at.specure.measurement.MeasurementService
 import at.specure.util.hasPermission
 import at.specure.util.toast
+import at.specure.util.openAppSettings
 import timber.log.Timber
 import java.lang.IndexOutOfBoundsException
+import kotlin.math.max
 import cz.mroczis.netmonster.core.model.connection.SecondaryConnection
 
 class HomeFragment : BaseFragment(), SimpleDialog.Callback {
@@ -60,8 +68,8 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                homeViewModel.toggleSignalMeasurementService()
-                requireContext().toast(R.string.toast_signal_measurement_enabled)
+//                homeViewModel.toggleSignalMeasurementService()
+//                requireContext().toast(R.string.toast_signal_measurement_enabled)
             }
         }
 
@@ -77,6 +85,45 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
             }
         }
 
+
+    private fun recalculateInsets() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+                val insetsSystemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val insetsDisplayCutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+                val topSafe = max(insetsSystemBars.top, insetsDisplayCutout.top)
+                val leftSafe = max(insetsSystemBars.left, insetsDisplayCutout.left)
+                val rightSafe = max(insetsSystemBars.right, insetsDisplayCutout.right)
+
+                binding.rightGuideline?.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    rightMargin = rightSafe
+                }
+
+                binding.tvTitle.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    topMargin = topSafe
+                    leftMargin = leftSafe
+                    rightMargin = rightSafe
+                }
+                binding.loopModeTitle.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    leftMargin = leftSafe
+                    rightMargin = rightSafe
+                }
+                binding.btnLoop.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    topMargin = topSafe
+                    leftMargin = leftSafe
+                    rightMargin = rightSafe
+                }
+                binding.btnSetting.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    topMargin = topSafe
+                    leftMargin = leftSafe
+                    rightMargin = rightSafe
+                }
+
+                windowInsets
+            }
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -84,6 +131,8 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
         binding.state = homeViewModel.state
+
+        recalculateInsets()
 
         homeViewModel.isConnected.listen(this) {
             activity?.window?.changeStatusBarColor(if (it) ToolbarTheme.BLUE else ToolbarTheme.GRAY)
@@ -141,15 +190,11 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
 
         binding.btnLocation.setOnClickListener {
 
-            context?.let {
-                homeViewModel.state.isLocationEnabled.get()?.let {
-                    when (it) {
-                        LocationState.ENABLED -> LocationInfoDialog.instance().show(activity)
-                        LocationState.DISABLED_APP -> OpenLocationPermissionDialog.instance().show(activity)
-                        LocationState.DISABLED_DEVICE -> OpenGpsSettingDialog.instance().show(activity)
-                    }
-                }
+            val action = {
+                LocationInfoDialog.instance().show(activity)
             }
+
+            doGPSRelatedActionOrShowProblemDialog(action)
         }
 
         binding.ivSignalLevel.setOnClickListener {
@@ -193,8 +238,10 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         binding.btnUpload.setOnClickListener {
             homeViewModel.activeSignalMeasurementLiveData.value?.let { active ->
                 if (!active) {
-                    val intent = SignalMeasurementTermsActivity.start(requireContext())
-                    getSignalMeasurementResult.launch(intent)
+                    val checksPassed = isSignalMeasurementPrechecksPassed()
+                    if (checksPassed) {
+                        openSignalMeasurementTermsActivity()
+                    }
                 } else {
                     homeViewModel.toggleSignalMeasurementService()
                 }
@@ -380,6 +427,39 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         return s.toString()
     }
 
+    private fun openSignalMeasurementTermsActivity() {
+        val intent = SignalMeasurementTermsActivity.start(requireContext())
+        getSignalMeasurementResult.launch(intent)
+    }
+
+    private fun openSignalMeasurementActivity() {
+        SignalMeasurementActivity.start(requireContext())
+    }
+
+    private fun doGPSRelatedActionOrShowProblemDialog(action: () -> Unit): Boolean {
+        context?.let {
+            homeViewModel.state.isLocationEnabled.get()?.let {
+                when (it) {
+                    LocationState.ENABLED -> {
+                        action()
+                        return true
+                    }
+                    LocationState.DISABLED_APP -> {
+                        OpenLocationPermissionDialog.instance()
+                            .show(activity)
+                        return false
+                    }
+
+                    LocationState.DISABLED_DEVICE -> {
+                        OpenGpsSettingDialog.instance().show(activity)
+                        return false
+                    }
+                }
+            }
+        }
+        return false
+    }
+
     override fun onResume() {
         super.onResume()
         homeViewModel.signalStrengthLiveData.listen(this) {
@@ -413,6 +493,65 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         }
         checkInformationAvailability()
         homeViewModel.state.informationAccessProblem.get()?.let { updateProblemUI(it) }
+
+        continueInSignalMeasurementIfShould()
+    }
+
+    private fun continueInSignalMeasurementIfShould() {
+        if (homeViewModel.shouldOpenSignalMeasurementScreen()) {
+
+            homeViewModel.setSignalMeasurementShouldContinueInLastSession(true)
+            openSignalMeasurementActivity()
+        }
+    }
+
+    private fun isSignalMeasurementPrechecksPassed(): Boolean {
+        val isMobileNetworkActive = homeViewModel.isMobileNetworkActive()
+        val isOnlyOneSimActive = homeViewModel.isOnlyOneSimActive()
+        val isGPSEnabledAndPermitted = doGPSRelatedActionOrShowProblemDialog {}
+
+        if (!isGPSEnabledAndPermitted) {
+            return false
+        }
+
+        if (!isMobileNetworkActive) {
+            showWrongNetworkTypeDialog()
+            return false
+        }
+
+        if (!isOnlyOneSimActive) {
+            showMoreSimsActiveDialog()
+            return false
+        }
+
+        return true
+    }
+
+    private fun showMoreSimsActiveDialog() {
+        context?.let {
+            val title = ContextCompat.getString(it, R.string.more_sims_active_dialog_title)
+            val text = ContextCompat.getString(it, R.string.more_sims_active_dialog_text)
+            SimpleDialog.Builder()
+                .messageText(text)
+                .titleText(title)
+                .positiveText(R.string.confirm)
+                .cancelable(false)
+                .show(this.childFragmentManager, CODE_DIALOG_MORE_SIMS)
+        }
+    }
+
+    private fun showWrongNetworkTypeDialog() {
+        context?.let {
+            val title = ContextCompat.getString(it, R.string.wrong_network_type_active_dialog_title)
+            val text = ContextCompat.getString(it, R.string.wrong_network_type_active_dialog_text)
+            SimpleDialog.Builder()
+                .messageText(text)
+                .titleText(title)
+                .positiveText(R.string.confirm)
+                .cancelable(false)
+                .show(this.childFragmentManager, CODE_DIALOG_MORE_SIMS)
+        }
+
     }
 
     private fun checkInformationAvailability() {
@@ -772,11 +911,13 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
     companion object {
         private const val INFO_WINDOW_TIME_MS: Long = 2000
         private const val CODE_DIALOG_NEWS = 14
-        private const val CODE_CERT_INSTRUCTIONS = 15
-        private const val CODE_PERM_LOCATION_INFO = 16
-        private const val CODE_PERM_PHONE_INFO = 20
-        private const val CODE_BACKGROUND_PERM_INFO = 17
-        private const val CODE_BACKGROUND_BACKUP_PERM_INFO = 18
-        private const val CODE_NO_CELLULAR_NETWORK = 19
+        private const val CODE_DIALOG_MORE_SIMS = 15
+        private const val CODE_CERT_INSTRUCTIONS = 16
+        private const val CODE_PERM_LOCATION_INFO = 17
+        private const val CODE_PERM_PHONE_INFO = 18
+        private const val CODE_BACKGROUND_PERM_INFO = 19
+        private const val CODE_BACKGROUND_BACKUP_PERM_INFO = 20
+        private const val CODE_NO_CELLULAR_NETWORK = 21
+
     }
 }

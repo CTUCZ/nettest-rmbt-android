@@ -16,13 +16,19 @@ package at.rtr.rmbt.android.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
+import android.view.KeyEvent
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.ActivityQosTestsSummaryBinding
 import at.rtr.rmbt.android.ui.fragment.QosTestsSummaryFragment
 import at.specure.data.entity.QosCategoryRecord
 import at.specure.result.QoSCategory
+import kotlin.math.max
 
 class QosTestsSummaryActivity : BaseActivity() {
 
@@ -45,20 +51,44 @@ class QosTestsSummaryActivity : BaseActivity() {
                 .replace(R.id.fragment_content, QosTestsSummaryFragment.newInstance(testUUID, categoryDescription, category, categoryName))
                 .commitNow()
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+                val insetsSystemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val insetsDisplayCutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+                val topSafe = max(insetsSystemBars.top, insetsDisplayCutout.top)
+                val leftSafe = max(insetsSystemBars.left, insetsDisplayCutout.left)
+                val rightSafe = max(insetsSystemBars.right, insetsDisplayCutout.right)
+                val bottomSafe = max(insetsSystemBars.bottom, insetsDisplayCutout.bottom)
+
+                v.updatePadding(
+                    right = rightSafe,
+                    left = leftSafe,
+                    top = topSafe,
+                    bottom = bottomSafe
+                )
+                WindowInsetsCompat.CONSUMED
+            }
+        }
 
         setupToolbar(categoryName)
     }
 
     private fun setupToolbar(toolbarTitle: String?) {
-        val toolbar: Toolbar = binding.toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        toolbar.setNavigationIcon(R.drawable.ic_back)
-        binding.tvToolbarTitle.text = toolbarTitle
-        toolbar.setNavigationOnClickListener {
+        binding.title.text = toolbarTitle
+        binding.title.contentDescription = "${ContextCompat.getString(this.applicationContext, R.string.title)} $toolbarTitle"
+        binding.buttonBack.setOnClickListener {
             onBackPressed()
         }
     }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            binding.buttonBack.requestFocus()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
     companion object {
 
         private const val KEY_TEST_UUID: String = "KEY_TEST_UUID"

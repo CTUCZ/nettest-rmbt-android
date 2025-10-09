@@ -1,10 +1,8 @@
 package at.specure.measurement.signal
 
-import at.specure.data.entity.SignalMeasurementInfo
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import at.specure.data.entity.SignalMeasurementSession
 
 interface SignalMeasurementChunkResultCallback {
 
-    @ExperimentalCoroutinesApi
-    fun newUUIDSent(respondedUuid: String, info: SignalMeasurementInfo)
+    fun newUUIDSent(respondedUuid: String, info: SignalMeasurementSession)
 }

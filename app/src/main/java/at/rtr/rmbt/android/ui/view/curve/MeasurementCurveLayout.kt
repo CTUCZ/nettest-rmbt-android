@@ -11,6 +11,8 @@ import at.rtr.rmbt.android.databinding.LayoutDashBinding
 import at.rtr.rmbt.android.databinding.LayoutMeasurementCurveBinding
 import at.rtr.rmbt.android.databinding.LayoutPercentageBinding
 import at.rtr.rmbt.android.databinding.LayoutSpeedBinding
+import at.rtr.rmbt.android.ui.getBigDownloadIconAccordingToSpeed
+import at.rtr.rmbt.android.ui.getBigUploadIconAccordingToSpeed
 import at.rtr.rmbt.android.util.format
 import at.specure.data.entity.LoopModeState
 import at.specure.info.strength.SignalStrengthInfo
@@ -21,6 +23,9 @@ import kotlin.math.min
 class MeasurementCurveLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     FrameLayout(context, attrs, defStyleAttr) {
 
+    private var lastSignalStrength: SignalStrengthInfo? = null
+    private var downloadAlreadyMeasured: Boolean = false
+    private var uploadAlreadyMeasured: Boolean = false
     private lateinit var speedLayout: LayoutSpeedBinding
     private lateinit var percentageLayout: LayoutPercentageBinding
     private lateinit var dashUpperLayout: LayoutDashBinding
@@ -175,6 +180,7 @@ class MeasurementCurveLayout @JvmOverloads constructor(context: Context, attrs: 
      */
     fun setTopProgress(currentProgress: Int) {
         if (topCenterX != 0 && topCenterY != 0) {
+            setSignalStrength(lastSignalStrength)
             currentTopProgress = currentProgress
             val progress = prepareProgressValueByPhase(currentProgress)
             curveBinding.curveView.setTopProgress(phase, currentProgress, isQoSEnabled)
@@ -209,15 +215,39 @@ class MeasurementCurveLayout @JvmOverloads constructor(context: Context, attrs: 
             (progressOffsets[phase] ?: 0) + ((progressCoefficients[phase] ?: 0f) * progress).toInt()
         }
 
+    private fun getDownloadSpeedIconOrUnknown(progressInMbps: Float): Int {
+        downloadAlreadyMeasured = (downloadAlreadyMeasured || progressInMbps > 0f)
+        return if (downloadAlreadyMeasured) {
+            getDownloadSpeedIconResId(progressInMbps)
+        } else {
+            R.drawable.ic_speed_download_gray
+        }
+    }
+
+    private fun getUploadSpeedIconOrUnknown(progressInMbps: Float): Int {
+        uploadAlreadyMeasured = (uploadAlreadyMeasured || progressInMbps > 0f)
+        return if (uploadAlreadyMeasured) {
+            getUploadSpeedIconResId(progressInMbps)
+        } else {
+            R.drawable.ic_speed_upload_gray
+        }
+    }
+
     /**
      * Update the bottom part UI according to progress changing
      */
     fun setBottomProgress(progress: Long) {
         if (phase == MeasurementState.DOWNLOAD || phase == MeasurementState.UPLOAD) {
             currentBottomProgress = progress
-            speedLayout.icon.setImageResource(if (phase == MeasurementState.DOWNLOAD) R.drawable.ic_speed_download else R.drawable.ic_speed_upload)
             curveBinding.curveView.setBottomProgress(phase, (progress * 1e-3).toInt(), isQoSEnabled)
             val progressInMbps: Float = progress / 1000000.0f
+            speedLayout.icon.setImageResource(
+                if (phase == MeasurementState.DOWNLOAD)
+                    getDownloadSpeedIconOrUnknown(progressInMbps)
+                else {
+                    getUploadSpeedIconOrUnknown(progressInMbps)
+                }
+            )
             speedLayout.value.text = progressInMbps.format()
             speedLayout.units.text = context.getString(R.string.speed_progress_units)
             if (progress != 0L) {
@@ -231,10 +261,19 @@ class MeasurementCurveLayout @JvmOverloads constructor(context: Context, attrs: 
         }
     }
 
+    fun getUploadSpeedIconResId(progressInMbps: Float): Int {
+        return getBigUploadIconAccordingToSpeed((progressInMbps * 1_000_000L).toLong())
+    }
+
+    fun getDownloadSpeedIconResId(progressInMbps: Float): Int {
+        return getBigDownloadIconAccordingToSpeed((progressInMbps * 1_000_000L).toLong())
+    }
+
     /**
      * Update the signal strength bar UI according to progress changing
      */
     fun setSignalStrength(signalStrengthInfo: SignalStrengthInfo?) {
+        lastSignalStrength = signalStrengthInfo
         if (signalStrengthInfo?.value != null && signalStrengthInfo.value != 0 && signalStrengthInfo.min != signalStrengthInfo.max) {
             with(curveBinding.layoutStrength) {
                 root.visibility = View.VISIBLE
@@ -244,6 +283,9 @@ class MeasurementCurveLayout @JvmOverloads constructor(context: Context, attrs: 
         } else {
             with(curveBinding.layoutStrength) {
                 root.visibility = View.INVISIBLE
+                strength.setSignalData(-140, -140, -60)
+                strengthValue.text = context.getString(R.string.strength_signal_value, -60)
+                root.requestLayout()
             }
         }
     }

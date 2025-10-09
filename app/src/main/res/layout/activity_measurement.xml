@@ -19,10 +19,6 @@
             type="at.rtr.rmbt.android.ui.viewstate.MeasurementViewState" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -67,6 +63,7 @@
                 android:textColor="@android:color/background_light"
                 android:textSize="@dimen/network_name_size"
                 android:textStyle="bold"
+                android:accessibilityTraversalAfter="@id/network_name_label"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/technology_name"
                 app:layout_constraintTop_toBottomOf="@id/network_name_label" />
@@ -89,6 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/padding_large"
+                android:accessibilityTraversalAfter="@id/network_tech_label"
                 android:textColor="@android:color/background_light"
                 android:textSize="@dimen/network_name_size"
                 android:textStyle="bold"
@@ -122,6 +120,7 @@
                 android:layout_marginEnd="@dimen/margin_small"
                 android:scaleType="center"
                 android:src="@drawable/ic_cancel"
+                android:accessibilityTraversalAfter="@id/technology_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -132,13 +131,28 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.60" />
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/guideline">
+
+                <include
+                    android:id="@+id/measurementBottomView"
+                    layout="@layout/measurement_bottom_view"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="bottom"
+                    bind:state="@{state}" />
+
+            </FrameLayout>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <include
-            android:id="@+id/measurementBottomView"
-            layout="@layout/measurement_bottom_view"
-            bind:state="@{state}" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 
 </layout>

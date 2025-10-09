@@ -12,6 +12,7 @@ import at.specure.data.Classification
 import at.specure.data.ClientUUID
 import at.specure.data.CoreDatabase
 import at.specure.data.NetworkTypeCompat
+import at.specure.data.entity.CapabilitiesRecord
 import at.specure.data.entity.PingRecord
 import at.specure.data.entity.QoeInfoRecord
 import at.specure.data.entity.QosCategoryRecord
@@ -81,18 +82,18 @@ class ResultsRepositoryImpl @Inject constructor(
                 val signals: List<SignalRecord> = db.signalDao().get(testUUID, null)
 
                 val body = testRecord.toRequest(
-                    clientUUID = clientUUID,
-                    deviceInfo = deviceInfo,
+                    clientUUID = clientUUID ?: throw DataMissingException("ClientUUID is null"),
+                    deviceInfo = deviceInfo ?: throw DataMissingException("DeviceInfo is null"),
                     telephonyInfo = telephonyInfo,
                     wlanInfo = wlanInfo,
-                    locations = db.geoLocationDao().get(testUUID, null),
-                    capabilities = db.capabilitiesDao().get(testUUID, null),
-                    pingList = pings,
-                    cellInfoList = db.cellInfoDao().get(testUUID, null),
-                    signalList = signals,
-                    speedInfoList = speeds,
-                    cellLocationList = db.cellLocationDao().get(testUUID, null),
-                    permissions = db.permissionStatusDao().get(testUUID, null),
+                    locations = db.geoLocationDao().get(testUUID, null) ?: throw DataMissingException("locations are null"),
+                    capabilities = db.capabilitiesDao().get(testUUID, null) ?: CapabilitiesRecord(0, testUUID, null, classificationCount = 5, qosSupportInfo = true, rmbtHttpStatus = false), // ?: throw DataMissingException("capabilities are null"),
+                    pingList = pings ?: throw DataMissingException("pings are null"),
+                    cellInfoList = db.cellInfoDao().get(testUUID, null) ?: throw DataMissingException("cellInfoList are null"),
+                    signalList = signals ?: throw DataMissingException("signalList are null"),
+                    speedInfoList = speeds ?: throw DataMissingException("speedInfoList are null"),
+                    cellLocationList = db.cellLocationDao().get(testUUID, null) ?: throw DataMissingException("cellLocationList are null"),
+                    permissions = db.permissionStatusDao().get(testUUID, null) ?: throw DataMissingException("permissions are null"),
                     jplTestResultsRecord
                 )
 
@@ -112,6 +113,7 @@ class ResultsRepositoryImpl @Inject constructor(
                 Timber.d("TRS sending result with UUID ${body.testUUID} download speed: ${body.downloadSpeedKbs}")
 
                 result.onSuccess {
+                    Timber.d("Sending result successfully finished")
                     val count = db.testDao().updateTestIsSubmitted(testUUID)
                     if (count == 0) {
                         Timber.e("Failed to update test is submitted")
@@ -130,6 +132,7 @@ class ResultsRepositoryImpl @Inject constructor(
 //
                 result.onFailure {
 
+                    Timber.d("Sending result failed")
                     if ((testRecord.status != TestStatus.SPEEDTEST_END) || (testRecord.status != TestStatus.QOS_END) || (testRecord.status != TestStatus.END)) {
                         return@onFailure
                     }
@@ -141,6 +144,7 @@ class ResultsRepositoryImpl @Inject constructor(
 
         if (finalResult.ok && clientVersion != null) {
             if (qosRecord != null) {
+                Timber.d("Sending QOS results")
                 val body = qosRecord.toRequest(clientUUID, deviceInfo, clientVersion)
 
                 val isONTApp = !config.headerValue.isNullOrEmpty()
@@ -151,7 +155,9 @@ class ResultsRepositoryImpl @Inject constructor(
                     client.sendQoSTestResults(body)
                 }
 
+
                 result.onSuccess {
+                    Timber.d("Sending QOS results succeeded.")
                     val count = db.testDao().updateQoSTestIsSubmitted(testUUID)
                     if (count == 0) {
                         Timber.e("DB: failed to updated qos test is submitted")
@@ -245,7 +251,8 @@ class ResultsRepositoryImpl @Inject constructor(
                 jitterMillis = jitterMean,
                 jitterClass = Classification.fromValue(0),
                 packetLossClass = Classification.fromValue(0),
-                packetLossPercents = packetLoss
+                packetLossPercents = packetLoss,
+                status = null
             )
         )
 

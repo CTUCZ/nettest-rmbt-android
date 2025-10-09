@@ -13,7 +13,7 @@ import android.os.PowerManager
 import androidx.lifecycle.LiveData
 import at.specure.di.CoreInjector
 import at.specure.di.NotificationProvider
-import at.specure.test.SignalMeasurementType
+import at.rmbt.client.control.data.SignalMeasurementType
 import at.specure.util.CustomLifecycleService
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -97,9 +97,7 @@ class SignalMeasurementService : CustomLifecycleService() {
     }
 
     private fun startMeasurement(signalMeasurementType: SignalMeasurementType) {
-        if (!wakeLock.isHeld) {
-            wakeLock.acquire(TimeUnit.MINUTES.toMillis(config.signalMeasurementDurationMin.toLong()))
-        }
+        acquireWakeLock()
         processor.startMeasurement(false, signalMeasurementType)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -112,17 +110,14 @@ class SignalMeasurementService : CustomLifecycleService() {
         isUnstoppable = false
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            startForeground(NOTIFICATION_ID, notificationProvider.signalMeasurementService(stopIntent(this)), FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            startForeground(NOTIFICATION_ID, notificationProvider.signalMeasurementService(null), FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
         } else {
-            startForeground(NOTIFICATION_ID, notificationProvider.signalMeasurementService(stopIntent(this)))
+            startForeground(NOTIFICATION_ID, notificationProvider.signalMeasurementService(null))
         }
     }
 
     private fun stopMeasurement() {
-        if (wakeLock.isHeld) {
-            wakeLock.release()
-        }
-
+        releaseWakeLock()
         cancelSignalMeasurementStopAlarm()
         Timber.i("Signal measurement stopped")
         processor.stopMeasurement(false)
@@ -148,6 +143,18 @@ class SignalMeasurementService : CustomLifecycleService() {
         }
     }
 
+    private fun acquireWakeLock() {
+        if (!wakeLock.isHeld) {
+            wakeLock.acquire(TimeUnit.MINUTES.toMillis(config.signalMeasurementDurationMin.toLong()))
+        }
+    }
+
+    private fun releaseWakeLock() {
+        if (wakeLock.isHeld) {
+            wakeLock.release()
+        }
+    }
+
     private fun cancelSignalMeasurementStopAlarm() {
         if (alarmStopPendingIntent != null && alarmManager != null) {
             Timber.i("Signal measurement alarm cancelled")
@@ -168,6 +175,9 @@ class SignalMeasurementService : CustomLifecycleService() {
 
         override val pausedStateLiveData: LiveData<Boolean>
             get() = processor.pausedStateLiveData
+
+        override val signalMeasurementSessionIdLiveData: LiveData<String?>
+            get() = processor.signalMeasurementSessionIdLiveData
 
         override fun startMeasurement(unstoppable: Boolean, signalMeasurementType: SignalMeasurementType) {
             this@SignalMeasurementService.isUnstoppable = unstoppable

@@ -47,6 +47,7 @@ import at.specure.location.cell.CellLocationWatcher
 import at.specure.location.cell.CellLocationWatcherImpl
 import at.specure.test.TestController
 import at.specure.test.TestControllerImpl
+import at.specure.util.map.CustomMarker
 import at.specure.util.permission.LocationAccess
 import at.specure.util.permission.LocationAccessImpl
 import at.specure.util.permission.PermissionsWatcher
@@ -56,6 +57,7 @@ import cz.mroczis.netmonster.core.INetMonster
 import cz.mroczis.netmonster.core.factory.NetMonsterFactory
 import dagger.Module
 import dagger.Provides
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -134,7 +136,7 @@ class CoreModule {
         connectivityManager: ConnectivityManager,
         connectivityWatcher: ConnectivityWatcher,
         wifiInfoWatcher: WifiInfoWatcher,
-        locationWatcher: LocationWatcher,
+        @Named("GPSAndNetworkLocationProvider") locationWatcher: LocationWatcher,
         captivePortal: CaptivePortal,
         cellInfoWatcher: CellInfoWatcher
     ): ActiveNetworkWatcher =
@@ -269,4 +271,10 @@ class CoreModule {
         config = config,
         permissionsWatcher = permissionsWatcher
     )
+
+    @Provides
+    @Singleton
+    fun provideCustomMarker(
+        context: Context
+    ) : CustomMarker = CustomMarker(context = context)
 }

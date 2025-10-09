@@ -2,10 +2,14 @@ package at.rtr.rmbt.android.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.DividerItemDecoration
 import at.rmbt.util.exception.HandledException
 import at.rtr.rmbt.android.R
@@ -21,10 +25,12 @@ import at.rtr.rmbt.android.util.listen
 import at.rtr.rmbt.android.viewmodel.ResultViewModel
 import at.specure.data.NetworkTypeCompat
 import at.specure.data.entity.TestResultRecord
+import at.specure.data.entity.isCoverageResult
 import timber.log.Timber
 import java.lang.IllegalStateException
 import java.util.Timer
 import kotlin.concurrent.timerTask
+import kotlin.math.max
 
 class ResultsActivity : BaseActivity() {
 
@@ -41,6 +47,25 @@ class ResultsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = bindContentView(R.layout.activity_results)
         binding.state = viewModel.state
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+                val insetsSystemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val insetsDisplayCutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+                val topSafe = max(insetsSystemBars.top, insetsDisplayCutout.top)
+                val leftSafe = max(insetsSystemBars.left, insetsDisplayCutout.left)
+                val rightSafe = max(insetsSystemBars.right, insetsDisplayCutout.right)
+                val bottomSafe = max(insetsSystemBars.bottom, insetsDisplayCutout.bottom)
+
+                v.updatePadding(
+                    right = rightSafe,
+                    left = leftSafe,
+                    top = topSafe,
+                    bottom = bottomSafe
+                )
+                windowInsets
+            }
+        }
 
         viewModel.state.playServicesAvailable.set(isGmsAvailable())
 
@@ -205,47 +230,7 @@ class ResultsActivity : BaseActivity() {
         }
     }
 
-//    private fun setUpMap(result: TestResultRecord) {
-//        if (result.latitude != null && result.longitude != null) {
-//            val latLngW = LatLngW(result.latitude!!, result.longitude!!)
-//
-//            val icon = when (result.networkType) {
-//                NetworkTypeCompat.TYPE_BLUETOOTH,
-//                NetworkTypeCompat.TYPE_VPN,
-//                NetworkTypeCompat.TYPE_UNKNOWN -> R.drawable.ic_marker_empty
-//                NetworkTypeCompat.TYPE_LAN -> R.drawable.ic_marker_ethernet
-//                NetworkTypeCompat.TYPE_BROWSER -> R.drawable.ic_marker_browser
-//                NetworkTypeCompat.TYPE_WLAN -> R.drawable.ic_marker_wifi
-//                NetworkTypeCompat.TYPE_5G_AVAILABLE,
-//                NetworkTypeCompat.TYPE_4G -> R.drawable.ic_marker_4g
-//                NetworkTypeCompat.TYPE_3G -> R.drawable.ic_marker_3g
-//                NetworkTypeCompat.TYPE_2G -> R.drawable.ic_marker_2g
-//                NetworkTypeCompat.TYPE_5G_NSA,
-//                NetworkTypeCompat.TYPE_5G -> R.drawable.ic_marker_5g
-//            }
-//
-//            mapW().run {
-//                addCircle(
-//                    latLngW,
-//                    ContextCompat.getColor(this@ResultsActivity, R.color.map_circle_fill),
-//                    ContextCompat.getColor(this@ResultsActivity, R.color.map_circle_stroke),
-//                    STROKE_WIDTH, CIRCLE_RADIUS
-//                )
-//                addMarker(this@ResultsActivity, latLngW, ANCHOR_U, ANCHOR_V, icon)
-//                moveCamera(latLngW, ZOOM_LEVEL)
-//                setOnMapClickListener {
-//                    DetailedFullscreenMapActivity.start(
-//                        this@ResultsActivity,
-//                        latLngW.latitude,
-//                        latLngW.longitude,
-//                        result.networkType
-//                    )
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun mapW(): MapWrapper = binding.map.mapWrapper
+    // remove map
 
     private fun refreshResults() {
         viewModel.loadTestResults()
