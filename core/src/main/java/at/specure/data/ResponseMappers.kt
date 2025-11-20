@@ -216,7 +216,8 @@ fun SignalGraphItemResponse.toModel(testUUID: String): TestResultGraphItemRecord
         testUUID = testUUID,
         time = timeMillis,
         value = signalStrength?.toLong() ?: lteRsrp?.toLong() ?: 0,
-        type = TestResultGraphItemRecord.Type.SIGNAL
+        type = TestResultGraphItemRecord.Type.SIGNAL,
+        isLocal = false,
     )
 }
 
@@ -225,7 +226,8 @@ fun PingGraphItemResponse.toModel(testUUID: String): TestResultGraphItemRecord {
         testUUID = testUUID,
         time = timeMillis,
         value = durationMillis.toLong(),
-        type = TestResultGraphItemRecord.Type.PING
+        type = TestResultGraphItemRecord.Type.PING,
+        isLocal = false,
     )
 }
 
@@ -234,7 +236,8 @@ fun SpeedGraphItemResponse.toModel(testUUID: String, type: TestResultGraphItemRe
         testUUID = testUUID,
         time = timeMillis,
         value = bytes,
-        type = type
+        type = type,
+        isLocal = false,
     )
 }
 
@@ -261,7 +264,8 @@ fun SpeedGraphItemResponseONT.toModel(
         testUUID = testUUID,
         time = timeMillis,
         value = bytes,
-        type = type
+        type = type,
+        isLocal = false,
     )
 }
 
