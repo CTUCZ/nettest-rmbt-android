@@ -125,11 +125,13 @@
         <activity android:name=".ui.activity.TermsAcceptanceActivity"
             android:theme="@style/PreferenceTheme"/>
 
-        <activity android:name=".ui.activity.PermissionsActivity"
-            android:theme="@style/PreferenceTheme"/>
 
-        <activity android:name=".ui.activity.PermissionsExplanationActivity"
-            android:theme="@style/PreferenceTheme"/>
+        <!--  NOT USED IN CTU-NetTest  -->
+<!--        <activity android:name=".ui.activity.PermissionsActivity"-->
+<!--            android:theme="@style/PreferenceTheme"/>-->
+
+<!--        <activity android:name=".ui.activity.PermissionsExplanationActivity"-->
+<!--            android:theme="@style/PreferenceTheme"/>-->
 
 <!--        <meta-data-->
 <!--            android:name="com.google.android.geo.API_KEY"-->

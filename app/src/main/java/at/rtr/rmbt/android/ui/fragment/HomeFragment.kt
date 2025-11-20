@@ -22,25 +22,32 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
 import at.rmbt.client.control.IpProtocol
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.FragmentHomeBinding
 import at.rtr.rmbt.android.di.viewModelLazy
-import at.rtr.rmbt.android.ui.activity.*
+import at.rtr.rmbt.android.ui.activity.CertInstructionsActivity
+import at.rtr.rmbt.android.ui.activity.LoopConfigurationActivity
+import at.rtr.rmbt.android.ui.activity.LoopInstructionsActivity
+import at.rtr.rmbt.android.ui.activity.MeasurementActivity
+import at.rtr.rmbt.android.ui.activity.PreferenceActivity
+import at.rtr.rmbt.android.ui.activity.SignalMeasurementActivity
+import at.rtr.rmbt.android.ui.activity.SignalMeasurementTermsActivity
 import at.rtr.rmbt.android.ui.dialog.IpInfoDialog
 import at.rtr.rmbt.android.ui.dialog.LocationInfoDialog
-import at.rtr.rmbt.android.ui.dialog.OpenGpsSettingDialog
-import at.rtr.rmbt.android.ui.dialog.OpenLocationPermissionDialog
 import at.rtr.rmbt.android.ui.dialog.MessageDialog
 import at.rtr.rmbt.android.ui.dialog.NetworkInfoDialog
+import at.rtr.rmbt.android.ui.dialog.OpenGpsSettingDialog
+import at.rtr.rmbt.android.ui.dialog.OpenLocationPermissionDialog
 import at.rtr.rmbt.android.ui.dialog.SimpleDialog
-import at.rtr.rmbt.android.util.*
-import at.rtr.rmbt.android.ui.dialog.*
 import at.rtr.rmbt.android.util.InfoWindowStatus
+import at.rtr.rmbt.android.util.InformationAccessProblem
 import at.rtr.rmbt.android.util.ToolbarTheme
+import at.rtr.rmbt.android.util.addOnPropertyChanged
 import at.rtr.rmbt.android.util.changeStatusBarColor
+import at.rtr.rmbt.android.util.hasLocationPermissions
 import at.rtr.rmbt.android.util.listen
+import at.rtr.rmbt.android.viewmodel.CertConfigurationViewModel
 import at.rtr.rmbt.android.viewmodel.HomeViewModel
 import at.rtr.rmbt.android.viewmodel.MeasurementViewModel
 import at.specure.info.TransportType
@@ -48,12 +55,9 @@ import at.specure.info.network.WifiNetworkInfo
 import at.specure.location.LocationState
 import at.specure.measurement.MeasurementService
 import at.specure.util.hasPermission
-import at.specure.util.toast
-import at.specure.util.openAppSettings
-import timber.log.Timber
-import java.lang.IndexOutOfBoundsException
-import kotlin.math.max
 import cz.mroczis.netmonster.core.model.connection.SecondaryConnection
+import timber.log.Timber
+import kotlin.math.max
 
 class HomeFragment : BaseFragment(), SimpleDialog.Callback {
 
@@ -330,9 +334,10 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
             }
         }
 
-        binding.panelPermissionsProblems.drawableHelp.setOnClickListener {
-            PermissionsExplanationActivity.start(this)
-        }
+        // not used in CTU-NetTest
+//        binding.panelPermissionsProblems.drawableHelp.setOnClickListener {
+//            PermissionsExplanationActivity.start(this)
+//        }
 
         homeViewModel.state.informationAccessProblem.addOnPropertyChanged { problem ->
             problem.get()?.let { updateProblemUI(it) }
@@ -792,9 +797,9 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         homeViewModel.appConfig.savedLoopModeDistanceMeters = homeViewModel.appConfig.loopModeDistanceMeters
         homeViewModel.appConfig.savedSkipQoSTests = homeViewModel.appConfig.skipQoSTests
 
-        homeViewModel.appConfig.loopModeNumberOfTests = 6
-        homeViewModel.appConfig.loopModeWaitingTimeMin = 11
-        homeViewModel.appConfig.loopModeDistanceMeters = 100000
+        homeViewModel.appConfig.loopModeNumberOfTests = CertConfigurationViewModel.NUMBER_OF_TESTS
+        homeViewModel.appConfig.loopModeWaitingTimeMin = CertConfigurationViewModel.WAITING_TIME_MINUTES
+        homeViewModel.appConfig.loopModeDistanceMeters = CertConfigurationViewModel.DISTANCE_METERS
         homeViewModel.appConfig.skipQoSTests = true
 
         MeasurementService.startTests(requireContext())

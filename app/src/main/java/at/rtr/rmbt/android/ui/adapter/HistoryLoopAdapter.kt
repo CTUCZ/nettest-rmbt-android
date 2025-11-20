@@ -206,7 +206,9 @@ class HistoryLoopAdapter : PagedListAdapter<HistoryContainer, HistoryLoopAdapter
             item: HistoryContainer,
             expandedItemsMap: MutableMap<Int, Boolean>,
             actionCallback: ((History) -> Unit)?,
-            pendingAnimationCallback: (() -> Unit)?
+            pendingAnimationCallback: (() -> Unit)?,
+            context: Context?,
+            downloadCallback: ((String) -> Unit)?
         ) {
             if (item.items.isEmpty()) {
                 return
@@ -254,7 +256,9 @@ class HistoryLoopAdapter : PagedListAdapter<HistoryContainer, HistoryLoopAdapter
             item: HistoryContainer,
             expandedItemsMap: MutableMap<Int, Boolean>,
             actionCallback: ((History) -> Unit)?,
-            pendingAnimationCallback: (() -> Unit)?
+            pendingAnimationCallback: (() -> Unit)?,
+            context: Context?,
+            downloadCallback: ((String) -> Unit)?
         ) {
             binding.item = item.items.first()
             binding.root.setOnClickListener {

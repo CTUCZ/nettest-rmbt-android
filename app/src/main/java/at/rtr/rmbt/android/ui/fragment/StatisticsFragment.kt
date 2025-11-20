@@ -53,8 +53,6 @@ class StatisticsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //force landscape orientation
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         activity?.window?.changeStatusBarColor(ToolbarTheme.WHITE)
 
@@ -64,7 +62,7 @@ class StatisticsFragment : BaseFragment() {
             setInitialScale(1)
             settings.loadWithOverviewMode = true
             settings.useWideViewPort = true
-            settings.builtInZoomControls = false
+            settings.builtInZoomControls = true
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
             webViewClient = MyWebViewClient(statisticsViewModel)

@@ -127,7 +127,7 @@ fun HistoryItemONTResponse.toModel(): History {
         packetLossClassification = Classification.NONE,
         jitterClassification = Classification.NONE,
         isCoverageResult = false,
-        fencesCount = 0
+        fencesCount = 0,
         certMode = false
     )
 }

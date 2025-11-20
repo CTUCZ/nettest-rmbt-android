@@ -28,8 +28,8 @@ enum class InformationAccessProblem(val titleID: Int, val descriptionId: Int) {
         R.string.label_location_access_disabled_explanation
     ),
     MISSING_NOTIFICATION_PERMISSION(
-        R.string.label_some_permission_denied,
-        R.string.label_some_permission_denied_explanation
+        R.string.label_notification_permission_disabled,
+        R.string.label_notification_permission_disabled_explanation
     ),
 
 }

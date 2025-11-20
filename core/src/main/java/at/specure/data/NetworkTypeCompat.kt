@@ -19,8 +19,7 @@ enum class NetworkTypeCompat(val stringValue: String, val minSignalValue: Int, v
     TYPE_BROWSER("BROWSER", Int.MIN_VALUE, Int.MIN_VALUE),
     TYPE_UNKNOWN("UNKNOWN", Int.MIN_VALUE, Int.MIN_VALUE),
     TYPE_BLUETOOTH("BLUETOOTH", Int.MIN_VALUE, Int.MIN_VALUE),
-    TYPE_VPN("VPN", Int.MIN_VALUE, Int.MIN_VALUE),
-    TYPE_MOBILE("MOBILE", Int.MIN_VALUE, Int.MIN_VALUE);
+    TYPE_VPN("VPN", Int.MIN_VALUE, Int.MIN_VALUE);
 
     companion object {
 

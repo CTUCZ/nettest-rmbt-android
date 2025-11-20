@@ -911,7 +911,6 @@ private fun getSignalImageResource(networkType: NetworkTypeCompat, signalStrengt
                 Classification.NONE -> R.drawable.ic_signal_unknown_small
             }
         }
-        NetworkTypeCompat.TYPE_MOBILE -> R.drawable.ic_history_no_internet
     }
 }
 
@@ -1301,7 +1300,6 @@ fun ImageView.setNetworkType(networkType: String, signalStrength: Classification
                 NetworkTypeCompat.TYPE_5G -> {
                     R.drawable.ic_history_5g_3
                 }
-                NetworkTypeCompat.TYPE_MOBILE -> R.drawable.ic_history_no_internet
             }
         )
     } else {
