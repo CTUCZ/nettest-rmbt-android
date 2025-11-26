@@ -88,7 +88,7 @@
     <string name="preferences_data_protection">Privacy policy and terms of use</string>
     <string name="preferences_developed_by">Developed by Specure GmbH</string>
     <string name="preferences_developer_page" translatable="false">https://specure.com/</string>
-    <string name="preferences_design_by">Design by Feinblick</string>
+    <string name="preferences_design_by" translatable="false">Design by Feinblick</string>
     <string name="preferences_design_page" translatable="false">https://www.feinblick.com</string>
     <string name="preferences_network_info_by">Network information by NetMonster Core</string>
     <string name="preferences_network_info_page" translatable="false">https://netmonster.app/</string>
@@ -415,7 +415,7 @@
     <string name="label_some_permission_denied_explanation">Grant permissions in settings.</string>
     <string name="label_notification_permission_disabled">Notification permission missing</string>
     <string name="label_notification_permission_disabled_explanation">Grant notification permission in settings.</string>
-    <string name="title_open_nettest_accuracy">Permissions for ČTÚ-Nettest</string>
+    <string name="title_open_nettest_accuracy">Permissions for ČTÚ-NetTest</string>
     <string name="subtitle_open_nettest_accuracy">ČTÚ-NetTest requires certain permissions to work.</string>
     <string name="phone_permission_title">1. Phone permission</string>
     <string name="location_permission_title">2. Location permission</string>
