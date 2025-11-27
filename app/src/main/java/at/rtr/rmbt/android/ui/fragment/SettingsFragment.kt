@@ -33,6 +33,7 @@ import at.specure.util.copyToClipboard
 import at.specure.util.openAppSettings
 import timber.log.Timber
 import java.util.Locale
+import androidx.core.net.toUri
 
 
 class SettingsFragment : BaseFragment(), InputSettingDialog.Callback,
@@ -285,13 +286,23 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback,
 
         binding.dataPrivacyAndTerms.root.setOnClickListener {
             settingsViewModel.state.dataPrivacyAndTermsUrl.get()?.let { url ->
-                DataPrivacyAndTermsOfUseActivity.start(
-                    requireContext(),
-                    when (Locale.getDefault().language) {
-                        "cs" -> String.format(url, "cs")
-                        else -> String.format(url, "en")
-                    }
-                )
+
+                val localizedUrl = when (Locale.getDefault().language) {
+                    "cs" -> String.format(url, "cs")
+                    "sk" -> String.format(url, "cs")
+                    else -> String.format(url, "en")
+                }
+
+                try {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            localizedUrl.toUri()
+                        )
+                    )
+                } catch (e: ActivityNotFoundException) {
+                    showUnableToFindBrowserAppToast()
+                }
             }
         }
 
