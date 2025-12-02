@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import at.rmbt.util.io
 import at.rtr.rmbt.android.R
+import at.rtr.rmbt.android.config.AppConfig
 import at.rtr.rmbt.android.ui.viewstate.HistoryDownloadViewState
 import at.specure.data.ControlServerSettings
 import at.specure.data.entity.History
@@ -22,6 +23,7 @@ class HistoryDownloadViewModel @Inject constructor(
     private val fileDownloader: FileDownloader,
     private val repository: HistoryRepository,
     private val controlServerSettings: ControlServerSettings,
+    private val appConfig: AppConfig
 ) : BaseViewModel() {
 
     private val fileName = context.getString(R.string.history_filename)
@@ -105,7 +107,7 @@ class HistoryDownloadViewModel @Inject constructor(
             }
             val languageCode = Locale.getDefault().toLanguageTag().split("-")[0]
             val statisticServerUrl = controlServerSettings.statisticsMasterServerUrl
-                ?: "https://***REMOVED***/RMBTStatisticServer"
+                ?: ("https://" + appConfig.controlServerHost + "/RMBTStatisticServer")
             val url =
                 if (format == "pdf") "$statisticServerUrl/export/pdf/$languageCode"
                 else "$statisticServerUrl/opentests/search"
