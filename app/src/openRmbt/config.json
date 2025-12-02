@@ -7,37 +7,37 @@
     },
     {
       "name": "CONTROL_SERVER_HOST",
-      "value": "***REMOVED***",
+      "value": "sdev.example.com",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PRIVATE_IPV4_HOST",
-      "value": "v4-***REMOVED***",
+      "value": "sdevv4.example.com",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PRIVATE_IPV6_HOST",
-      "value": "v6-***REMOVED***",
+      "value": "sdevv6.example.com",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PUBLIC_IPV4_URL",
-      "value": "v4-***REMOVED***/RMBTControlServer/ip",
+      "value": "sdevv4.example.com/RMBTControlServer/ip",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_CHECK_PUBLIC_IPV6_URL",
-      "value": "v6-***REMOVED***/RMBTControlServer/ip",
+      "value": "sdevv6.example.com/RMBTControlServer/ip",
       "visible": false
     },
     {
       "name": "CAPTIVE_PORTAL_WALLED_GARDEN_URL",
-      "value": "***REMOVED***/nocon",
+      "value": "http://webtest.example.com/generate_204",
       "visible": false
     },
     {
       "name": "CONTROL_SERVER_NEW_HOST",
-      "value": "nope",
+      "value": "api-test.example.org",
       "visible": false
     },
     {
@@ -252,22 +252,22 @@
     },
     {
       "name": "WEBSITE_URL",
-      "value": "***REMOVED***",
+      "value": "https://www.example.com",
       "visible": false
     },
     {
       "name": "EMAIL_ADDRESS",
-      "value": "NetTest podpora <nettest@ctu.gov.cz>",
+      "value": "RMBT Support <support@example.com>",
       "visible": false
     },
     {
       "name": "DATA_PRIVACY_AND_TERMS_URL",
-      "value": "***REMOVED***/%s/PrivacyAndroid",
+      "value": "https://example.com/%s/PrivacyAndroid",
       "visible": true
     },
     {
       "name": "TERMS_FOR_ACCEPTANCE_URL",
-      "value": "***REMOVED***/%s/tc_android.html",
+      "value": "https://example.com/%s/tc_android.html",
       "visible": true
     },
     {
