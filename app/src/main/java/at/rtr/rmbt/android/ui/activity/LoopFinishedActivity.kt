@@ -10,6 +10,7 @@ import android.content.*
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -68,6 +69,12 @@ class LoopFinishedActivity : BaseActivity() {
             HomeActivity.startWithFragment(this, HomeActivity.Companion.HomeNavigationTarget.HOME_FRAGMENT_TO_SHOW)
             LoopConfigurationActivity.start(this)
         }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                this@LoopFinishedActivity.finishAffinity()
+                HomeActivity.startWithFragment(this@LoopFinishedActivity, HomeActivity.Companion.HomeNavigationTarget.HOME_FRAGMENT_TO_SHOW)
+            }
+        })
 
         binding.buttonDownloadPdf.setOnClickListener {
             val loopUUID = intent.getStringExtra("loopUUID")
@@ -98,12 +105,6 @@ class LoopFinishedActivity : BaseActivity() {
             binding.buttonDownloadPdf.visibility = View.GONE
             binding.buttonDownloadPdfInBrowser.visibility = View.GONE
         }
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        this.finishAffinity()
-        HomeActivity.startWithFragment(this, HomeActivity.Companion.HomeNavigationTarget.HOME_FRAGMENT_TO_SHOW)
     }
 
     override fun onResume() {
