@@ -79,8 +79,9 @@ android {
             println("flavorDimension: ${flavorDimension}")
 
             def jsonFile
-            if ((isPrivate) && (flavorDimension != "openRmbt")) {
-                jsonFile = file("$project.rootDir/private/$project.name/src/${flavorDimension}/config.json")
+            def privateConfigFile = file("$project.rootDir/private/$project.name/src/${flavorDimension}/config.json")
+            if (privateConfigFile.exists()) {
+                jsonFile = privateConfigFile
             } else {
                 jsonFile = file("$project.rootDir/$project.name/src/${flavorDimension}/config.json")
             }
