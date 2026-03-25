@@ -90,7 +90,7 @@ class CertInstructionsActivity : BaseActivity(), CertInstructionsCallback {
     }
 
     override fun onDeclined() {
-        setResult(Activity.RESULT_CANCELED)
+        setResult(RESULT_CANCELED)
         finish()
     }
 
@@ -105,7 +105,7 @@ class CertInstructionsActivity : BaseActivity(), CertInstructionsCallback {
     }
 
     override fun onThirdPageAccepted() {
-        setResult(Activity.RESULT_OK)
+        setResult(RESULT_OK)
         finish()
     }
 

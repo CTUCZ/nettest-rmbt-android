@@ -51,7 +51,6 @@ import at.rtr.rmbt.android.util.addOnPropertyChanged
 import at.rtr.rmbt.android.util.changeStatusBarColor
 import at.rtr.rmbt.android.util.hasLocationPermissions
 import at.rtr.rmbt.android.util.listen
-import at.rtr.rmbt.android.viewmodel.CertConfigurationViewModel
 import at.rtr.rmbt.android.viewmodel.HomeViewModel
 import at.rtr.rmbt.android.viewmodel.MeasurementViewModel
 import at.specure.info.TransportType
@@ -90,6 +89,22 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
             } else {
                 homeViewModel.state.isLoopModeActive.set(false)
                 binding.btnLoop.isChecked = false
+            }
+        }
+
+    private val getCertInstructionsResult =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                homeViewModel.state.isCertModeActive.set(true)
+                binding.spinMode.setSelection(2)
+                homeViewModel.state.isLoopModeActive.set(false)
+                binding.btnLoop.isChecked = false
+            } else {
+                homeViewModel.state.isCertModeActive.set(false)
+                homeViewModel.state.isLoopModeActive.set(false)
+                binding.btnLoop.isChecked = false
+                binding.spinMode.setSelection(0)
             }
         }
 
@@ -221,16 +236,16 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
                             OpenGpsSettingDialog.instance().show(activity)
                         }else if(isPermissionsForCertMeasuringGranted()) {
                             val networkType = homeViewModel.activeNetworkLiveData.activeNetworkWatcher.currentNetworkInfo?.type
-                            if(networkType != TransportType.CELLULAR) {
-                                SimpleDialog.Builder()
-                                    .titleText(R.string.unsupported_network_title)
-                                    .messageText(R.string.unsupported_network_text)
-                                    .positiveText(android.R.string.ok)
-                                    .cancelable(true)
-                                    .show(childFragmentManager, CODE_NO_CELLULAR_NETWORK)
-                            } else {
+//                            if(networkType != TransportType.CELLULAR) {
+//                                SimpleDialog.Builder()
+//                                    .titleText(R.string.unsupported_network_title)
+//                                    .messageText(R.string.unsupported_network_text)
+//                                    .positiveText(android.R.string.ok)
+//                                    .cancelable(true)
+//                                    .show(childFragmentManager, CODE_NO_CELLULAR_NETWORK)
+//                            } else {
                                 startCertMeasurement()
-                            }
+//                            }
 
                         } else {
                             Timber.d("Cert measurement requires all permissions, requiring permissions...")
@@ -301,7 +316,7 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
                                         2 -> {
                                             if(!homeViewModel.state.isCertModeActive.get()) {
                                                 val intent = CertInstructionsActivity.start(requireContext())
-                                                startActivityForResult(intent, CODE_CERT_INSTRUCTIONS)
+                                                getCertInstructionsResult.launch(intent)
                                             }
                                         }
                                         else -> homeViewModel.state.isCertModeActive.set(false)
@@ -805,16 +820,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
     private fun startCertMeasurement() {
         Timber.d("Starting cert measurement")
         homeViewModel.state.isLoopModeActive.set(true)
-        homeViewModel.appConfig.savedLoopModeNumberOfTests = homeViewModel.appConfig.loopModeNumberOfTests
-        homeViewModel.appConfig.savedLoopModeWaitingTimeMin = homeViewModel.appConfig.loopModeWaitingTimeMin
-        homeViewModel.appConfig.savedLoopModeDistanceMeters = homeViewModel.appConfig.loopModeDistanceMeters
-        homeViewModel.appConfig.savedSkipQoSTests = homeViewModel.appConfig.skipQoSTests
-
-        homeViewModel.appConfig.loopModeNumberOfTests = CertConfigurationViewModel.NUMBER_OF_TESTS
-        homeViewModel.appConfig.loopModeWaitingTimeMin = CertConfigurationViewModel.WAITING_TIME_MINUTES
-        homeViewModel.appConfig.loopModeDistanceMeters = CertConfigurationViewModel.DISTANCE_METERS
-        homeViewModel.appConfig.skipQoSTests = true
-
         MeasurementService.startTests(requireContext())
         MeasurementActivity.start(requireContext())
     }
@@ -881,45 +886,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
     override fun onStop() {
         super.onStop()
         homeViewModel.detach(requireContext())
-    }
-
-    @Deprecated("TODO transform to current solution")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        when (requestCode) {
-            // TODO FIX CERT MEASUREMENT
-//            CODE_LOOP_INSTRUCTIONS -> {
-//                if (resultCode == Activity.RESULT_OK) {
-//                    homeViewModel.state.isLoopModeActive.set(true)
-//                    binding.btnLoop?.isChecked = true
-//
-//                    binding.spinMode?.setSelection(1)
-//                    homeViewModel.state.isCertModeActive.set(false)
-//                } else {
-//                    homeViewModel.state.isLoopModeActive.set(false)
-//                    binding.btnLoop?.isChecked = false
-//                    binding.spinMode?.setSelection(0)
-//                }
-//            }
-            CODE_CERT_INSTRUCTIONS -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    homeViewModel.state.isCertModeActive.set(true)
-                    binding.spinMode.setSelection(2)
-
-                    homeViewModel.state.isLoopModeActive.set(false)
-                    binding.btnLoop.isChecked = false
-
-                    //showDialog()
-                } else {
-                    homeViewModel.state.isCertModeActive.set(false)
-
-                    homeViewModel.state.isLoopModeActive.set(false)
-                    binding.btnLoop.isChecked = false
-                    binding.spinMode.setSelection(0)
-                }
-            }
-        }
     }
 
     /**
@@ -989,7 +955,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
         private const val INFO_WINDOW_TIME_MS: Long = 2000
         private const val CODE_DIALOG_NEWS = 14
         private const val CODE_DIALOG_MORE_SIMS = 15
-        private const val CODE_CERT_INSTRUCTIONS = 16
         private const val CODE_PERM_LOCATION_INFO = 17
         private const val CODE_PERM_PHONE_INFO = 18
         private const val CODE_BACKGROUND_PERM_INFO = 19

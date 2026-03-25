@@ -156,6 +156,15 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
         get() = getBoolean(BuildConfig.CERT_MODE_ENABLED)
         set(value) = setBoolean(BuildConfig.CERT_MODE_ENABLED, value)
 
+    override val certNumberOfTests: Int
+        get() = getInt(BuildConfig.CERT_NUMBER_OF_TESTS)
+
+    override val certWaitingTimeMin: Int
+        get() = getInt(BuildConfig.CERT_WAITING_TIME_MIN)
+
+    override val certDistanceMeters: Int
+        get() = getInt(BuildConfig.CERT_DISTANCE_METERS)
+
 
     override var expertModeEnabled: Boolean
         get() = getBoolean(BuildConfig.EXPERT_MODE_ENABLED)
@@ -513,16 +522,4 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
         get() = getString(BuildConfig.TECHNICIAN_ACTIVATION_CODE)
         set(value) = setString(BuildConfig.TECHNICIAN_ACTIVATION_CODE, value)
 
-    var savedLoopModeNumberOfTests: Int
-        get() = preferences.getInt("savedNumberOfTests", loopModeNumberOfTests)
-        set(value) = preferences.edit().putInt("savedNumberOfTests", value).apply()
-    var savedLoopModeWaitingTimeMin: Int
-        get() = preferences.getInt("savedWaitingTime", loopModeWaitingTimeMin)
-        set(value) = preferences.edit().putInt("savedWaitingTime", value).apply()
-    var savedLoopModeDistanceMeters: Int
-        get() = preferences.getInt("savedDistanceMeters", loopModeDistanceMeters)
-        set(value) = preferences.edit().putInt("savedDistanceMeters", value).apply()
-    var savedSkipQoSTests: Boolean
-        get() = preferences.getBoolean("savedSkipQoSTests", skipQoSTests)
-        set(value) = preferences.edit().putBoolean("savedSkipQoSTests", value).apply()
 }

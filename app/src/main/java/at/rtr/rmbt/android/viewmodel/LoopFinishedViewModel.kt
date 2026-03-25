@@ -36,9 +36,6 @@ class LoopFinishedViewModel @Inject constructor(
     }
 
     fun resetLoopMode() {
-        config.loopModeNumberOfTests = config.savedLoopModeNumberOfTests
-        config.loopModeWaitingTimeMin = config.savedLoopModeWaitingTimeMin
-        config.loopModeDistanceMeters = config.savedLoopModeDistanceMeters
-        config.skipQoSTests = config.savedSkipQoSTests
+        // Settings no longer need restoring — cert mode stores params in LoopModeRecord
     }
 }

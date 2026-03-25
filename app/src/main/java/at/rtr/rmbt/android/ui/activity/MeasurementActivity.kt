@@ -172,7 +172,9 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
 
         Timber.d("Measurement state loop create: ${viewModel.state.measurementState.get()?.name}")
 
-        viewModel.state.loopModeRecord.get()?.testsPerformed?.let { viewModel.state.setLoopProgress(it, viewModel.config.loopModeNumberOfTests) }
+        viewModel.state.loopModeRecord.get()?.let { record ->
+            record.testsPerformed.let { viewModel.state.setLoopProgress(it, record.configuredNumberOfTests) }
+        }
 
         viewModel.qosProgressLiveData.value?.let { binding.measurementBottomView?.qosProgressContainer?.update(it) }
     }
@@ -231,7 +233,7 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
         loopRecord?.testsPerformed?.let { testsPerformed ->
             viewModel.state.setLoopProgress(
                 testsPerformed,
-                viewModel.config.loopModeNumberOfTests
+                loopRecord.configuredNumberOfTests
             )
             Timber.d("setting loop record test performed: $testsPerformed")
         }

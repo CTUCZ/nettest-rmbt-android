@@ -53,7 +53,8 @@ class TestControllerImpl(
     private val config: Config,
     private val clientUUID: ClientUUID,
     private val connectivityManager: ConnectivityManager,
-    private val measurementServer: MeasurementServers
+    private val measurementServer: MeasurementServers,
+    private val stateRecorder: StateRecorder
 ) : TestController {
 
     private var lastNetwork: Network? = null
@@ -152,9 +153,9 @@ class TestControllerImpl(
 
             val loopSettings: LoopModeSettings? = if (config.loopModeEnabled) {
                 LoopModeSettings(
-                    config.loopModeWaitingTimeMin,
-                    config.loopModeDistanceMeters,
-                    config.loopModeNumberOfTests,
+                    stateRecorder.loopWaitingTimeMin,
+                    stateRecorder.loopDistanceMeters,
+                    stateRecorder.loopNumberOfTests,
                     loopTestCount,
                     loopModeUUID
                 )

@@ -17,7 +17,10 @@ data class LoopModeRecord(
     var lastTestLatitude: Double? = null,
     var lastTestFinishedTimeMillis: Long = 0,
     var movementDistanceMeters: Int = 0,
-    var status: LoopModeState = LoopModeState.RUNNING
+    var status: LoopModeState = LoopModeState.RUNNING,
+    val configuredNumberOfTests: Int = 0,
+    val configuredWaitingTimeMin: Int = 0,
+    val configuredDistanceMeters: Int = 0
 )
 
 enum class LoopModeState(val valueInt: Int) {

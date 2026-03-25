@@ -100,6 +100,7 @@ dependencies {
     api  "io.noties.markwon:linkify:$versions.markwon"
 
     testImplementation "junit:junit:$versions.junit"
+    testImplementation "io.mockk:mockk:$versions.mockk"
 
     androidTestImplementation "androidx.test:runner:$versions.test_runner"
     androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso_core"

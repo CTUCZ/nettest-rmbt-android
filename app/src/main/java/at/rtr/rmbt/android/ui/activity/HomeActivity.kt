@@ -87,11 +87,13 @@ class HomeActivity : BaseActivity() {
             Timber.d("Test is running: $isRunning,  Loop mode enabled: ${viewModel.config.loopModeEnabled} Loop mode record status: ${viewModel.state.loopModeRecord.get()?.status}, performed: ${viewModel.state.loopModeRecord.get()?.testsPerformed}")
             if (isRunning) {
                 if (viewModel.config.loopModeEnabled) {
-                    if (viewModel.state.loopModeRecord.get()?.status != LoopModeState.FINISHED
-                        && viewModel.state.loopModeRecord.get()?.status != LoopModeState.CANCELLED
+                    val loopRecord = viewModel.state.loopModeRecord.get()
+                    val numberOfTests = loopRecord?.configuredNumberOfTests ?: viewModel.config.loopModeNumberOfTests
+                    val testsPerformed = loopRecord?.testsPerformed ?: 0
+                    if (loopRecord?.status != LoopModeState.FINISHED
+                        && loopRecord?.status != LoopModeState.CANCELLED
                         && viewModel.state.loopLocalUUID.get() != null
-                        && (((viewModel.state.loopModeRecord.get()?.testsPerformed
-                            ?: 0) <= viewModel.config.loopModeNumberOfTests && viewModel.config.loopModeNumberOfTests != 0) || viewModel.config.loopModeNumberOfTests == 0)
+                        && (testsPerformed <= numberOfTests && numberOfTests != 0 || numberOfTests == 0)
                     ) {
                         Timber.d("Starting measurement activity because loop measurement is running")
                         MeasurementActivity.start(this)
