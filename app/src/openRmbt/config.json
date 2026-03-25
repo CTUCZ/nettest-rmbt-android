@@ -151,11 +151,6 @@
       "visible": true
     },
     {
-      "name": "CERT_DISTANCE_METERS",
-      "value": "100000",
-      "visible": true
-    },
-    {
       "name": "CAPABILITIES_RMBT_HTTP",
       "value": "true",
       "visible": false

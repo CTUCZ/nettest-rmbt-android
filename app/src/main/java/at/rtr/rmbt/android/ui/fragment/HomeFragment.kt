@@ -235,17 +235,7 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
                         if(LocationState.DISABLED_DEVICE == homeViewModel.state.isLocationEnabled.get()) {
                             OpenGpsSettingDialog.instance().show(activity)
                         }else if(isPermissionsForCertMeasuringGranted()) {
-                            val networkType = homeViewModel.activeNetworkLiveData.activeNetworkWatcher.currentNetworkInfo?.type
-//                            if(networkType != TransportType.CELLULAR) {
-//                                SimpleDialog.Builder()
-//                                    .titleText(R.string.unsupported_network_title)
-//                                    .messageText(R.string.unsupported_network_text)
-//                                    .positiveText(android.R.string.ok)
-//                                    .cancelable(true)
-//                                    .show(childFragmentManager, CODE_NO_CELLULAR_NETWORK)
-//                            } else {
-                                startCertMeasurement()
-//                            }
+                            startCertMeasurement()
 
                         } else {
                             Timber.d("Cert measurement requires all permissions, requiring permissions...")
@@ -377,12 +367,9 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
                 .positiveText(android.R.string.ok)
                 .cancelable(true)
                 .show(this.childFragmentManager, 0)
-
-            //LoopFinishedActivity.startForCertMode(requireContext(), "L7142468f-7cf3-4ae8-ac0c-0baf25b44c11")
         }
     }
 
-//    @SuppressLint("MissingPermission")
     private fun debugData(): String {
         val signalWatcher = homeViewModel.signalStrengthLiveData.signalStrengthWatcher
         val networkWatcher = homeViewModel.activeNetworkLiveData.activeNetworkWatcher
@@ -674,8 +661,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
         super.onStart()
         homeViewModel.attach(requireContext())
 
-        //checkPermissions()
-        //showDialog()
         if(homeViewModel.shouldAskForPermission()) requirePermissions()
         startTimerForInfoWindow()
         homeViewModel.state.checkConfig()
@@ -721,40 +706,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
             locationViewModel.updateLocationPermissions()
         }
         homeViewModel.getNews() // displaying news after permissions were/were not granted
-    }
-
-    private fun showDialog() {
-        val checkPermissions: Boolean
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val background = checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-            val fineLocation = checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-            checkPermissions = checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        } else {
-            checkPermissions = checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        }
-
-//        ActivityCompat.requestPermissions(
-//            requireActivity(),
-//            arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-//            PERMISSIONS_REQUEST_CODE
-//        )
-
-        if(!checkPermissions /*|| homeViewModel.shouldAskForPermission()*/) {
-            SimpleDialog.Builder()
-                .titleText(R.string.permissions_dialog_title)
-                .messageText(R.string.permissions_dialog_text)
-                .positiveText(android.R.string.ok)
-                .cancelable(false)
-                .show(this.childFragmentManager, CODE_PERM_LOCATION_INFO)
-        }
     }
 
     private fun requirePermissions(forceBackgroundLocation: Boolean = false) {
@@ -925,10 +876,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
             i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             activityLauncher.launch(i)
         }
-// cant start cert measurement if not cellular
-//        if(code == CODE_NO_CELLULAR_NETWORK) {
-//            startCertMeasurement()
-//        }
     }
 
     private val permRequestLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -948,7 +895,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
     }
 
     override fun onDialogNegativeClicked(code: Int) {
-        // TODO("Not yet implemented")
     }
 
     companion object {
@@ -959,7 +905,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
         private const val CODE_PERM_PHONE_INFO = 18
         private const val CODE_BACKGROUND_PERM_INFO = 19
         private const val CODE_BACKGROUND_BACKUP_PERM_INFO = 20
-        private const val CODE_NO_CELLULAR_NETWORK = 21
 
     }
 }

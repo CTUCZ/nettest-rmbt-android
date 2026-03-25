@@ -246,7 +246,7 @@ class StateRecorder @Inject constructor(
                 localLoopUUID, loopUUID, lastTestUuid = testRecord?.uuid, config.certModeEnabled,
                 configuredNumberOfTests = if (config.certModeEnabled) config.certNumberOfTests else config.loopModeNumberOfTests,
                 configuredWaitingTimeMin = if (config.certModeEnabled) config.certWaitingTimeMin else config.loopModeWaitingTimeMin,
-                configuredDistanceMeters = if (config.certModeEnabled) config.certDistanceMeters else config.loopModeDistanceMeters
+                configuredDistanceMeters = if (config.certModeEnabled) Int.MAX_VALUE else config.loopModeDistanceMeters
             )
             Timber.d("LOOP STATE SAVED 1: ${_loopModeRecord!!.status}")
             repository.saveLoopMode(_loopModeRecord!!)

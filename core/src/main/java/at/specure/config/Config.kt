@@ -120,11 +120,6 @@ interface Config {
     val certWaitingTimeMin: Int
 
     /**
-     * Distance threshold for certified measurement mode, in meters
-     */
-    val certDistanceMeters: Int
-
-    /**
      * Duration of the signal measurement activity time after user enable it, in minutes
      */
     var signalMeasurementDurationMin: Int

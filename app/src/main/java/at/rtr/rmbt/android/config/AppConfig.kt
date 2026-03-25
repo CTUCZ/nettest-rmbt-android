@@ -162,10 +162,6 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
     override val certWaitingTimeMin: Int
         get() = getInt(BuildConfig.CERT_WAITING_TIME_MIN)
 
-    override val certDistanceMeters: Int
-        get() = getInt(BuildConfig.CERT_DISTANCE_METERS)
-
-
     override var expertModeEnabled: Boolean
         get() = getBoolean(BuildConfig.EXPERT_MODE_ENABLED)
         set(value) = setBoolean(BuildConfig.EXPERT_MODE_ENABLED, value)

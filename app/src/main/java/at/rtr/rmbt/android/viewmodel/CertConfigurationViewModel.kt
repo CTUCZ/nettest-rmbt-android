@@ -11,8 +11,4 @@ class CertConfigurationViewModel @Inject constructor(val config: AppConfig) : Ba
     val waitingTimeMinutes: Int
         get() = config.certWaitingTimeMin
 
-    // fixme cert measurement should not use distance as trigger for new test at all
-    val distanceMeters: Int
-        get() = config.certDistanceMeters
-
 }

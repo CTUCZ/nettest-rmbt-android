@@ -144,14 +144,13 @@ class StateRecorderLoopConfigTest {
         every { config.certModeEnabled } returns true
         every { config.certNumberOfTests } returns 6
         every { config.certWaitingTimeMin } returns 15
-        every { config.certDistanceMeters } returns 0
 
         stateRecorder.initializeLoopModeData("remote-loop-uuid")
 
         val record = stateRecorder.loopModeRecord
         assertEquals(6, record?.configuredNumberOfTests)
         assertEquals(15, record?.configuredWaitingTimeMin)
-        assertEquals(0, record?.configuredDistanceMeters)
+        assertEquals(Int.MAX_VALUE, record?.configuredDistanceMeters)
         assertTrue(record?.certMode == true)
         verify { repository.saveLoopMode(any()) }
     }
