@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
@@ -23,6 +24,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import at.rmbt.client.control.IpProtocol
+import at.rmbt.client.control.Server
+import at.rtr.rmbt.android.BuildConfig
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.FragmentHomeBinding
 import at.rtr.rmbt.android.di.viewModelLazy
@@ -40,6 +43,7 @@ import at.rtr.rmbt.android.ui.dialog.NetworkInfoDialog
 import at.rtr.rmbt.android.ui.dialog.OpenGpsSettingDialog
 import at.rtr.rmbt.android.ui.dialog.OpenLocationPermissionDialog
 import at.rtr.rmbt.android.ui.dialog.SimpleDialog
+import at.rtr.rmbt.android.ui.dialog.TechnicianQuickSwitchDialog
 import at.rtr.rmbt.android.util.InfoWindowStatus
 import at.rtr.rmbt.android.util.InformationAccessProblem
 import at.rtr.rmbt.android.util.ToolbarTheme
@@ -59,7 +63,7 @@ import cz.mroczis.netmonster.core.model.connection.SecondaryConnection
 import timber.log.Timber
 import kotlin.math.max
 
-class HomeFragment : BaseFragment(), SimpleDialog.Callback {
+class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitchDialog.Callback {
 
     private val homeViewModel: HomeViewModel by viewModelLazy()
     private val binding: FragmentHomeBinding by bindingLazy()
@@ -180,6 +184,9 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         binding.btnSetting.setOnClickListener {
             startActivity(Intent(requireContext(), PreferenceActivity::class.java))
         }
+        binding.chipTechnicianMode.setOnClickListener {
+            showTechnicianQuickSwitchDialog()
+        }
         binding.tvInfo.setOnClickListener {
             homeViewModel.state.infoWindowStatus.set(InfoWindowStatus.GONE)
         }
@@ -202,6 +209,11 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         }
 
         binding.ivSignalLevel.setOnClickListener {
+            if (homeViewModel.state.technicianModeIsEnabled.get() == true &&
+                homeViewModel.state.selectedMeasurementServer.get() == null) {
+                Toast.makeText(requireContext(), R.string.home_technician_mode_no_server, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             if (homeViewModel.isConnected.value == true) {
                 if (!homeViewModel.clientUUID.value.isNullOrEmpty()) {
                     if (homeViewModel.state.isCertModeActive.get()) {
@@ -652,6 +664,7 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
         if(homeViewModel.shouldAskForPermission()) requirePermissions()
         startTimerForInfoWindow()
         homeViewModel.state.checkConfig()
+        updateTechnicianBanner()
     }
 
     private fun checkPermissions() {
@@ -804,6 +817,65 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback {
 
         MeasurementService.startTests(requireContext())
         MeasurementActivity.start(requireContext())
+    }
+
+    private fun updateTechnicianBanner() {
+        if (homeViewModel.state.technicianModeIsEnabled.get() == true) {
+            val server = homeViewModel.state.selectedMeasurementServer.get()
+            val backend = homeViewModel.state.technicianSelectedBackend.get() ?: ""
+            val backendLabel = if (backend == "test") {
+                getString(R.string.preferences_technician_backend_test)
+            } else {
+                getString(R.string.preferences_technician_backend_production)
+            }
+            if (server != null) {
+                binding.tvLblTechnicianMode.text = getString(R.string.home_technician_mode, backendLabel, server.name)
+                binding.chipTechnicianMode.setBackgroundResource(R.drawable.bg_technician_chip)
+            } else {
+                binding.tvLblTechnicianMode.text = getString(R.string.home_technician_mode_no_server)
+                binding.chipTechnicianMode.setBackgroundResource(R.drawable.bg_technician_chip_warning)
+            }
+        }
+    }
+
+    private fun showTechnicianQuickSwitchDialog() {
+        val productionLabel = getString(R.string.preferences_technician_backend_production)
+        val testLabel = getString(R.string.preferences_technician_backend_test)
+        val controlServerItems = arrayListOf(productionLabel, testLabel)
+        val currentBackend = homeViewModel.state.technicianSelectedBackend.get() ?: ""
+        val currentBackendIndex = if (currentBackend == "test") 1 else 0
+        val servers = homeViewModel.state.technicianMeasurementServers.get() ?: emptyList()
+        val currentServerUuid = homeViewModel.state.selectedMeasurementServer.get()?.uuid
+        Timber.d("TechnicianDialog: opening with ${servers.size} servers, backend=$currentBackend, serverUuid=$currentServerUuid")
+
+        TechnicianQuickSwitchDialog.instance(
+            controlServerItems = controlServerItems,
+            currentBackendIndex = currentBackendIndex,
+            measurementServers = servers,
+            currentServerUuid = currentServerUuid
+        ).show(childFragmentManager)
+    }
+
+    override fun onControlServerPreview(backend: String) {
+        Timber.d("TechnicianDialog: preview backend=$backend")
+        homeViewModel.previewControlServer(backend) { servers ->
+            Timber.d("TechnicianDialog: got ${servers.size} servers")
+            activity?.runOnUiThread {
+                val dialog = childFragmentManager.findFragmentByTag("dialog") as? TechnicianQuickSwitchDialog
+                dialog?.updateMeasurementServers(servers)
+            }
+        }
+    }
+
+    override fun onTechnicianSettingsConfirmed(backend: String, server: Server?) {
+        Timber.d("TechnicianDialog: confirmed backend=$backend server=${server?.name}")
+        homeViewModel.appConfig.technicianSelectedBackend = backend
+        homeViewModel.state.technicianSelectedBackend.set(backend)
+        if (server != null) {
+            homeViewModel.state.selectedMeasurementServer.set(server)
+            homeViewModel.measurementServers.selectedMeasurementServer = server
+        }
+        updateTechnicianBanner()
     }
 
     override fun onStop() {

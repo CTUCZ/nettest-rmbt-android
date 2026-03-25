@@ -236,8 +236,53 @@
       "visible": false
     },
     {
+      "name": "TECHNICIAN_ACTIVATE_CODE",
+      "value": "placeholder",
+      "visible": false
+    },
+    {
+      "name": "TECHNICIAN_DEACTIVATE_CODE",
+      "value": "placeholder",
+      "visible": false
+    },
+    {
       "name": "ALL_DEACTIVATE_CODE",
       "value": "0000",
+      "visible": false
+    },
+    {
+      "line1": "=======================================",
+      "_section": "TECHNICIAN MODE SETTINGS",
+      "line2": "======================================="
+    },
+    {
+      "name": "TECHNICIAN_MODE_ENABLED",
+      "value": "false",
+      "visible": false
+    },
+    {
+      "name": "TECHNICIAN_TEST_CONTROL_SERVER_HOST",
+      "value": "placeholder",
+      "visible": false
+    },
+    {
+      "name": "TECHNICIAN_TEST_CONTROL_SERVER_PORT",
+      "value": "443",
+      "visible": false
+    },
+    {
+      "name": "TECHNICIAN_TEST_CONTROL_SERVER_USE_SSL",
+      "value": "true",
+      "visible": false
+    },
+    {
+      "name": "TECHNICIAN_SELECTED_BACKEND",
+      "value": "",
+      "visible": false
+    },
+    {
+      "name": "TECHNICIAN_ACTIVATION_CODE",
+      "value": "",
       "visible": false
     },
     {

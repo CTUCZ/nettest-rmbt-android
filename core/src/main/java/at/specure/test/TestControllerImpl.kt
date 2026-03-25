@@ -177,11 +177,13 @@ class TestControllerImpl(
                 additionalValues.put(KEY_LOOP_MODE_SETTINGS, JSONObject(gson.toJson(it, LoopModeSettings::class.java)))
             }
 
-            if (config.expertModeEnabled) {
+            if (config.expertModeEnabled || config.technicianModeEnabled) {
                 additionalValues.put(KEY_SERVER_SELECTION_ENABLED, true)
                 measurementServer.selectedMeasurementServer?.let {
                     additionalValues.put(KEY_SERVER_PREFERRED, it.uuid)
+                    Timber.d("TestController: prefer_server=${it.uuid} name=${it.name}")
                 }
+                Timber.d("TestController: server_selection_enabled, controlHost=${config.controlServerHost}, technicianMode=${config.technicianModeEnabled}")
             }
 
             if (config.developerModeIsEnabled) {
@@ -195,6 +197,7 @@ class TestControllerImpl(
                 additionalValues.put(KEY_MEASUREMENT_TYPE, SignalMeasurementType.REGULAR.signalTypeName)
             }
 
+            Timber.d("TestController: connecting to ${if (config.controlServerUseSSL) "https" else "http"}://${config.controlServerHost}:${config.controlServerPort}")
             client = RMBTClient.getInstance(
                 config.controlServerHost,
                 if (config.headerValue.isNullOrEmpty()) null else config.rmbtClientRequestsPathPrefix,

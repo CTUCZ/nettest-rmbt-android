@@ -15,6 +15,7 @@
 package at.rmbt.util.exception
 
 import android.content.Context
+import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -47,6 +48,14 @@ open class HandledException constructor(val msg: String?, val stringResource: In
             is HandledException -> ex
             is SocketTimeoutException -> ConnectionTimeoutException()
             is UnknownHostException, is ConnectException, is SocketException -> NoConnectionException()
+            is IOException -> {
+                val rootCause = ex.cause
+                when (rootCause) {
+                    is SocketTimeoutException -> ConnectionTimeoutException()
+                    is UnknownHostException, is ConnectException, is SocketException -> NoConnectionException()
+                    else -> HandledException("Message: ${ex.message} \nCause: ${ex.cause} \nCustom message: $msg")
+                }
+            }
             else -> HandledException("Message: ${ex.message} \nCause: ${ex.cause} \nCustom message: $msg")
         }
     }

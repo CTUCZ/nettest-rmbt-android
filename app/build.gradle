@@ -114,6 +114,7 @@ dependencies {
     implementation "androidx.core:core-splashscreen:$versions.splash_screen"
 
     testImplementation "junit:junit:$versions.junit"
+    testImplementation "io.mockk:mockk:$versions.mockk"
     androidTestImplementation "androidx.test:runner:$versions.test_runner"
     androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso_core"
     androidTestImplementation "androidx.test:rules:$versions.rules"

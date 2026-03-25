@@ -104,8 +104,13 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
         }
 
         viewModel.measurementErrorLiveData.listen(this) {
+            val messageRes = if (viewModel.config.technicianModeEnabled) {
+                R.string.test_dialog_error_text_technician_mode
+            } else {
+                R.string.test_dialog_error_text_contact_support
+            }
             SimpleDialog.Builder()
-                .messageText(R.string.test_dialog_error_text)
+                .messageText(messageRes)
                 .positiveText(R.string.input_setting_dialog_ok)
                 .cancelable(false)
                 .show(supportFragmentManager, CODE_ERROR)
@@ -175,6 +180,10 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
     private fun finishActivity(measurementFinished: Boolean) {
         Timber.d("Finish activity with measurement finished: $measurementFinished, testUUID: ${viewModel.testUUID}, measurementState: ${viewModel.state.measurementState.get()}, LoopModeActive: ${viewModel.state.isLoopModeActive.get()}, LoopModeState: ${viewModel.state.loopModeRecord.get()?.status}")
         if (measurementFinished) {
+            // Don't auto-finish on error when no test was started — let the error dialog handle dismissal
+            if (viewModel.state.measurementState.get() == MeasurementState.ERROR && viewModel.testUUID == null) {
+                return
+            }
             if (viewModel.state.isLoopModeActive.get()) {
                 if (viewModel.state.loopModeRecord.get()?.status == LoopModeState.FINISHED) {
                     val certMode = viewModel.state.loopModeRecord.get()?.certMode ?: false

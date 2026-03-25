@@ -397,6 +397,16 @@ interface Config {
     var secretCodeCoverageModeOff: String
 
     /**
+     * Secret code to enable technician mode
+     */
+    var secretCodeTechnicianModeOn: String
+
+    /**
+     * Secret code to disable technician mode
+     */
+    var secretCodeTechnicianModeOff: String
+
+    /**
      * Secret code to disable all special modes
      */
     var secretCodeAllModesOff: String
@@ -461,5 +471,35 @@ interface Config {
      * Minimum distance between latest two dots on map during the signal measurement
      */
     var minDistanceMetersToLogNewLocationOnMapDuringSignalMeasurement: Int
+
+    /**
+     * Is technician mode enabled
+     */
+    var technicianModeEnabled: Boolean
+
+    /**
+     * Host of the test control server for technician mode
+     */
+    var technicianTestControlServerHost: String
+
+    /**
+     * Port of the test control server for technician mode
+     */
+    var technicianTestControlServerPort: Int
+
+    /**
+     * Whether test control server for technician mode uses SSL
+     */
+    var technicianTestControlServerUseSSL: Boolean
+
+    /**
+     * Selected backend in technician mode ("production" | "test" | "")
+     */
+    var technicianSelectedBackend: String
+
+    /**
+     * Activation code entered by the technician (sent as developer_code in API)
+     */
+    var technicianActivationCode: String
 
 }

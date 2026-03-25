@@ -9,8 +9,10 @@ import at.rtr.rmbt.android.util.addOnPropertyChanged
 import at.specure.data.ClientUUID
 import at.specure.data.ControlServerSettings
 import at.specure.data.MeasurementServers
+import at.rmbt.client.control.Server
 import at.specure.data.repository.SettingsRepository
 import at.specure.location.LocationState
+import timber.log.Timber
 
 class SettingsViewState constructor(
     val appConfig: AppConfig,
@@ -50,10 +52,26 @@ class SettingsViewState constructor(
     val mapServerUseSSL = ObservableField(appConfig.mapServerUseSSL)
     val qosSSL = ObservableField(appConfig.qosSSL)
     val selectedMeasurementServer = ObservableField(measurementServers.selectedMeasurementServer)
+    val technicianModeEnabled = ObservableField(appConfig.technicianModeEnabled)
+    val technicianSelectedBackend = ObservableField(appConfig.technicianSelectedBackend)
+    val technicianMeasurementServers = ObservableField<List<Server>>().apply { set(emptyList()) }
+    val technicianError = ObservableField<String?>()
     val clientUUIDFormatted = ObservableField(if (clientUUID.value.isNullOrEmpty()) "" else "U{$clientUUID.value}")
 
+    private var isSettingControlServer = false
+
     private fun setControlServerAddress() {
-        if ((appConfig.controlServerOverrideEnabled) && (appConfig.developerModeIsEnabled)) {
+        if (isSettingControlServer) return
+        isSettingControlServer = true
+        if (appConfig.technicianModeEnabled && appConfig.technicianSelectedBackend == "test") {
+            appConfig.controlServerHost = appConfig.technicianTestControlServerHost
+            appConfig.controlServerPort = appConfig.technicianTestControlServerPort
+            appConfig.controlServerUseSSL = appConfig.technicianTestControlServerUseSSL
+        } else if (appConfig.technicianModeEnabled && appConfig.technicianSelectedBackend == "production") {
+            appConfig.controlServerHost = BuildConfig.CONTROL_SERVER_HOST.value
+            appConfig.controlServerPort = BuildConfig.CONTROL_SERVER_PORT.value.toInt()
+            appConfig.controlServerUseSSL = BuildConfig.CONTROL_SERVER_USE_SSL.value.toBoolean()
+        } else if ((appConfig.controlServerOverrideEnabled) && (appConfig.developerModeIsEnabled)) {
             controlServerHost.get()?.let {
                 appConfig.controlServerHost = it
             }
@@ -63,15 +81,58 @@ class SettingsViewState constructor(
         } else {
             appConfig.controlServerHost = BuildConfig.CONTROL_SERVER_HOST.value
             appConfig.controlServerPort = BuildConfig.CONTROL_SERVER_PORT.value.toInt()
+            appConfig.controlServerUseSSL = BuildConfig.CONTROL_SERVER_USE_SSL.value.toBoolean()
         }
 
-        refreshSettings()
+        io {
+            try {
+                val success = try {
+                    settingsRepository.refreshSettings()
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to refresh settings from control server")
+                    false
+                }
+                if (success && appConfig.technicianModeEnabled) {
+                    technicianMeasurementServers.set(measurementServers.measurementServers ?: emptyList())
+                    technicianError.set(null)
+                } else if (!success && appConfig.technicianModeEnabled) {
+                    appConfig.controlServerHost = BuildConfig.CONTROL_SERVER_HOST.value
+                    appConfig.controlServerPort = BuildConfig.CONTROL_SERVER_PORT.value.toInt()
+                    appConfig.controlServerUseSSL = BuildConfig.CONTROL_SERVER_USE_SSL.value.toBoolean()
+                    appConfig.technicianSelectedBackend = "production"
+                    technicianSelectedBackend.set("production")
+                    technicianMeasurementServers.set(emptyList())
+                    technicianError.set("server_error")
+                    val fallbackSuccess = try {
+                        settingsRepository.refreshSettings()
+                    } catch (e: Exception) {
+                        Timber.e(e, "Production fallback refresh also failed")
+                        false
+                    }
+                    if (fallbackSuccess) {
+                        technicianMeasurementServers.set(measurementServers.measurementServers ?: emptyList())
+                    } else {
+                        technicianError.set("network_error")
+                    }
+                }
+            } finally {
+                isSettingControlServer = false
+            }
+        }
     }
 
     private fun refreshSettings() {
         io {
-            settingsRepository.refreshSettings()
+            try {
+                settingsRepository.refreshSettings()
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to refresh settings")
+            }
         }
+    }
+
+    fun refreshTechnicianSettings() {
+        setControlServerAddress()
     }
 
     init {
@@ -82,6 +143,12 @@ class SettingsViewState constructor(
         if (controlServerHost.get().isNullOrEmpty()) {
             controlServerHost.set(appConfig.controlServerHost)
             controlServerSettings.controlServerOverrideUrl = controlServerHost.get()
+        }
+        if (appConfig.technicianModeEnabled) {
+            val servers = measurementServers.measurementServers
+            if (!servers.isNullOrEmpty()) {
+                technicianMeasurementServers.set(servers)
+            }
         }
         isNDTEnabled.addOnPropertyChanged { value ->
             value.get()?.let {
@@ -209,6 +276,15 @@ class SettingsViewState constructor(
         selectedMeasurementServer.addOnPropertyChanged { value ->
             value.get().let {
                 measurementServers.selectedMeasurementServer = it
+            }
+        }
+        technicianSelectedBackend.addOnPropertyChanged { value ->
+            value.get()?.let {
+                if (it.isNotEmpty()) {
+                    appConfig.technicianSelectedBackend = it
+                    selectedMeasurementServer.set(null)
+                    setControlServerAddress()
+                }
             }
         }
      }

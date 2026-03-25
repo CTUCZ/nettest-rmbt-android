@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import at.rmbt.client.control.Server
 import at.rtr.rmbt.android.config.AppConfig
 import at.rtr.rmbt.android.map.wrapper.LatLngW
 import at.rtr.rmbt.android.ui.fragment.START_ZOOM_LEVEL
@@ -49,7 +50,12 @@ class HomeViewState(
     val expertModeIsEnabled = ObservableField(config.expertModeEnabled)
     val developerModeIsEnabled = ObservableField(config.developerModeIsEnabled)
     val coverageModeIsEnabled = ObservableField(config.coverageModeEnabled)
+    val technicianModeIsEnabled = ObservableField(config.technicianModeEnabled)
+    val technicianSelectedBackend = ObservableField(config.technicianSelectedBackend)
     val selectedMeasurementServer = ObservableField(measurementServers.selectedMeasurementServer)
+    val technicianMeasurementServers = ObservableField<List<Server>>().apply {
+        set(if (config.technicianModeEnabled) measurementServers.measurementServers ?: emptyList() else emptyList())
+    }
     val informationAccessProblem = ObservableField(InformationAccessProblem.NO_PROBLEM)
     val locationChanged = ObservableBoolean(false)
     val locationWarningDialogSilenced = ObservableBoolean(false)
@@ -104,5 +110,10 @@ class HomeViewState(
         coverageModeIsEnabled.set(config.coverageModeEnabled)
         selectedMeasurementServer.set(measurementServers.selectedMeasurementServer)
         expertModeIsEnabled.set(config.expertModeEnabled)
+        technicianModeIsEnabled.set(config.technicianModeEnabled)
+        technicianSelectedBackend.set(config.technicianSelectedBackend)
+        if (config.technicianModeEnabled) {
+            technicianMeasurementServers.set(measurementServers.measurementServers ?: emptyList())
+        }
     }
 }

@@ -10,6 +10,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.map
 import at.rmbt.client.control.NewsItem
+import at.rmbt.client.control.Server
+import at.rmbt.util.io
+import at.rtr.rmbt.android.BuildConfig
 import at.rtr.rmbt.android.config.AppConfig
 import at.rtr.rmbt.android.ui.viewstate.HomeViewState
 import at.specure.data.ClientUUID
@@ -64,12 +67,37 @@ class HomeViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val signalMeasurementRepository: SignalMeasurementRepository,
     private val dedicatedSignalMeasurementProcessor: DedicatedSignalMeasurementProcessor,
-    measurementServers: MeasurementServers,
+    val measurementServers: MeasurementServers,
     private val signalMeasurementSettings: SignalMeasurementSettings,
     private val customMarker: CustomMarker,
 ) : BaseViewModel() {
 
     val state = HomeViewState(appConfig, measurementServers)
+
+    fun previewControlServer(backend: String, onResult: (List<Server>) -> Unit) {
+        if (backend == "test") {
+            appConfig.controlServerHost = appConfig.technicianTestControlServerHost
+            appConfig.controlServerPort = appConfig.technicianTestControlServerPort
+            appConfig.controlServerUseSSL = appConfig.technicianTestControlServerUseSSL
+        } else {
+            appConfig.controlServerHost = BuildConfig.CONTROL_SERVER_HOST.value
+            appConfig.controlServerPort = BuildConfig.CONTROL_SERVER_PORT.value.toInt()
+            appConfig.controlServerUseSSL = BuildConfig.CONTROL_SERVER_USE_SSL.value.toBoolean()
+        }
+        Timber.d("TechnicianDialog: previewControlServer backend=$backend host=${appConfig.controlServerHost} port=${appConfig.controlServerPort} ssl=${appConfig.controlServerUseSSL}")
+        io {
+            val success = try {
+                settingsRepository.refreshSettings()
+            } catch (e: Exception) {
+                Timber.e(e, "TechnicianDialog: refreshSettings failed for backend=$backend host=${appConfig.controlServerHost}")
+                false
+            }
+            val servers = if (success) measurementServers.measurementServers ?: emptyList() else emptyList()
+            Timber.d("TechnicianDialog: refreshSettings success=$success, got ${servers.size} servers")
+            state.technicianMeasurementServers.set(servers)
+            onResult(servers)
+        }
+    }
 
     // If ConnectivityInfo is null than no internet connection otherwise internet connection available
     val isConnected: LiveData<Boolean> = connectivityInfoLiveData.map {

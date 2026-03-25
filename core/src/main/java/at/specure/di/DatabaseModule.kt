@@ -16,6 +16,8 @@ package at.specure.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import at.rmbt.client.control.ControlServerClient
 import at.rmbt.client.control.IpClient
 import at.rmbt.client.control.MapServerClient
@@ -58,6 +60,11 @@ class DatabaseModule {
     @Singleton
     fun provideCoreDatabase(context: Context): CoreDatabase {
         val builder = Room.databaseBuilder(context, CoreDatabase::class.java, "CoreDatabase.db")
+        builder.addMigrations(object : Migration(159, 160) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE test ADD COLUMN developerCode TEXT DEFAULT NULL")
+            }
+        })
         builder.fallbackToDestructiveMigration()
         return builder.build()
     }

@@ -11,6 +11,7 @@ import at.specure.data.MeasurementServers
 import at.specure.data.repository.SettingsRepository
 import at.specure.location.LocationState
 import at.specure.location.LocationWatcher
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -95,12 +96,33 @@ class SettingsViewModel @Inject constructor(
                     state.developerModeTag.set(null)
                     R.string.preferences_coverage_mode_disabled
                 }
+                appConfig.secretCodeTechnicianModeOn -> {
+                    appConfig.technicianModeEnabled = true
+                    appConfig.technicianActivationCode = code
+                    state.technicianModeEnabled.set(true)
+                    state.technicianSelectedBackend.set("production")
+                    state.refreshTechnicianSettings()
+                    R.string.preferences_technician_mode_available
+                }
+                appConfig.secretCodeTechnicianModeOff -> {
+                    appConfig.technicianModeEnabled = false
+                    appConfig.technicianSelectedBackend = ""
+                    appConfig.technicianActivationCode = ""
+                    state.technicianModeEnabled.set(false)
+                    state.technicianSelectedBackend.set("")
+                    R.string.preferences_technician_mode_disabled
+                }
                 appConfig.secretCodeAllModesOff -> {
                     state.developerModeIsEnabled.set(false)
                     state.coverageModeEnabled.set(false)
                     state.developerModeTag.set(null)
                     state.controlServerOverrideEnabled.set(false)
                     state.mapServerOverrideEnabled.set(false)
+                    appConfig.technicianModeEnabled = false
+                    appConfig.technicianSelectedBackend = ""
+                    appConfig.technicianActivationCode = ""
+                    state.technicianModeEnabled.set(false)
+                    state.technicianSelectedBackend.set("")
                     R.string.preferences_all_disabled
                 }
                 else -> {
@@ -126,5 +148,16 @@ class SettingsViewModel @Inject constructor(
                 _openCodeWindow.postValue(true)
             }
         }
+    }
+
+    fun disableTechnicianMode() {
+        Timber.d("TechnicianMode: disabling, resetting to production server")
+        appConfig.technicianModeEnabled = false
+        appConfig.technicianSelectedBackend = ""
+        appConfig.technicianActivationCode = ""
+        state.technicianModeEnabled.set(false)
+        state.technicianSelectedBackend.set("")
+        state.refreshTechnicianSettings()
+        Timber.d("TechnicianMode: disabled, host=${appConfig.controlServerHost}")
     }
 }

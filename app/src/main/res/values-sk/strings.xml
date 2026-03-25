@@ -81,6 +81,22 @@
     <string name="preferences_category_developer_qos_server">QoS server</string>
     <string name="preferences_developer_qos_ssl">QoS server SSL</string>
     <string name="preferences_developer_qos_ssl_sum">Použít šifrované spojení ke QoS serveru</string>
+    <string name="preferences_technician_mode_available">Režim pre technikov povolený</string>
+    <string name="preferences_technician_mode_disabled">Režim pre technikov zakázaný</string>
+    <string name="preferences_technician_header">Režim pre technikov</string>
+    <string name="preferences_technician_backend">Backend</string>
+    <string name="preferences_technician_backend_production">Produkčný</string>
+    <string name="preferences_technician_backend_test">Testovací</string>
+    <string name="preferences_technician_server">Merací server</string>
+    <string name="preferences_technician_control_server">Riadiaci server</string>
+    <string name="preferences_technician_measurement_server">Merací server</string>
+    <string name="preferences_technician_server_error">Server nedostupný, vrátené na produkčný</string>
+    <string name="preferences_technician_network_error">Chyba siete — skontrolujte pripojenie</string>
+    <string name="preferences_technician_disable">Vypnúť režim pre technikov</string>
+    <string name="preferences_technician_disable_confirm">Naozaj chcete vypnúť režim pre technikov?</string>
+    <string name="home_technician_mode">Režim pre technikov | %1$s | %2$s</string>
+    <string name="home_technician_mode_no_server">Režim pre technikov — vyberte merací server</string>
+    <string name="home_technician_quick_switch_title">Režim pre technikov — výber servera</string>
     <string name="preferences_all_disabled">Vše deaktivováno.</string>
     <string name="preferences_server_selection">Výběr serveru</string>
     <string name="preferences_default_server_selection">Default</string>
@@ -166,7 +182,8 @@
 
     <string name="notification_test_title">NetTest běží</string>
 
-    <string name="test_dialog_error_text">Test se nezdařil. Prosím zkuste to znovu později.</string>
+    <string name="test_dialog_error_text_technician_mode">Test se nezdařil. Nepodařilo se navázat spojení se serverem. Zkontrolujte prosím nastavení serveru a zkuste to znovu.</string>
+    <string name="test_dialog_error_text_contact_support">Test se nezdařil. Nepodařilo se navázat spojení se serverem. Zkuste to prosím znovu později, případně kontaktujte podporu.</string>
 
     <!-- History -->
     <string name="measurement_cancel">Zrušit</string>
@@ -335,6 +352,7 @@
     <string name="download_complete">Stahování dokončeno</string>
     <string name="download_complete_description">Soubor %1$s byl úspěšně stažen. Klepněte na něj pro otevření.</string>
     <string name="error_no_connection">Není k dispozici připojení k internetu. Nelze načíst data.</string>
+    <string name="error_server_connection_failed">Nepodařilo se spojit se serverem: %s</string>
     <string name="preferences_network_info_by">Síťové informace díky Netmonster core</string>
     <string name="download_progress">Staženo %1$d%%</string>
     <string name="history_filename">NetTestExportHistorie</string>

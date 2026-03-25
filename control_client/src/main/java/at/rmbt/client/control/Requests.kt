@@ -537,7 +537,13 @@ data class TestResultBody(
      * packet loss in percents
      */
     @SerializedName("voip_result_packet_loss_percents")
-    val packetLoss: Double?
+    val packetLoss: Double?,
+
+    /**
+     * Developer code sent when technician mode is active
+     */
+    @SerializedName("developer_code")
+    var developerCode: String? = null
 )
 
 @Keep

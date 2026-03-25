@@ -586,7 +586,7 @@ data class VersionsSettings(
 data class Server(
     val name: String?,
     val uuid: String?
-)
+) : java.io.Serializable
 
 @Keep
 data class MapServerSettings(

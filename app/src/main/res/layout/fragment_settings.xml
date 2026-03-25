@@ -420,6 +420,80 @@
                 bind:title="@{@string/preferences_test_cases}"
                 bind:value="@{String.valueOf(state.numberOfTests)}" />
 
+            <!-- Technician mode section -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardTechnicianSettings"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginEnd="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:layout_marginBottom="@dimen/margin_medium"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/background_technician_card"
+                app:visibleOrGone="@{state.technicianModeEnabled}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/numberOfTestsPerformed">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/margin_large">
+
+                    <TextView
+                        android:id="@+id/tvTechnicianHeader"
+                        style="@style/RobotoMediumStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/preferences_technician_header"
+                        android:paddingBottom="@dimen/margin_medium" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/preferences_technician_control_server"
+                        android:paddingBottom="@dimen/margin_small" />
+
+                    <Spinner
+                        android:id="@+id/spinnerTechnicianControlServer"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/spinner_background"
+                        android:paddingStart="@dimen/margin_medium"
+                        android:paddingEnd="@dimen/margin_medium" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/preferences_technician_measurement_server"
+                        android:paddingTop="@dimen/margin_medium"
+                        android:paddingBottom="@dimen/margin_small" />
+
+                    <Spinner
+                        android:id="@+id/spinnerTechnicianMeasurementServer"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/spinner_background"
+                        android:paddingStart="@dimen/margin_medium"
+                        android:paddingEnd="@dimen/margin_medium" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/buttonDisableTechnicianMode"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_large"
+                        android:background="@drawable/button_white_background"
+                        android:text="@string/preferences_technician_disable"
+                        android:textColor="#D32F2F"
+                        app:textAllCaps="true" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
             <include
                 android:id="@+id/labelAbout"
                 layout="@layout/item_setting_header"
@@ -427,7 +501,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/numberOfTestsPerformed"
+                app:layout_constraintTop_toBottomOf="@+id/cardTechnicianSettings"
                 bind:title="@{@string/preferences_about}" />
 
             <include

@@ -38,6 +38,10 @@ android {
             pattern = Pattern.compile("generate(\\w+)")
         } else if (tskReqStr.contains("bundle")) {
             pattern = Pattern.compile("bundle(\\w+)")
+        } else if (tskReqStr.contains("UnitTest") || tskReqStr.contains("unitTest")) {
+            pattern = Pattern.compile("test(\\w+?)UnitTest")
+        } else if (tskReqStr.contains("kapt")) {
+            pattern = Pattern.compile("kapt(?:GenerateStubs)?(\\w+)Kotlin")
         } else {
             pattern = Pattern.compile("lint(\\w+)")
         }

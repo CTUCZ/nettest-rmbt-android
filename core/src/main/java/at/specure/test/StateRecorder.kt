@@ -208,9 +208,10 @@ class StateRecorder @Inject constructor(
             testTag = config.measurementTag,
             coverage = config.coverageModeEnabled,
             developerModeEnabled = config.developerModeIsEnabled,
-            serverSelectionEnabled = config.expertModeEnabled,
+            serverSelectionEnabled = config.expertModeEnabled || config.technicianModeEnabled,
             loopModeEnabled = config.loopModeEnabled,
             certModeEnabled = config.certModeEnabled,
+            developerCode = if (config.technicianModeEnabled) config.technicianActivationCode else null,
             transportType = networkInfo?.type,
             networkCapabilitiesRaw = networkInfo?.capabilitiesRaw ?: "networkInfo: null",
             clientVersion = RMBT_CLIENT_VERSION

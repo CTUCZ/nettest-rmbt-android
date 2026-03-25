@@ -11,7 +11,7 @@ class RetryInterceptor(private val maxRetryCount: Int = 3) : Interceptor {
         var response = try {
             chain.proceed(request)
         } catch (e: Exception) {
-            throw IOException("Initial request failed: ${e.message}")
+            throw IOException("Initial request failed: ${e.message}", e)
         }
         var retryCount = 0
         while (!response.isSuccessful && retryCount < maxRetryCount) {
@@ -21,7 +21,7 @@ class RetryInterceptor(private val maxRetryCount: Int = 3) : Interceptor {
             response = try {
                 chain.proceed(request)
             } catch (e: Exception) {
-                throw IOException("Request failed on retry $retryCount: ${e.message}")
+                throw IOException("Request failed on retry $retryCount: ${e.message}", e)
             }
         }
         if (!response.isSuccessful){

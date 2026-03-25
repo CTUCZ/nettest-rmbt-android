@@ -388,6 +388,17 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
             // this value cannot be changed
         }
 
+    override var secretCodeTechnicianModeOn: String
+        get() = getString(BuildConfig.TECHNICIAN_ACTIVATE_CODE)
+        set(value) {
+            // this value cannot be changed
+        }
+
+    override var secretCodeTechnicianModeOff: String
+        get() = getString(BuildConfig.TECHNICIAN_DEACTIVATE_CODE)
+        set(value) {
+            // this value cannot be changed
+        }
 
     override var secretCodeAllModesOff: String
         get() = getString(BuildConfig.ALL_DEACTIVATE_CODE)
@@ -472,6 +483,35 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
         get() = getInt(BuildConfig.MIN_LOCATION_DISTANCE_METERS_SIGNAL_MEASUREMENT)
         set(value) = setInt(BuildConfig.MIN_LOCATION_DISTANCE_METERS_SIGNAL_MEASUREMENT, value)
 
+    override var technicianModeEnabled: Boolean
+        get() = getBoolean(BuildConfig.TECHNICIAN_MODE_ENABLED)
+        set(value) = setBoolean(BuildConfig.TECHNICIAN_MODE_ENABLED, value)
+
+    override var technicianTestControlServerHost: String
+        get() = getString(BuildConfig.TECHNICIAN_TEST_CONTROL_SERVER_HOST)
+        set(value) {
+            // this value cannot be changed
+        }
+
+    override var technicianTestControlServerPort: Int
+        get() = getInt(BuildConfig.TECHNICIAN_TEST_CONTROL_SERVER_PORT)
+        set(value) {
+            // this value cannot be changed
+        }
+
+    override var technicianTestControlServerUseSSL: Boolean
+        get() = getBoolean(BuildConfig.TECHNICIAN_TEST_CONTROL_SERVER_USE_SSL)
+        set(value) {
+            // this value cannot be changed
+        }
+
+    override var technicianSelectedBackend: String
+        get() = getString(BuildConfig.TECHNICIAN_SELECTED_BACKEND)
+        set(value) = setString(BuildConfig.TECHNICIAN_SELECTED_BACKEND, value)
+
+    override var technicianActivationCode: String
+        get() = getString(BuildConfig.TECHNICIAN_ACTIVATION_CODE)
+        set(value) = setString(BuildConfig.TECHNICIAN_ACTIVATION_CODE, value)
 
     var savedLoopModeNumberOfTests: Int
         get() = preferences.getInt("savedNumberOfTests", loopModeNumberOfTests)

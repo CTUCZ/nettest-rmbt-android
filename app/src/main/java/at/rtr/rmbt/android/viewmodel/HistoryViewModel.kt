@@ -62,6 +62,8 @@ class HistoryViewModel @Inject constructor(
         loader.errorChannel = errorChannel
     }
 
+    val controlServerHost: String get() = endpointProvider.host
+
     val activeFiltersLiveData = repository.appliedFiltersLiveData
 
     init {

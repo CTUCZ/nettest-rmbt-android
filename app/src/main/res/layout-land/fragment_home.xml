@@ -323,7 +323,7 @@
             app:layout_constraintBottom_toTopOf="@+id/tvNetworkName"
             app:layout_constraintEnd_toEndOf="@+id/leftView"
             app:layout_constraintStart_toStartOf="@+id/leftView"
-            app:layout_constraintTop_toBottomOf="@+id/ivIsConnectedCircle"
+            app:layout_constraintTop_toBottomOf="@+id/chipTechnicianMode"
             app:networkType="@{state.activeNetworkInfo}"
             android:accessibilityTraversalAfter="@id/ivSignalLevel"
             tools:text="4G/LTE"
@@ -359,6 +359,33 @@
             app:layout_constraintStart_toStartOf="@+id/leftView"
             app:layout_constraintTop_toBottomOf="@+id/tvNetworkName"
             app:visibleOrGone="@{!state.isConnected}" />
+
+        <LinearLayout
+            android:id="@+id/chipTechnicianMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/bg_technician_chip"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/leftView"
+            app:layout_constraintStart_toStartOf="@+id/leftView"
+            app:layout_constraintTop_toBottomOf="@+id/ivIsConnectedCircle"
+            app:visibleOrGone="@{state.technicianModeIsEnabled}">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvLblTechnicianMode"
+                style="@style/RobotoRegularStyle.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/text_technician_chip" />
+        </LinearLayout>
 
         <View
             android:id="@+id/vBottomDivider"

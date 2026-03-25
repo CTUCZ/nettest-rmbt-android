@@ -257,6 +257,12 @@ data class TestRecord(
     val certModeEnabled: Boolean,
 
     /**
+     * Developer code sent when technician mode is active
+     */
+    @ColumnInfo(name = "developerCode")
+    val developerCode: String? = null,
+
+    /**
      * version of the measurement server used during the test
      */
     var clientVersion: String,

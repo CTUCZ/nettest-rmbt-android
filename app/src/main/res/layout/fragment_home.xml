@@ -305,11 +305,38 @@
             android:gravity="center"
             android:text="@string/home_coverage_mode"
             android:textColor="@color/text_green"
-            app:layout_constraintBottom_toTopOf="@+id/waveView"
+            app:layout_constraintBottom_toTopOf="@+id/chipTechnicianMode"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvLblNoConnection"
             app:visibleOrGone="@{state.coverageModeIsEnabled}" />
+
+        <LinearLayout
+            android:id="@+id/chipTechnicianMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_technician_chip"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/waveView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvLblCoverageMode"
+            app:visibleOrGone="@{state.technicianModeIsEnabled}">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvLblTechnicianMode"
+                style="@style/RobotoRegularStyle.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/text_technician_chip" />
+        </LinearLayout>
 
         <at.rtr.rmbt.android.ui.view.WaveView
             android:id="@+id/waveView"

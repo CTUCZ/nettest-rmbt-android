@@ -40,6 +40,8 @@
     <color name="text_gray">#545454</color>
     <color name="text_dark_gray">#424242</color>
     <color name="text_green">#52d301</color>
+    <color name="text_orange">#FF8C00</color>
+    <color name="text_red">#CF0C0C</color>
 
     <!-- Horizontal line divider color -->
     <color name="horizontal_divider">#eeeeee</color>
@@ -90,4 +92,8 @@
     <color name="ping_bar_color">#4D78Ed03</color>
 
     <color name="colorSelector">#5559b200</color>
+
+    <!-- Technician mode -->
+    <color name="background_technician_card">#F5F5F5</color>
+    <color name="text_technician_chip">#333333</color>
 </resources>

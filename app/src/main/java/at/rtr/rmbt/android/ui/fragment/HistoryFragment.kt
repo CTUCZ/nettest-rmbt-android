@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
+import at.rmbt.util.exception.HandledException
+import at.rmbt.util.exception.NoConnectionException
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.FragmentHistoryBinding
 import at.rtr.rmbt.android.di.viewModelLazy
@@ -23,6 +25,7 @@ import at.rtr.rmbt.android.ui.adapter.FilterLabelAdapter
 import at.rtr.rmbt.android.ui.adapter.HistoryLoopAdapter
 import at.rtr.rmbt.android.ui.dialog.HistoryDownloadDialog
 import at.rtr.rmbt.android.ui.dialog.HistoryFiltersDialog
+import at.rtr.rmbt.android.ui.dialog.SimpleDialog
 import at.rtr.rmbt.android.ui.dialog.SyncDevicesDialog
 import at.rtr.rmbt.android.util.ToolbarTheme
 import at.rtr.rmbt.android.util.changeStatusBarColor
@@ -32,6 +35,7 @@ import kotlin.math.max
 
 private const val CODE_FILTERS = 13
 private const val CODE_DOWNLOAD = 14
+private const val CODE_SERVER_ERROR = 15
 
 class HistoryFragment : BaseFragment(), SyncDevicesDialog.Callback, HistoryFiltersDialog.Callback {
 
@@ -137,6 +141,13 @@ class HistoryFragment : BaseFragment(), SyncDevicesDialog.Callback, HistoryFilte
             binding.swipeRefreshLayoutHistoryItems.isRefreshing = it
         }
 
+        historyViewModel.errorLiveData.listen(this) { error ->
+            error?.let {
+                onHandledException(it)
+                historyViewModel.clearErrorMessages()
+            }
+        }
+
         refreshHistory()
     }
 
@@ -157,5 +168,20 @@ class HistoryFragment : BaseFragment(), SyncDevicesDialog.Callback, HistoryFilte
 
     override fun onDevicesSynced() {
         refreshHistory()
+    }
+
+    override fun onHandledException(exception: HandledException?) {
+        exception?.let {
+            val message = if (it is NoConnectionException) {
+                getString(R.string.error_server_connection_failed, historyViewModel.controlServerHost)
+            } else {
+                it.getText(requireContext())
+            }
+            SimpleDialog.Builder()
+                .messageText(message)
+                .positiveText(android.R.string.ok)
+                .cancelable(false)
+                .show(parentFragmentManager, CODE_SERVER_ERROR)
+        }
     }
 }

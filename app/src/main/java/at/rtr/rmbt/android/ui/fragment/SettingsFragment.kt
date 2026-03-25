@@ -11,6 +11,8 @@ import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import at.rmbt.client.control.Server
@@ -356,6 +358,8 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback,
             )
                 .show(activity)
         }
+
+        setupTechnicianSpinners()
     }
 
     override fun onSelected(value: String, requestCode: Int) {
@@ -464,6 +468,91 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback,
         }
     }
 
+    private fun setupTechnicianSpinners() {
+        val productionHost = BuildConfig.CONTROL_SERVER_HOST.value
+        val testHost = BuildConfig.TECHNICIAN_TEST_CONTROL_SERVER_HOST.value
+        val controlServerItems = listOf(productionHost, testHost)
+        val controlServerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, controlServerItems)
+        controlServerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerTechnicianControlServer.adapter = controlServerAdapter
+
+        val currentBackend = settingsViewModel.state.technicianSelectedBackend.get() ?: ""
+        binding.spinnerTechnicianControlServer.setSelection(if (currentBackend == "test") 1 else 0)
+
+        binding.spinnerTechnicianControlServer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val backend = if (position == 1) "test" else "production"
+                if (settingsViewModel.state.technicianSelectedBackend.get() != backend) {
+                    settingsViewModel.state.technicianSelectedBackend.set(backend)
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        updateMeasurementServerSpinner(settingsViewModel.state.technicianMeasurementServers.get() ?: emptyList())
+
+        settingsViewModel.state.technicianMeasurementServers.addOnPropertyChanged { value ->
+            activity?.runOnUiThread {
+                updateMeasurementServerSpinner(value.get() ?: emptyList())
+            }
+        }
+
+        settingsViewModel.state.technicianError.addOnPropertyChanged { value ->
+            activity?.runOnUiThread {
+                value.get()?.let { error ->
+                    val messageRes = when (error) {
+                        "network_error" -> R.string.preferences_technician_network_error
+                        else -> R.string.preferences_technician_server_error
+                    }
+                    Toast.makeText(requireContext(), messageRes, Toast.LENGTH_LONG).show()
+                    binding.spinnerTechnicianControlServer.setSelection(0)
+                    settingsViewModel.state.technicianError.set(null)
+                }
+            }
+        }
+
+        settingsViewModel.state.technicianModeEnabled.addOnPropertyChanged { value ->
+            if (value.get() == true) {
+                binding.spinnerTechnicianControlServer.setSelection(0)
+            }
+        }
+
+        binding.buttonDisableTechnicianMode.setOnClickListener {
+            SimpleDialog.Builder()
+                .messageText(R.string.preferences_technician_disable_confirm)
+                .positiveText(android.R.string.ok)
+                .negativeText(android.R.string.cancel)
+                .cancelable(true)
+                .show(childFragmentManager, KEY_DISABLE_TECHNICIAN_MODE)
+        }
+    }
+
+    private fun updateMeasurementServerSpinner(servers: List<Server>) {
+        val serverNames = servers.map { it.name ?: it.uuid ?: "Unknown" }
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, serverNames)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerTechnicianMeasurementServer.adapter = adapter
+
+        val currentServer = settingsViewModel.state.selectedMeasurementServer.get()
+        if (currentServer != null) {
+            val index = servers.indexOfFirst { it.uuid == currentServer.uuid }
+            if (index >= 0) {
+                binding.spinnerTechnicianMeasurementServer.setSelection(index)
+            }
+        }
+
+        binding.spinnerTechnicianMeasurementServer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (position < servers.size) {
+                    settingsViewModel.state.selectedMeasurementServer.set(servers[position])
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                settingsViewModel.state.selectedMeasurementServer.set(null)
+            }
+        }
+    }
+
     companion object {
         private const val KEY_REQUEST_CODE_LOOP_MODE_WAITING_TIME: Int = 1
         private const val KEY_REQUEST_CODE_LOOP_MODE_DISTANCE: Int = 2
@@ -478,12 +567,17 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback,
         private const val CODE_DIALOG_INVALID = 14
 
         private const val KEY_REQUEST_CODE_LOOP_MODE_NUM_OF_TESTS: Int = 15
+        private const val KEY_DISABLE_TECHNICIAN_MODE: Int = 16
 
         fun newInstance() = SettingsFragment()
     }
 
     override fun onDialogPositiveClicked(code: Int) {
         when (code) {
+            KEY_DISABLE_TECHNICIAN_MODE -> {
+                settingsViewModel.disableTechnicianMode()
+                Toast.makeText(activity, R.string.preferences_technician_mode_disabled, Toast.LENGTH_SHORT).show()
+            }
             KEY_RADIO_INFO_CODE -> {
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
