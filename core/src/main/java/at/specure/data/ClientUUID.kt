@@ -28,9 +28,14 @@ class ClientUUID @Inject constructor(context: Context, val config: Config) {
 
     private val preferences = context.getSharedPreferences("client_uuid.pref", Context.MODE_PRIVATE)
 
+    private val isPerServerUUID: Boolean
+        get() = (config.expertModeEnabled && config.controlServerOverrideEnabled)
+                ||
+                config.technicianModeEnabled
+
     val liveData: LiveData<String?>
         get() {
-            return if (config.expertModeEnabled && config.controlServerOverrideEnabled) {
+            return if (isPerServerUUID) {
                 StringPreferenceLiveData(preferences, KEY_CLIENT_UUID + config.controlServerHost, null)
                     .also {
                         it.postValue(preferences.getString(KEY_CLIENT_UUID + config.controlServerHost, null))
@@ -45,21 +50,19 @@ class ClientUUID @Inject constructor(context: Context, val config: Config) {
 
     var value: String?
         get() {
-            return if (config.expertModeEnabled && config.controlServerOverrideEnabled) {
-                preferences.getString(KEY_CLIENT_UUID + config.controlServerHost , _value)
+            return if (isPerServerUUID) {
+                preferences.getString(KEY_CLIENT_UUID + config.controlServerHost, _value)
             } else {
                 _value
             }
         }
         set(a) {
             _value = a
-            if (config.expertModeEnabled && config.controlServerOverrideEnabled) {
+            if (isPerServerUUID) {
                 preferences.edit().putString(KEY_CLIENT_UUID + config.controlServerHost, _value).apply()
             } else {
                 preferences.edit().putString(KEY_CLIENT_UUID, _value).apply()
             }
-
-
         }
 
     private var _value: String? = null
