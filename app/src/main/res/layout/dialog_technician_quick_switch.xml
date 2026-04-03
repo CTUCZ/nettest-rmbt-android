@@ -24,29 +24,41 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/labelControlServer"
-            style="@style/RobotoRegularStyle.Small"
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleControlServer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_large"
-            android:text="@string/preferences_technician_control_server"
-            android:textColor="@color/text_black_transparency_60"
+            android:theme="@style/TechnicianToggleTheme"
+            app:singleSelection="true"
+            app:selectionRequired="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/labelTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/labelTitle">
 
-        <Spinner
-            android:id="@+id/spinnerControlServer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:background="@drawable/spinner_background"
-            android:minHeight="40dp"
-            android:padding="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/labelControlServer" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonProduction"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAllCaps="false"
+                android:singleLine="false"
+                android:maxLines="2"
+                android:gravity="center" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonTest"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAllCaps="false"
+                android:singleLine="false"
+                android:maxLines="2"
+                android:gravity="center" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/labelMeasurementServer"
@@ -58,7 +70,7 @@
             android:textColor="@color/text_black_transparency_60"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerControlServer" />
+            app:layout_constraintTop_toBottomOf="@+id/toggleControlServer" />
 
         <Spinner
             android:id="@+id/spinnerMeasurementServer"

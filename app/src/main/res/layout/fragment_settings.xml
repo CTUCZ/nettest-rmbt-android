@@ -457,13 +457,37 @@
                         android:text="@string/preferences_technician_control_server"
                         android:paddingBottom="@dimen/margin_small" />
 
-                    <Spinner
-                        android:id="@+id/spinnerTechnicianControlServer"
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/toggleTechnicianControlServer"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:background="@drawable/spinner_background"
-                        android:paddingStart="@dimen/margin_medium"
-                        android:paddingEnd="@dimen/margin_medium" />
+                        android:layout_height="wrap_content"
+                        android:theme="@style/TechnicianToggleTheme"
+                        app:singleSelection="true"
+                        app:selectionRequired="true">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonSettingsProduction"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAllCaps="false"
+                            android:singleLine="false"
+                            android:maxLines="2"
+                            android:gravity="center" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonSettingsTest"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAllCaps="false"
+                            android:singleLine="false"
+                            android:maxLines="2"
+                            android:gravity="center" />
+
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
 
                     <TextView
                         android:layout_width="match_parent"

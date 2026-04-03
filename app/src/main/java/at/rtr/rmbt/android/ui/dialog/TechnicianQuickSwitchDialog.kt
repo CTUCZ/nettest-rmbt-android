@@ -1,6 +1,11 @@
 package at.rtr.rmbt.android.ui.dialog
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +15,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import at.rmbt.client.control.Server
+import com.google.android.material.button.MaterialButton
+import at.rtr.rmbt.android.BuildConfig
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.DialogTechnicianQuickSwitchBinding
 import at.rtr.rmbt.android.util.args
@@ -23,7 +30,6 @@ class TechnicianQuickSwitchDialog : FullscreenDialog() {
     private var selectedBackend: String = "production"
     private var selectedServer: Server? = null
     private var originalBackend: String = "production"
-    private var initialSetup = true
 
     private val callback: Callback?
         get() = when {
@@ -45,7 +51,6 @@ class TechnicianQuickSwitchDialog : FullscreenDialog() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val controlServerItems = arguments?.getStringArrayList(KEY_CONTROL_SERVERS) ?: arrayListOf()
         val currentBackendIndex = arguments?.getInt(KEY_CURRENT_BACKEND_INDEX, 0) ?: 0
         val currentServerUuid = arguments?.getString(KEY_CURRENT_SERVER_UUID)
 
@@ -64,27 +69,8 @@ class TechnicianQuickSwitchDialog : FullscreenDialog() {
             selectedServer = servers.firstOrNull { it.uuid == currentServerUuid }
         }
 
-        // Control server spinner
-        val controlAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item_dark_text, controlServerItems)
-        controlAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerControlServer.adapter = controlAdapter
-        binding.spinnerControlServer.setSelection(currentBackendIndex)
-
-        binding.spinnerControlServer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val backend = if (position == 1) "test" else "production"
-                if (initialSetup) {
-                    initialSetup = false
-                    return
-                }
-                if (backend != selectedBackend) {
-                    selectedBackend = backend
-                    selectedServer = null
-                    callback?.onControlServerPreview(backend)
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
+        // Control server toggle group
+        setupControlServerToggle(currentBackendIndex)
 
         // Measurement server spinner
         updateMeasurementSpinner(servers, currentServerUuid)
@@ -99,6 +85,29 @@ class TechnicianQuickSwitchDialog : FullscreenDialog() {
                 callback?.onControlServerPreview(originalBackend)
             }
             dismiss()
+        }
+    }
+
+    private fun setupControlServerToggle(currentBackendIndex: Int) {
+        val productionLabel = getString(R.string.preferences_technician_backend_production)
+        val testLabel = getString(R.string.preferences_technician_backend_test)
+        val productionHost = BuildConfig.CONTROL_SERVER_HOST.value
+        val testHost = BuildConfig.TECHNICIAN_TEST_CONTROL_SERVER_HOST.value
+
+        setupToggleButton(binding.buttonProduction, productionLabel, productionHost)
+        setupToggleButton(binding.buttonTest, testLabel, testHost)
+
+        val checkedId = if (currentBackendIndex == 1) R.id.buttonTest else R.id.buttonProduction
+        binding.toggleControlServer.check(checkedId)
+
+        binding.toggleControlServer.addOnButtonCheckedListener { _, checkedButtonId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            val backend = if (checkedButtonId == R.id.buttonTest) "test" else "production"
+            if (backend != selectedBackend) {
+                selectedBackend = backend
+                selectedServer = null
+                callback?.onControlServerPreview(backend)
+            }
         }
     }
 
@@ -136,31 +145,55 @@ class TechnicianQuickSwitchDialog : FullscreenDialog() {
     override fun onStart() {
         super.onStart()
         dialog?.let {
-            it.window?.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.CENTER)
+            val maxWidthPx = resources.getDimensionPixelSize(R.dimen.technician_dialog_max_width)
+            val width = minOf(maxWidthPx, resources.displayMetrics.widthPixels)
+            it.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
+            it.window?.setGravity(Gravity.CENTER)
             it.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }
     }
 
     companion object {
-        private const val KEY_CONTROL_SERVERS = "key_control_servers"
         private const val KEY_CURRENT_BACKEND_INDEX = "key_current_backend_index"
         private const val KEY_MEASUREMENT_SERVERS = "key_measurement_servers"
         private const val KEY_CURRENT_SERVER_UUID = "key_current_server_uuid"
 
         fun instance(
-            controlServerItems: ArrayList<String>,
             currentBackendIndex: Int,
             measurementServers: List<Server>,
             currentServerUuid: String?
         ): TechnicianQuickSwitchDialog {
             val dialog = TechnicianQuickSwitchDialog()
             dialog.args {
-                putStringArrayList(KEY_CONTROL_SERVERS, controlServerItems)
                 putInt(KEY_CURRENT_BACKEND_INDEX, currentBackendIndex)
                 putSerializable(KEY_MEASUREMENT_SERVERS, measurementServers as Serializable)
                 putString(KEY_CURRENT_SERVER_UUID, currentServerUuid)
             }
             return dialog
+        }
+
+        fun setupToggleButton(button: MaterialButton, label: String, host: String) {
+            button.isSingleLine = false
+            button.maxLines = 2
+            button.ellipsize = null
+            button.text = buildToggleButtonText(label, host)
+        }
+
+        fun buildToggleButtonText(label: String, host: String): SpannableString {
+            val text = "$label\n$host"
+            val spannable = SpannableString(text)
+            val hostStart = label.length + 1
+            spannable.setSpan(
+                RelativeSizeSpan(0.75f),
+                hostStart, text.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            spannable.setSpan(
+                ForegroundColorSpan(Color.GRAY),
+                hostStart, text.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            return spannable
         }
     }
 

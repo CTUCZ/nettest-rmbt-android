@@ -27,6 +27,7 @@ import at.rtr.rmbt.android.ui.dialog.OpenGpsSettingDialog
 import at.rtr.rmbt.android.ui.dialog.OpenLocationPermissionDialog
 import at.rtr.rmbt.android.ui.dialog.ServerSelectionDialog
 import at.rtr.rmbt.android.ui.dialog.SimpleDialog
+import at.rtr.rmbt.android.ui.dialog.TechnicianQuickSwitchDialog
 import at.rtr.rmbt.android.util.addOnPropertyChanged
 import at.rtr.rmbt.android.util.listen
 import at.rtr.rmbt.android.viewmodel.SettingsViewModel
@@ -469,24 +470,25 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback,
     }
 
     private fun setupTechnicianSpinners() {
+        val productionLabel = getString(R.string.preferences_technician_backend_production)
+        val testLabel = getString(R.string.preferences_technician_backend_test)
         val productionHost = BuildConfig.CONTROL_SERVER_HOST.value
         val testHost = BuildConfig.TECHNICIAN_TEST_CONTROL_SERVER_HOST.value
-        val controlServerItems = listOf(productionHost, testHost)
-        val controlServerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, controlServerItems)
-        controlServerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerTechnicianControlServer.adapter = controlServerAdapter
+
+        TechnicianQuickSwitchDialog.setupToggleButton(binding.buttonSettingsProduction, productionLabel, productionHost)
+        TechnicianQuickSwitchDialog.setupToggleButton(binding.buttonSettingsTest, testLabel, testHost)
 
         val currentBackend = settingsViewModel.state.technicianSelectedBackend.get() ?: ""
-        binding.spinnerTechnicianControlServer.setSelection(if (currentBackend == "test") 1 else 0)
+        binding.toggleTechnicianControlServer.check(
+            if (currentBackend == "test") R.id.buttonSettingsTest else R.id.buttonSettingsProduction
+        )
 
-        binding.spinnerTechnicianControlServer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val backend = if (position == 1) "test" else "production"
-                if (settingsViewModel.state.technicianSelectedBackend.get() != backend) {
-                    settingsViewModel.state.technicianSelectedBackend.set(backend)
-                }
+        binding.toggleTechnicianControlServer.addOnButtonCheckedListener { _, checkedButtonId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            val backend = if (checkedButtonId == R.id.buttonSettingsTest) "test" else "production"
+            if (settingsViewModel.state.technicianSelectedBackend.get() != backend) {
+                settingsViewModel.state.technicianSelectedBackend.set(backend)
             }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
         updateMeasurementServerSpinner(settingsViewModel.state.technicianMeasurementServers.get() ?: emptyList())
@@ -505,7 +507,7 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback,
                         else -> R.string.preferences_technician_server_error
                     }
                     Toast.makeText(requireContext(), messageRes, Toast.LENGTH_LONG).show()
-                    binding.spinnerTechnicianControlServer.setSelection(0)
+                    binding.toggleTechnicianControlServer.check(R.id.buttonSettingsProduction)
                     settingsViewModel.state.technicianError.set(null)
                 }
             }
@@ -513,7 +515,7 @@ class SettingsFragment : BaseFragment(), InputSettingDialog.Callback,
 
         settingsViewModel.state.technicianModeEnabled.addOnPropertyChanged { value ->
             if (value.get() == true) {
-                binding.spinnerTechnicianControlServer.setSelection(0)
+                binding.toggleTechnicianControlServer.check(R.id.buttonSettingsProduction)
             }
         }
 

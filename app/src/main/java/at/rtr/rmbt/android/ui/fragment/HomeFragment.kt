@@ -795,9 +795,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
     }
 
     private fun showTechnicianQuickSwitchDialog() {
-        val productionLabel = getString(R.string.preferences_technician_backend_production)
-        val testLabel = getString(R.string.preferences_technician_backend_test)
-        val controlServerItems = arrayListOf(productionLabel, testLabel)
         val currentBackend = homeViewModel.state.technicianSelectedBackend.get() ?: ""
         val currentBackendIndex = if (currentBackend == "test") 1 else 0
         val servers = homeViewModel.state.technicianMeasurementServers.get() ?: emptyList()
@@ -805,7 +802,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
         Timber.d("TechnicianDialog: opening with ${servers.size} servers, backend=$currentBackend, serverUuid=$currentServerUuid")
 
         TechnicianQuickSwitchDialog.instance(
-            controlServerItems = controlServerItems,
             currentBackendIndex = currentBackendIndex,
             measurementServers = servers,
             currentServerUuid = currentServerUuid
