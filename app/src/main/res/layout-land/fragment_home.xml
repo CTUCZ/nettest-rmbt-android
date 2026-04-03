@@ -98,9 +98,8 @@
             android:entries="@array/spin_modes"
             android:popupElevation="3dp"
             app:layout_constraintBottom_toTopOf="@id/ivIsConnectedCircle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.145"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="@+id/leftView"
+            app:layout_constraintStart_toStartOf="@+id/leftView" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnSetting"
