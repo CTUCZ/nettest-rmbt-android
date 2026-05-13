@@ -235,8 +235,17 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
                         if(LocationState.DISABLED_DEVICE == homeViewModel.state.isLocationEnabled.get()) {
                             OpenGpsSettingDialog.instance().show(activity)
                         }else if(isPermissionsForCertMeasuringGranted()) {
-                            startCertMeasurement()
-
+                            val networkType = homeViewModel.activeNetworkLiveData.activeNetworkWatcher.currentNetworkInfo?.type
+                            if(networkType != TransportType.CELLULAR) {
+                                SimpleDialog.Builder()
+                                    .titleText(R.string.unsupported_network_title)
+                                    .messageText(R.string.unsupported_network_text)
+                                    .positiveText(android.R.string.ok)
+                                    .cancelable(true)
+                                    .show(childFragmentManager, CODE_NO_CELLULAR_NETWORK)
+                            } else {
+                                startCertMeasurement()
+                            }
                         } else {
                             Timber.d("Cert measurement requires all permissions, requiring permissions...")
                             requirePermissions(true)
@@ -901,6 +910,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
         private const val CODE_PERM_PHONE_INFO = 18
         private const val CODE_BACKGROUND_PERM_INFO = 19
         private const val CODE_BACKGROUND_BACKUP_PERM_INFO = 20
-
+        private const val CODE_NO_CELLULAR_NETWORK = 21
     }
 }
