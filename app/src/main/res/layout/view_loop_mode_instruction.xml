@@ -24,7 +24,7 @@
                 android:justificationMode="inter_word"
                 android:padding="@dimen/margin_large"
                 android:textColor="@color/text_dark_gray"
-                tools:targetApi="o" />
+                 />
 
         </ScrollView>
 

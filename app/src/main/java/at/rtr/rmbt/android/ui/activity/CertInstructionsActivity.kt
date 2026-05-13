@@ -1,11 +1,11 @@
 package at.rtr.rmbt.android.ui.activity
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,7 +70,10 @@ class CertInstructionsActivity : BaseActivity(), CertInstructionsCallback {
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val binding = ViewLoopModeInstructionBinding.inflate(LayoutInflater.from(container.context))
 
-            binding.content.text = items[position]
+            binding.content.apply {
+                movementMethod = LinkMovementMethod.getInstance()
+                text = items[position]
+            }
 
             binding.decline.setOnClickListener { callback.onDeclined() }
             binding.accept.setOnClickListener {
