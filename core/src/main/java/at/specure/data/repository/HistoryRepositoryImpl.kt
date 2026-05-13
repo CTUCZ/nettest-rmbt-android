@@ -55,7 +55,7 @@ class HistoryRepositoryImpl(
             Timber.w("Unable to update history client uuid is null")
             return Maybe(emptyList())
         }
-// TODO zjistit co to je ONT, my máme headerValue empty
+        // ONT = Open NetTest API (RTR's newer API). CTU has empty headerValue, so we use the classic RTR path.
         val useONTApiVersion = config.headerValue.isNotEmpty()
         return if (useONTApiVersion) {
             loadHistoryONT(clientUUID, offset, limit, ignoreFilters)

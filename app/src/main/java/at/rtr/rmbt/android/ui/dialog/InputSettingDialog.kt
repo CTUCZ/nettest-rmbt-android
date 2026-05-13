@@ -102,7 +102,7 @@ class InputSettingDialog : FullscreenDialog() {
         private const val KEY_IS_CANCELABLE: String = "key_is_cancelable"
         private const val KEY_IS_ALLOWED_EMPTY_INPUT: String = "key_is_allowed_empty_input"
         private const val KEY_CODE = "code"
-        private const val MAX_VALUE_LENGTH = 8
+        private const val MAX_VALUE_LENGTH = 10
         const val KEY_VALUE: String = "key_value"
 
         fun instance(

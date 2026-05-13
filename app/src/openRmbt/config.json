@@ -141,6 +141,16 @@
       "visible": true
     },
     {
+      "name": "CERT_NUMBER_OF_TESTS",
+      "value": "6",
+      "visible": true
+    },
+    {
+      "name": "CERT_WAITING_TIME_MIN",
+      "value": "10",
+      "visible": true
+    },
+    {
       "name": "CAPABILITIES_RMBT_HTTP",
       "value": "true",
       "visible": false

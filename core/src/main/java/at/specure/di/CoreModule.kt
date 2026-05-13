@@ -46,6 +46,7 @@ import at.specure.location.LocationWatcher
 import at.specure.location.cell.CellLocationWatcher
 import at.specure.location.cell.CellLocationWatcherImpl
 import at.specure.test.TestController
+import at.specure.test.StateRecorder
 import at.specure.test.TestControllerImpl
 import at.specure.util.map.CustomMarker
 import at.specure.util.permission.LocationAccess
@@ -221,9 +222,10 @@ class CoreModule {
         config: Config,
         clientUUID: ClientUUID,
         measurementServers: MeasurementServers,
-        connectivityManager: ConnectivityManager
+        connectivityManager: ConnectivityManager,
+        stateRecorder: StateRecorder
     ): TestController =
-        TestControllerImpl(context, config, clientUUID, connectivityManager, measurementServers)
+        TestControllerImpl(context, config, clientUUID, connectivityManager, measurementServers, stateRecorder)
 
     @Provides
     @Singleton

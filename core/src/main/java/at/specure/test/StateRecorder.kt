@@ -105,6 +105,15 @@ class StateRecorder @Inject constructor(
     val certMode: Boolean
         get() = _loopModeRecord?.certMode ?: false
 
+    val loopNumberOfTests: Int
+        get() = _loopModeRecord?.configuredNumberOfTests ?: config.loopModeNumberOfTests
+
+    val loopWaitingTimeMin: Int
+        get() = _loopModeRecord?.configuredWaitingTimeMin ?: config.loopModeWaitingTimeMin
+
+    val loopDistanceMeters: Int
+        get() = _loopModeRecord?.configuredDistanceMeters ?: config.loopModeDistanceMeters
+
     fun updateLocationInfo() {
         _locationInfo = if (locationWatcher.state == LocationState.ENABLED) {
             locationWatcher.latestLocation
@@ -233,7 +242,12 @@ class StateRecorder @Inject constructor(
         if (_loopModeRecord == null) {
             val localLoopUUID = UUID.randomUUID().toString()
             Timber.d("new generated local loop uuid $localLoopUUID")
-            _loopModeRecord = LoopModeRecord(localLoopUUID, loopUUID, lastTestUuid = testRecord?.uuid, config.certModeEnabled)
+            _loopModeRecord = LoopModeRecord(
+                localLoopUUID, loopUUID, lastTestUuid = testRecord?.uuid, config.certModeEnabled,
+                configuredNumberOfTests = if (config.certModeEnabled) config.certNumberOfTests else config.loopModeNumberOfTests,
+                configuredWaitingTimeMin = if (config.certModeEnabled) config.certWaitingTimeMin else config.loopModeWaitingTimeMin,
+                configuredDistanceMeters = if (config.certModeEnabled) Int.MAX_VALUE else config.loopModeDistanceMeters
+            )
             Timber.d("LOOP STATE SAVED 1: ${_loopModeRecord!!.status}")
             repository.saveLoopMode(_loopModeRecord!!)
         } else {
@@ -255,7 +269,7 @@ class StateRecorder @Inject constructor(
 
     fun onLoopTestFinished() {
         _loopModeRecord?.let {
-            if (it.testsPerformed >= config.loopModeNumberOfTests && config.loopModeNumberOfTests > 0) {
+            if (it.testsPerformed >= it.configuredNumberOfTests && it.configuredNumberOfTests > 0) {
                 it.status = LoopModeState.FINISHED
             } else {
                 it.status = LoopModeState.IDLE
@@ -306,9 +320,9 @@ class StateRecorder @Inject constructor(
                 it.movementDistanceMeters = loopLocation.distanceTo(newLocation).toInt()
                 Timber.d("LOOP DISTANCE: ${it.movementDistanceMeters}")
 
-                if (config.loopModeEnabled && loopModeRecord != null && loopModeRecord?.status != LoopModeState.FINISHED && loopModeRecord?.status != LoopModeState.CANCELLED) {
+                if (isDistanceTriggerEnabled(it)) {
                     var notifyDistanceReached = false
-                    if (it.movementDistanceMeters >= config.loopModeDistanceMeters && newLocation.accuracy < config.loopModeDistanceMeters) {
+                    if (it.movementDistanceMeters >= it.configuredDistanceMeters && newLocation.accuracy < it.configuredDistanceMeters) {
                         Timber.d("LOOP STARTING DISTANCE: ${it.movementDistanceMeters}")
                         notifyDistanceReached = true
                     }
@@ -321,6 +335,15 @@ class StateRecorder @Inject constructor(
             Timber.d("LOOP STATE UPDATED LOCATION SAVE 5: ${it.status}")
             repository.updateLoopMode(it)
         }
+    }
+
+    /**
+     * Returns true if distance-based loop trigger should be evaluated.
+     * Cert mode measurements happen at a fixed location, so distance trigger is disabled.
+     */
+    internal fun isDistanceTriggerEnabled(record: LoopModeRecord): Boolean {
+        return config.loopModeEnabled && !record.certMode &&
+            record.status != LoopModeState.FINISHED && record.status != LoopModeState.CANCELLED
     }
 
     @Deprecated("Use only saveSignalStrength")

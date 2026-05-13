@@ -212,7 +212,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                         state,
                         !config.shouldRunQosTest,
                         stateRecorder.loopModeRecord,
-                        config.loopModeNumberOfTests,
+                        stateRecorder.loopNumberOfTests,
                         stopTestsIntent(this@MeasurementService),
                         config.certModeEnabled
                     ),
@@ -273,7 +273,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
             stateRecorder.onLoopTestFinished()
 
-            if (!config.loopModeEnabled || (config.loopModeEnabled && ((stateRecorder.loopTestCount >= config.loopModeNumberOfTests && config.loopModeNumberOfTests > 0) || stateRecorder.loopModeRecord?.status == LoopModeState.CANCELLED))) {
+            if (!config.loopModeEnabled || (config.loopModeEnabled && ((stateRecorder.loopTestCount >= stateRecorder.loopNumberOfTests && stateRecorder.loopNumberOfTests > 0) || stateRecorder.loopModeRecord?.status == LoopModeState.CANCELLED))) {
                 loopCountdownTimer?.cancel()
                 Timber.d("TIMER: cancelling 3: ${loopCountdownTimer?.hashCode()}")
 
@@ -286,7 +286,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                 unlock()
                 resumeSignalMeasurement(false)
             } else {
-                if ((config.loopModeEnabled) && (stateRecorder.loopTestCount < config.loopModeNumberOfTests || config.loopModeNumberOfTests == 0) && (stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED) && (stateRecorder.loopModeRecord?.status != LoopModeState.FINISHED)) {
+                if ((config.loopModeEnabled) && (stateRecorder.loopTestCount < stateRecorder.loopNumberOfTests || stateRecorder.loopNumberOfTests == 0) && (stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED) && (stateRecorder.loopModeRecord?.status != LoopModeState.FINISHED)) {
                     startSignalMeasurement(SignalMeasurementType.LOOP_WAITING)
                 } else {
                     resumeSignalMeasurement(false)
@@ -297,7 +297,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
         override fun onPostFinish() {
             if (startPendingTest) {
                 Handler(Looper.getMainLooper()).postDelayed({
-                    if (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < config.loopModeNumberOfTests || (config.loopModeNumberOfTests == 0 && config.developerModeIsEnabled))) {
+                    if (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < stateRecorder.loopNumberOfTests || (stateRecorder.loopNumberOfTests == 0 && config.developerModeIsEnabled))) {
                         if (!runner.isRunning) {
                             runner.reset()
                             Timber.d("LOOP STARTING PENDING TEST from onFinish")
@@ -322,7 +322,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                 stopForeground(true)
             }
             removeInactivityCheck()
-            if (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < config.loopModeNumberOfTests || (config.loopModeNumberOfTests == 0 && config.developerModeIsEnabled))) {
+            if (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < stateRecorder.loopNumberOfTests || (stateRecorder.loopNumberOfTests == 0 && config.developerModeIsEnabled))) {
                 startSignalMeasurement(SignalMeasurementType.LOOP_WAITING)
             } else {
                 resumeSignalMeasurement(false)
@@ -362,7 +362,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
             measurementState = MeasurementState.ERROR
             onProgressChanged(measurementState, 0)
-            if (config.loopModeEnabled && (stateRecorder.loopTestCount >= config.loopModeNumberOfTests && config.loopModeNumberOfTests != 0)) {
+            if (config.loopModeEnabled && (stateRecorder.loopTestCount >= stateRecorder.loopNumberOfTests && stateRecorder.loopNumberOfTests != 0)) {
                 loopCountdownTimer?.cancel()
                 Timber.d("TIMER: cancelling 8: ${loopCountdownTimer?.hashCode()}")
                 hasErrors = true
@@ -378,14 +378,14 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
             Timber.d("TEST ERROR HANDLING")
 
-            if (startPendingTest && !runner.isRunning && (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < config.loopModeNumberOfTests || (config.loopModeNumberOfTests == 0 && config.developerModeIsEnabled)))) {
+            if (startPendingTest && !runner.isRunning && (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < stateRecorder.loopNumberOfTests || (stateRecorder.loopNumberOfTests == 0 && config.developerModeIsEnabled)))) {
                 Timber.d("TEST ERROR HANDLING - PENDING")
                 runner.reset()
                 Timber.d("LOOP STARTING PENDING TEST from onError")
                 runTest()
             } else {
                 Timber.d("TEST ERROR HANDLING - NOT PENDING")
-                if (!config.loopModeEnabled || (config.loopModeEnabled && (stateRecorder.loopTestCount >= config.loopModeNumberOfTests && config.loopModeNumberOfTests != 0))) {
+                if (!config.loopModeEnabled || (config.loopModeEnabled && (stateRecorder.loopTestCount >= stateRecorder.loopNumberOfTests && stateRecorder.loopNumberOfTests != 0))) {
                     Timber.d("TIMER: cancelling 5: ${loopCountdownTimer?.hashCode()}")
                     loopCountdownTimer?.cancel()
                     Timber.d("TEST ERROR HANDLING - NOT PENDING LOOP DISABLED")
@@ -458,7 +458,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                     MeasurementState.QOS,
                     !config.shouldRunQosTest,
                     stateRecorder.loopModeRecord,
-                    config.loopModeNumberOfTests,
+                    stateRecorder.loopNumberOfTests,
                     stopTestsIntent(this@MeasurementService),
                     config.certModeEnabled
                 ), MeasurementState.QOS, false
@@ -507,7 +507,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
             Timber.d("TIMER: cancelling 1: ${loopCountdownTimer?.hashCode()}")
             loopCountdownTimer?.cancel()
 
-            if (((stateRecorder.loopTestCount < config.loopModeNumberOfTests) || config.loopModeNumberOfTests == 0 && config.developerModeIsEnabled) && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED) {
+            if (((stateRecorder.loopTestCount < stateRecorder.loopNumberOfTests) || stateRecorder.loopNumberOfTests == 0 && config.developerModeIsEnabled) && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED) {
                 if (runner.isRunning || startPendingTest) {
                     startPendingTest = true
                     Timber.d("LOOP STARTING PENDING TEST set to true onCreate due to distance")
@@ -591,7 +591,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                             Timber.d("LOOP STARTING PENDING TEST set to true")
                             startPendingTest = true
                         } else {
-                            if (!config.loopModeEnabled || (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < config.loopModeNumberOfTests || (config.loopModeNumberOfTests == 0 && config.developerModeIsEnabled)))) {
+                            if (!config.loopModeEnabled || (config.loopModeEnabled && stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED && (stateRecorder.loopTestCount < stateRecorder.loopNumberOfTests || (stateRecorder.loopNumberOfTests == 0 && config.developerModeIsEnabled)))) {
                                 runner.reset()
                                 Timber.d("LOOP STARTING PENDING TEST on timer finished")
                                 runTest()
@@ -601,7 +601,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
                     override fun onTick(millisUntilFinished: Long) {
                         Timber.d("LoopModeRecord status: ${stateRecorder.loopModeRecord?.status}, executed tests:  ${stateRecorder.loopModeRecord?.testsPerformed}")
-                        if (stateRecorder.loopModeRecord?.status == LoopModeState.FINISHED || stateRecorder.loopModeRecord?.status == LoopModeState.CANCELLED || (stateRecorder.loopModeRecord?.testsPerformed ?: 0 >= config.loopModeNumberOfTests && config.loopModeNumberOfTests > 0)) {
+                        if (stateRecorder.loopModeRecord?.status == LoopModeState.FINISHED || stateRecorder.loopModeRecord?.status == LoopModeState.CANCELLED || (stateRecorder.loopModeRecord?.testsPerformed ?: 0 >= stateRecorder.loopNumberOfTests && stateRecorder.loopNumberOfTests > 0)) {
                             Timber.d("CountDownTimer cancelled according to conditions.")
                             this.cancel()
                         }
@@ -616,9 +616,9 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                                 val notification = notificationProvider.loopCountDownNotification(
                                     millisUntilFinished,
                                     distancePassed,
-                                    config.loopModeDistanceMeters,
+                                    stateRecorder.loopDistanceMeters,
                                     stateRecorder.loopTestCount,
-                                    config.loopModeNumberOfTests,
+                                    stateRecorder.loopNumberOfTests,
                                     stopTestsIntent(this@MeasurementService),
                                     locationAvailable,
                                     config.certModeEnabled
@@ -627,7 +627,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
                                 Timber.d("Created measurement notification time remaining IDLE state")
                             }
                             clientAggregator.onLoopCountDownTimer(loopDelayMs - millisUntilFinished, loopDelayMs)
-                            clientAggregator.onLoopDistanceChanged(distancePassed, config.loopModeDistanceMeters, locationAvailable)
+                            clientAggregator.onLoopDistanceChanged(distancePassed, stateRecorder.loopDistanceMeters, locationAvailable)
                         }
                     }
                 }
@@ -647,7 +647,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
     private val loopDelayMs: Long
         get() {
-            val timeAwait = TimeUnit.MINUTES.toMillis(config.loopModeWaitingTimeMin.toLong())
+            val timeAwait = TimeUnit.MINUTES.toMillis(stateRecorder.loopWaitingTimeMin.toLong())
             if (timeAwait == 0L) {
                 return 3000
             }
@@ -710,7 +710,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
     }
 
     private fun isBetweenTwoLoopTests() : Boolean {
-        return (config.loopModeEnabled && (stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED || stateRecorder.loopModeRecord?.status != LoopModeState.FINISHED) && (stateRecorder.loopTestCount < config.loopModeNumberOfTests || config.loopModeNumberOfTests == 0))
+        return (config.loopModeEnabled && (stateRecorder.loopModeRecord?.status != LoopModeState.CANCELLED || stateRecorder.loopModeRecord?.status != LoopModeState.FINISHED) && (stateRecorder.loopTestCount < stateRecorder.loopNumberOfTests || stateRecorder.loopNumberOfTests == 0))
     }
 
     private fun attachToForeground() {
@@ -720,7 +720,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
             MeasurementState.INIT,
             true,
             stateRecorder.loopModeRecord,
-            config.loopModeNumberOfTests,
+            stateRecorder.loopNumberOfTests,
             stopTestsIntent(this@MeasurementService),
             config.certModeEnabled
         )
@@ -988,7 +988,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
         override fun onSubmitted() {
             Timber.d("MeasurementService onSubmitted")
             if (config.loopModeEnabled) {
-                if (stateRecorder.loopTestCount >= config.loopModeNumberOfTests && config.loopModeNumberOfTests != 0) {
+                if (stateRecorder.loopTestCount >= stateRecorder.loopNumberOfTests && stateRecorder.loopNumberOfTests != 0) {
                     clients.forEach {
                         it.onSubmitted()
                     }
@@ -1011,7 +1011,7 @@ class MeasurementService : CustomLifecycleService(), CoroutineScope {
 
         override fun onSubmissionError(exception: HandledException) {
             if (config.loopModeEnabled) {
-                if (config.loopModeNumberOfTests >= config.loopModeNumberOfTests && config.loopModeNumberOfTests != 0) {
+                if (stateRecorder.loopTestCount >= stateRecorder.loopNumberOfTests && stateRecorder.loopNumberOfTests != 0) {
                     clients.forEach {
                         it.onSubmissionError(exception)
                     }

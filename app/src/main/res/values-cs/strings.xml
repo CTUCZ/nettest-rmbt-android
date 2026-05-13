@@ -320,6 +320,9 @@
     <string name="download_pdf_title">NetTest výsledek certfikovaného měření</string>
     <string name="download_pdf_description">Stahuji PDF s výsledkem testu</string>
     <string name="download_pdf_error">Chyba při získávání adresy pro stažení PDF</string>
+    <string name="cannot_open_file">Nelze otevřít soubor</string>
+    <string name="download_pdf_downloading">Stahování…</string>
+    <string name="open_pdf">Otevřít PDF</string>
     <string name="download_pdf_starting">Výsledky měření se stahují…</string>
     <string name="loop_id_nonexistent">Neexistuje ID měření</string>
     <string name="unsupported_network_title">Detekována nepodporovaná síť</string>

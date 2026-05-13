@@ -110,6 +110,16 @@ interface Config {
     var certModeEnabled: Boolean
 
     /**
+     * Number of tests to perform in certified measurement mode
+     */
+    val certNumberOfTests: Int
+
+    /**
+     * Waiting time between tests in certified measurement mode, in minutes
+     */
+    val certWaitingTimeMin: Int
+
+    /**
      * Duration of the signal measurement activity time after user enable it, in minutes
      */
     var signalMeasurementDurationMin: Int

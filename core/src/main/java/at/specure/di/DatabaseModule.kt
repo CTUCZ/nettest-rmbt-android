@@ -65,6 +65,13 @@ class DatabaseModule {
                 db.execSQL("ALTER TABLE test ADD COLUMN developerCode TEXT DEFAULT NULL")
             }
         })
+        builder.addMigrations(object : Migration(160, 161) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE loop_mode ADD COLUMN configuredNumberOfTests INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE loop_mode ADD COLUMN configuredWaitingTimeMin INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE loop_mode ADD COLUMN configuredDistanceMeters INTEGER NOT NULL DEFAULT 0")
+            }
+        })
         builder.fallbackToDestructiveMigration()
         return builder.build()
     }
