@@ -28,7 +28,7 @@
     <color name="navigation_gray">#545454</color>
 
     <!-- Ripple effect color  -->
-    <color name="greenRipple">#4259b200</color>
+    <color name="rippleHighlight">#420071D7</color>
     <color name="blackRipple">#26000000</color>
 
     <!--  White color with transparency -->
