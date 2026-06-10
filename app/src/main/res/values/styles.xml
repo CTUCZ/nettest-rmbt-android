@@ -58,7 +58,7 @@
         <item name="android:windowBackground">@color/colorPrimary</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="colorControlHighlight">@color/greenRipple</item>
+        <item name="colorControlHighlight">@color/rippleHighlight</item>
     </style>
 
 
