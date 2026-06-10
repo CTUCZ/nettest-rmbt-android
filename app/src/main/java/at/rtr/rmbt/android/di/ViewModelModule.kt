@@ -3,6 +3,8 @@ package at.rtr.rmbt.android.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.rtr.rmbt.android.viewmodel.ConfigCheckViewModel
+import at.rtr.rmbt.android.viewmodel.CoverageResultViewModel
+import at.rtr.rmbt.android.viewmodel.CoverageSettingsViewModel
 import at.rtr.rmbt.android.viewmodel.HistoryDownloadViewModel
 import at.rtr.rmbt.android.viewmodel.HistoryFiltersViewModel
 import at.rtr.rmbt.android.viewmodel.HistoryViewModel
@@ -153,4 +155,14 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(LoopFinishedViewModel::class)
     fun bindLoopFinishedViewModel(viewModel: LoopFinishedViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CoverageSettingsViewModel::class)
+    fun bindCoverageSettingsViewModel(viewModel: CoverageSettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CoverageResultViewModel::class)
+    fun bindCoverageResultViewModel(viewModel: CoverageResultViewModel): ViewModel
 }

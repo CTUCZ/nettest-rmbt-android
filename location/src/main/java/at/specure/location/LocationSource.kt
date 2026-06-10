@@ -11,6 +11,11 @@ interface LocationSource {
     val location: LocationInfo?
 
     /**
+     * The number of satellites in use for the last fix or current status
+     */
+    val satellitesCount: Int
+
+    /**
      * Init and start polling location changes to [Listener]
      */
     fun start(listener: Listener)
@@ -29,7 +34,7 @@ interface LocationSource {
     }
 
     companion object {
-        const val MINIMUM_UPDATE_TIME_MS: Long = 1000
+        const val MINIMUM_UPDATE_TIME_MS: Long = 500
         const val MINIMUM_DISTANCE_METERS: Float = 0.001f
     }
 }

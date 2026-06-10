@@ -30,6 +30,7 @@
     <!-- Ripple effect color  -->
     <color name="rippleHighlight">#420071D7</color>
     <color name="blackRipple">#26000000</color>
+    <color name="greenRipple">#4259b200</color>
 
     <!--  White color with transparency -->
     <color name="text_white_transparency_40">#66FFFFFF</color>
@@ -96,4 +97,6 @@
     <!-- Technician mode -->
     <color name="background_technician_card">#F5F5F5</color>
     <color name="text_technician_chip">#333333</color>
+    <color name="snackbar_error_background">#EEF2F3F5</color>
+    <color name="snackbar_error_text">#cf0c0c</color>
 </resources>

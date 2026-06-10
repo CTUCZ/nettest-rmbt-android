@@ -40,7 +40,8 @@ class App : CoreApp(), Configuration.Provider {
         CoreInjector.component = Injector.component
 
 
-            WorkLauncher.enqueueSettingsRequest(this)
+        WorkLauncher.enqueueSettingsRequest(this)
+        WorkLauncher.enqueueCoverageSyncRequest(this)
     }
 
     override fun attachBaseContext(base: Context?) {

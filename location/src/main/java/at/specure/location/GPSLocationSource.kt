@@ -4,12 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import timber.log.Timber
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * [LocationSource] that is used to provide location changes using GPS Provider
@@ -18,6 +20,22 @@ class GPSLocationSource(val context: Context) : LocationSource {
 
     private val manager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var listener: LocationSource.Listener? = null
+    private var _satellitesCount = 0
+
+    override val satellitesCount: Int
+        get() = _satellitesCount
+
+    private val gnssStatusCallback = object : GnssStatus.Callback() {
+        override fun onSatelliteStatusChanged(status: GnssStatus) {
+            var count = 0
+            for (i in 0 until status.satelliteCount) {
+                if (status.usedInFix(i)) {
+                    count++
+                }
+            }
+            _satellitesCount = count
+        }
+    }
 
     override val location: LocationInfo?
         get() = try {
@@ -35,6 +53,9 @@ class GPSLocationSource(val context: Context) : LocationSource {
                 location?.let { LocationInfo(it) }
             }
         } catch (ex: Exception) {
+            if (ex is CancellationException) {
+                throw ex
+            }
             Timber.e(ex, "Failed to get last known network location")
             null
         }
@@ -72,9 +93,13 @@ class GPSLocationSource(val context: Context) : LocationSource {
                     LocationSource.MINIMUM_DISTANCE_METERS,
                     locationListener
                 )
+                manager.registerGnssStatusCallback(gnssStatusCallback, null)
                 Timber.d("GPS Location Source started")
             }
         } catch (ex: Exception) {
+            if (ex is kotlinx.coroutines.CancellationException) {
+                throw ex
+            }
             Timber.e(ex, "Failed to register gps updates")
         }
     }
@@ -83,6 +108,7 @@ class GPSLocationSource(val context: Context) : LocationSource {
         try {
             listener = null
             manager.removeUpdates(locationListener)
+            manager.unregisterGnssStatusCallback(gnssStatusCallback)
         } catch (ex: Exception) {
             Timber.e(ex, "Failed to unregister gps updates")
         }
