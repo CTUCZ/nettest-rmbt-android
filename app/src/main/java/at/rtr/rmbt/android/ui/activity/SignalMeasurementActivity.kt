@@ -2,16 +2,13 @@ package at.rtr.rmbt.android.ui.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
-import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
-import android.util.Rational
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowInsets
@@ -56,8 +53,6 @@ import at.rtr.rmbt.android.viewmodel.viewData.CoverageMarkerDetailsData
 import at.specure.measurement.coverage.data.getFrequencyBand
 import at.specure.measurement.coverage.data.getSignalStrengthValue
 import at.specure.test.toDeviceInfoLocation
-import at.specure.util.hasPermission
-import at.specure.util.openAppSettings
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -79,7 +74,6 @@ class SignalMeasurementActivity() : BaseActivity(), OnMapReadyCallback, Coverage
     private var infoWindowMarker: Marker? = null
     private var warningSnackbar: Snackbar? = null
     private var sendingResultsErrorSnackbar: Snackbar? = null
-    private var noBackgroundLocationPermissionGrantedSnackbar: Snackbar? = null
     private var showMeasurementResultsJob: Job? = null
     private var updateUnfinishedMeasurementJob: Job? = null
     private val emptyBitmap by lazy { createBitmap(1, 1) }
@@ -202,22 +196,6 @@ class SignalMeasurementActivity() : BaseActivity(), OnMapReadyCallback, Coverage
         sendingResultsErrorSnackbar?.show()
     }
 
-    private fun showNoBackgroundLocationAllowed() {
-        if (sendingResultsErrorSnackbar?.isShownOrQueued == true) return
-        if (warningSnackbar?.isShownOrQueued == true) return
-        if (noBackgroundLocationPermissionGrantedSnackbar?.isShownOrQueued == true) return
-
-        noBackgroundLocationPermissionGrantedSnackbar = createErrorSnackbar(
-            getString(R.string.location_usage_always_warning_message),
-            R.string.allow,
-            {
-                this@SignalMeasurementActivity.openAppSettings()
-                hideBackgroundLocationMissingSnackbar()
-            }
-        )
-        noBackgroundLocationPermissionGrantedSnackbar?.show()
-    }
-
     private fun createErrorSnackbar(
         message: String,
         actionResId: Int,
@@ -235,6 +213,12 @@ class SignalMeasurementActivity() : BaseActivity(), OnMapReadyCallback, Coverage
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         coverageViewModel.onConfigurationChanged(map)
+        // onConfigurationChanged (e.g. entering/exiting PiP) clears the map.
+        // For a finished measurement no new data arrives to redraw the markers,
+        // so re-draw the stored results explicitly.
+        if (coverageViewModel.coverageMeasurementDataLiveData.value?.state == CoverageMeasurementState.FINISHED_LOOP_CORRECTLY) {
+            updateMapState(coverageViewModel.coverageMeasurementDataLiveData.value)
+        }
     }
 
     private fun showMeasurementResults(coverageMeasurementData: CoverageMeasurementData) {
@@ -243,7 +227,6 @@ class SignalMeasurementActivity() : BaseActivity(), OnMapReadyCallback, Coverage
         hideDialog()
         setMyPositionAndButtonVisible(false)
         hideNetworkWarningSnackbar()
-        hideBackgroundLocationMissingSnackbar()
         setInfoVisible(false)
         setResultTitleVisible(true)
         setSettingsButtonVisible(false)
@@ -260,10 +243,8 @@ class SignalMeasurementActivity() : BaseActivity(), OnMapReadyCallback, Coverage
     }
 
     private fun updateUnfinishedMeasurement(coverageMeasurementData: CoverageMeasurementData?) {
-
         setSettingsButtonVisible(true)
         checkNetwork(coverageMeasurementData?.currentNetworkInfo)
-        checkLocationPermissions()
         setInfoVisible(true)
         setResultTitleVisible(false)
         updatePingValue(coverageMeasurementData)
@@ -287,20 +268,6 @@ class SignalMeasurementActivity() : BaseActivity(), OnMapReadyCallback, Coverage
                 coverageMeasurementData?.fences.toCoverageResultItemRecords(),
                 coverageMeasurementData?.state
             )
-        }
-    }
-
-    private fun checkLocationPermissions() {
-        val backgroundLocationPermissionsGranted =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                this.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-            } else {
-                true
-            }
-        if (!backgroundLocationPermissionsGranted) {
-            showNoBackgroundLocationAllowed()
-        } else {
-            hideBackgroundLocationMissingSnackbar()
         }
     }
 
@@ -510,10 +477,6 @@ class SignalMeasurementActivity() : BaseActivity(), OnMapReadyCallback, Coverage
         warningSnackbar?.dismiss()
     }
 
-    fun hideBackgroundLocationMissingSnackbar() {
-        noBackgroundLocationPermissionGrantedSnackbar?.dismiss()
-    }
-
     private fun showWarningButton() {
         binding.fabWarning.hide()
         binding.fabWarning.show()
@@ -656,7 +619,9 @@ class SignalMeasurementActivity() : BaseActivity(), OnMapReadyCallback, Coverage
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        enterInPictureMode()
+        if (viewModel.activeSignalMeasurementLiveData.value == true) {
+            enterInPictureMode()
+        }
     }
 
     override fun onPictureInPictureModeChanged(
@@ -674,9 +639,6 @@ class SignalMeasurementActivity() : BaseActivity(), OnMapReadyCallback, Coverage
         } else {
             binding.fabClose.visibility = View.VISIBLE
             binding.fabLocation.visibility = View.VISIBLE
-            if (coverageViewModel.coverageMeasurementDataLiveData.value?.state == CoverageMeasurementState.FINISHED_LOOP_CORRECTLY) {
-                updateMapState(coverageViewModel.coverageMeasurementDataLiveData.value)
-            }
         }
     }
 

@@ -633,12 +633,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
             ) == true
         val precisePermissionsGranted =
             context?.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) == true
-        val backgroundLocationPermissionsGranted =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                context?.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) == true
-            } else {
-                true
-            }
         val notificationPermissionsGranted =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 context?.hasPermission(Manifest.permission.POST_NOTIFICATIONS) == true
@@ -661,12 +655,6 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
             !precisePermissionsGranted -> {
                 homeViewModel.state.informationAccessProblem.set(InformationAccessProblem.MISSING_PRECISE_LOCATION_PERMISSION)
                 Timber.e("MISSING_PRECISE_LOCATION_PERMISSION")
-            }
-
-            (!backgroundLocationPermissionsGranted) && (homeViewModel.state.isLoopModeActive.get() || homeViewModel.activeSignalMeasurementLiveData.value == true) -> {
-                homeViewModel.state.informationAccessProblem.set(
-                    InformationAccessProblem.MISSING_BACKGROUND_LOCATION_PERMISSION
-                )
             }
 
             (!notificationPermissionsGranted) && (homeViewModel.state.isLoopModeActive.get() || homeViewModel.activeSignalMeasurementLiveData.value == true) -> {
@@ -737,11 +725,11 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
-            if (hasForegroundLocationPermission) {
-                val hasBackgroundLocationPermission = checkSelfPermission(
+            if (hasForegroundLocationPermission && homeViewModel.shouldRequestBackgroundLocationPermission) {
+                checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
+                )
             } else {
                 permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
                 permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
