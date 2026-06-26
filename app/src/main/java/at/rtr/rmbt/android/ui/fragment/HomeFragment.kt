@@ -772,7 +772,8 @@ class HomeFragment : BaseFragment(), SimpleDialog.Callback, TechnicianQuickSwitc
             SimpleDialog.Builder()
                 .titleText(R.string.location_permission_title)
                 .messageText(R.string.permissions_dialog_text)
-                .positiveText(android.R.string.ok)
+                .positiveText(R.string.text_button_accept)
+                .negativeText(R.string.text_button_decline)
                 .cancelable(false)
                 .show(this.childFragmentManager, CODE_PERM_LOCATION_INFO)
         } else if(!phone) {
