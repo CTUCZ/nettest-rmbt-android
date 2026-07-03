@@ -218,6 +218,9 @@ class AppConfig @Inject constructor(context: Context, private val serverSettings
     override val controlServerHostForSettings: String
         get() = getString(BuildConfig.CONTROL_SERVER_HOST)
 
+    override val cloudProjectNumber: String
+        get() = getString(BuildConfig.CLOUD_PROJECT_NUMBER)
+
     override var measurementTag: String?
         get() = preferences.getString(KEY_MEASUREMENT_TAG, null)
         set(value) = preferences.edit()

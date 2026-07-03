@@ -54,6 +54,16 @@ public abstract interface Config
     public static final String RMBT_SETTINGS_HOST_URL = "/settings";
     public static final String RMBT_UPDATE_RESULT_URL = "/resultUpdate";
 
+    /**
+     * Keys of the Play Integrity fields sent in the /testRequest body. They are
+     * removed from the additional values before the /qosTestRequest call so the
+     * integrity fields appear exclusively in /testRequest.
+     */
+    public static final String INTEGRITY_TOKEN = "integrity_token";
+    public static final String INTEGRITY_TIMESTAMP = "integrity_timestamp";
+    public static final String INTEGRITY_ERROR = "integrity_error";
+    public static final String INTEGRITY_ERROR_DETAIL = "integrity_error_detail";
+
     public static final String RMBT_ENCRYPTION_STRING = "TLS";
 
     public static final String MLAB_NS = "http://mlab-ns.appspot.com/ndt?format=json";

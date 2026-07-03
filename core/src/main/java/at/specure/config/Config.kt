@@ -162,6 +162,12 @@ interface Config {
     val controlServerHostForSettings: String
 
     /**
+     * Google Cloud project number for Play Integrity standard requests.
+     * Empty or non-numeric value disables the integrity flow completely.
+     */
+    val cloudProjectNumber: String
+
+    /**
      * Url to the host for IPv4 test, example "v4.myhost.com"
      */
     var controlServerCheckPrivateIPv4Host: String

@@ -292,6 +292,15 @@ public class RMBTClient implements RMBTClientCallback {
             return null;
         }
 
+        // The integrity fields belong to /testRequest only; remove them before the
+        // /qosTestRequest call reuses the same additional values object.
+        if (additionalValues != null) {
+            additionalValues.remove(Config.INTEGRITY_TOKEN);
+            additionalValues.remove(Config.INTEGRITY_TIMESTAMP);
+            additionalValues.remove(Config.INTEGRITY_ERROR);
+            additionalValues.remove(Config.INTEGRITY_ERROR_DETAIL);
+        }
+
         final String errorNewTest = controlConnection.requestQoSTestParameters(host, pathPrefix, port, encryption, geoInfo,
                 uuid, clientType, clientName, clientVersion, additionalValues, headerValue);
 

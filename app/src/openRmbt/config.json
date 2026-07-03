@@ -331,6 +331,11 @@
       "visible": false
     },
     {
+      "name": "CLOUD_PROJECT_NUMBER",
+      "value": "",
+      "visible": false
+    },
+    {
       "line1": "=======================================",
       "_section": "MAP SETTINGS",
       "line2": "======================================="
