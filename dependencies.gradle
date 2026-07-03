@@ -47,10 +47,12 @@ buildscript {
                 guava               : '33.4.8-android',  // latest -android; rel. 2025-04 (~1.2y)
                 joda_time           : '2.13.1',          // latest net.danlew:android.joda; rel. ~2025 (~1y)
                 splash_screen       : '1.0.1',           // latest STABLE; rel. 2022-11 (~3.6y) — old, 1.1.0 alpha
+                play_integrity      : '1.4.0',           // Play Integrity API standard requests
 
                 junit               : '4.13.2',          // latest JUnit 4; rel. 2021-02 (~5.3y) — legacy (JUnit 5 separate)
                 mockk               : '1.13.12',
                 kotlin_junit        : '1.2.1',           // junit-ktx latest stable; rel. 2024-07 (~1.9y)
+                org_json            : '20240303',        // real org.json for core unit tests (android.jar stubs throw "not mocked")
 
                 test_runner         : "1.6.2",           // latest stable; rel. 2024-07 (~1.9y)
                 espresso_core       : "3.6.1",           // latest stable; rel. 2024-07 (~1.9y)

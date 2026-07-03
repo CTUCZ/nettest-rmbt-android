@@ -44,6 +44,8 @@ import at.specure.info.strength.SignalStrengthWatcher
 import at.specure.info.strength.SignalStrengthWatcherImpl
 import at.specure.info.wifi.WifiInfoWatcher
 import at.specure.info.wifi.WifiInfoWatcherImpl
+import at.specure.integrity.IntegrityTokenService
+import at.specure.integrity.IntegrityTokenServiceImpl
 import at.specure.location.LocationWatcher
 import at.specure.location.cell.CellLocationWatcher
 import at.specure.location.cell.CellLocationWatcherImpl
@@ -72,6 +74,7 @@ import at.specure.util.permission.LocationAccessImpl
 import at.specure.util.permission.PermissionsWatcher
 import at.specure.util.permission.PhoneStateAccess
 import at.specure.util.permission.PhoneStateAccessImpl
+import com.google.android.play.core.integrity.IntegrityManagerFactory
 import cz.mroczis.netmonster.core.INetMonster
 import cz.mroczis.netmonster.core.factory.NetMonsterFactory
 import dagger.Module
@@ -238,15 +241,21 @@ class CoreModule {
 
     @Provides
     @Singleton
+    fun provideIntegrityTokenService(context: Context, config: Config): IntegrityTokenService =
+        IntegrityTokenServiceImpl(config) { IntegrityManagerFactory.createStandard(context) }
+
+    @Provides
+    @Singleton
     fun provideTestController(
         context: Context,
         config: Config,
         clientUUID: ClientUUID,
         measurementServers: MeasurementServers,
         connectivityManager: ConnectivityManager,
-        stateRecorder: StateRecorder
+        stateRecorder: StateRecorder,
+        integrityTokenService: IntegrityTokenService
     ): TestController =
-        TestControllerImpl(context, config, clientUUID, connectivityManager, measurementServers, stateRecorder)
+        TestControllerImpl(context, config, clientUUID, connectivityManager, measurementServers, stateRecorder, integrityTokenService)
 
     @Provides
     @Singleton
