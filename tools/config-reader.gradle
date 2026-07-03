@@ -82,8 +82,10 @@ android {
             flavorDimension = flavorDimension - buildType
             println("flavorDimension: ${flavorDimension}")
             if (flavorDimension.length() == 0) {
-                println("No flavor dimension found for module. Skipping config reading.")
-                return
+                // A task of a flavorless module (e.g. :core:testDebugUnitTest) carries no
+                // flavor in its name; default to the openRmbt flavor like the clean branch does.
+                println("No flavor in requested tasks. Defaulting to openRmbt config.")
+                flavorDimension = "OpenRmbt"
             }
             flavorDimension = flavorDimension.substring(0, 1).toLowerCase() + flavorDimension.substring(1, flavorDimension.length())
             println("flavorDimension: ${flavorDimension}")
