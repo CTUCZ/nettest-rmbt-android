@@ -45,6 +45,10 @@
     <string name="preferences_expert_mode_summary">Zobrazit pokročílé nastavení a informace</string>
     <string name="preferences_ipv4_only">Pouze IPv4</string>
     <string name="preferences_ipv4_only_sum">Nepoužívat IPv6</string>
+    <string name="preferences_ipv6_only">Pouze IPv6</string>
+    <string name="preferences_ipv6_only_sum">Nepoužívat IPv4</string>
+    <string name="expert_mode_no_ipv4_connectivity">Bez IPv4 konektivity</string>
+    <string name="expert_mode_no_ipv6_connectivity">Bez IPv6 konektivity</string>
     <string name="preferences_radio_info">Informace o mobilním připojení</string>
     <string name="preferences_radio_info_sum">Podrobnosti o nastavení mobilní sítě</string>
     <string name="preferences_contact">Kontakt</string>
