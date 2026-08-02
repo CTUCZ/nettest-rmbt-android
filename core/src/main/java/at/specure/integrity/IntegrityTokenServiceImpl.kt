@@ -16,6 +16,9 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 
+/** Logcat tag for the whole Play Integrity flow — filter with `adb logcat -s IntegrityAPI`. */
+private const val LOG_TAG = "IntegrityAPI"
+
 /**
  * [IntegrityTokenService] backed by the Play Integrity standard request API.
  *
@@ -41,8 +44,16 @@ class IntegrityTokenServiceImpl(
         get() = config.cloudProjectNumber.toLongOrNull()
 
     override fun warmUp() {
-        val projectNumber = cloudProjectNumber ?: return
-        if (tokenProvider != null) return
+        val projectNumber = cloudProjectNumber
+        if (projectNumber == null) {
+            Timber.tag(LOG_TAG).i("Warm-up skipped — CLOUD_PROJECT_NUMBER not configured, integrity disabled")
+            return
+        }
+        if (tokenProvider != null) {
+            Timber.tag(LOG_TAG).d("Warm-up skipped — token provider already prepared")
+            return
+        }
+        Timber.tag(LOG_TAG).i("Warm-up: preparing token provider (cloudProjectNumber=%d)", projectNumber)
         try {
             integrityManagerProvider()
                 .prepareIntegrityToken(
@@ -50,20 +61,51 @@ class IntegrityTokenServiceImpl(
                         .setCloudProjectNumber(projectNumber)
                         .build()
                 )
-                .addOnSuccessListener(directExecutor) { tokenProvider = it }
+                .addOnSuccessListener(directExecutor) {
+                    tokenProvider = it
+                    Timber.tag(LOG_TAG).i("Warm-up: token provider ready")
+                }
                 .addOnFailureListener(directExecutor) {
-                    Timber.w(it, "Integrity token provider warm-up failed")
+                    Timber.tag(LOG_TAG).w(it, "Warm-up: token provider preparation failed")
                 }
         } catch (e: Exception) {
-            Timber.w(e, "Integrity token provider warm-up failed")
+            Timber.tag(LOG_TAG).w(e, "Warm-up: token provider preparation failed")
         }
     }
 
     override suspend fun requestToken(requestHash: String, timeoutMillis: Long): IntegrityTokenResult {
-        val projectNumber = cloudProjectNumber ?: return IntegrityTokenResult.Disabled
-        return withTimeoutOrNull(timeoutMillis) {
+        val projectNumber = cloudProjectNumber
+        if (projectNumber == null) {
+            Timber.tag(LOG_TAG).i("Token request skipped — CLOUD_PROJECT_NUMBER not configured, no integrity fields will be sent")
+            return IntegrityTokenResult.Disabled
+        }
+        Timber.tag(LOG_TAG).i(
+            "Token request started (requestHash=%s, timeoutMs=%d, providerCached=%s)",
+            requestHash,
+            timeoutMillis,
+            tokenProvider != null
+        )
+        val startedAtMillis = System.currentTimeMillis()
+        val result = withTimeoutOrNull(timeoutMillis) {
             requestTokenInternal(projectNumber, requestHash)
         } ?: IntegrityTokenResult.Failure(IntegrityError.TIMEOUT, null)
+        val elapsedMillis = System.currentTimeMillis() - startedAtMillis
+        when (result) {
+            is IntegrityTokenResult.Success -> Timber.tag(LOG_TAG).i(
+                "Token obtained in %d ms (length=%d, prefix=%s…)",
+                elapsedMillis,
+                result.token.length,
+                result.token.take(16)
+            )
+            is IntegrityTokenResult.Failure -> Timber.tag(LOG_TAG).w(
+                "Token request failed in %d ms: error=%s, detail=%s",
+                elapsedMillis,
+                result.error,
+                result.detail
+            )
+            IntegrityTokenResult.Disabled -> Unit
+        }
+        return result
     }
 
     private suspend fun requestTokenInternal(projectNumber: Long, requestHash: String): IntegrityTokenResult {
@@ -78,6 +120,7 @@ class IntegrityTokenServiceImpl(
             throw e // let withTimeoutOrNull handle the timeout cancellation
         } catch (e: Exception) {
             if (e.standardErrorCode() == StandardIntegrityErrorCode.INTEGRITY_TOKEN_PROVIDER_INVALID) {
+                Timber.tag(LOG_TAG).w("Token provider invalidated by Play services — re-preparing and retrying once")
                 tokenProvider = null
                 when (val prepared = prepare(projectNumber)) {
                     is PrepareOutcome.Ready -> {
@@ -98,6 +141,7 @@ class IntegrityTokenServiceImpl(
 
     private suspend fun prepare(projectNumber: Long): PrepareOutcome {
         return try {
+            Timber.tag(LOG_TAG).i("Preparing token provider on demand (cloudProjectNumber=%d)", projectNumber)
             val prepareTask = integrityManagerProvider()
                 .prepareIntegrityToken(
                     PrepareIntegrityTokenRequest.builder()
@@ -106,14 +150,18 @@ class IntegrityTokenServiceImpl(
                 )
             // Cache the provider even when the awaiting coroutine has been cancelled by the
             // caller's timeout — a late successful prepare then speeds up the next measurement.
-            prepareTask.addOnSuccessListener(directExecutor) { tokenProvider = it }
+            prepareTask.addOnSuccessListener(directExecutor) {
+                tokenProvider = it
+                Timber.tag(LOG_TAG).d("Token provider cached from prepare listener")
+            }
             val provider = prepareTask.await()
             tokenProvider = provider
+            Timber.tag(LOG_TAG).i("Token provider prepared")
             PrepareOutcome.Ready(provider)
         } catch (e: CancellationException) {
             throw e // let withTimeoutOrNull handle the timeout cancellation
         } catch (e: Exception) {
-            Timber.w(e, "Integrity token provider preparation failed")
+            Timber.tag(LOG_TAG).w(e, "Token provider preparation failed")
             PrepareOutcome.Failed(e.toFailure(IntegrityError.PREPARE_FAILED))
         }
     }

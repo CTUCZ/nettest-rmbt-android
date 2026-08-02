@@ -52,6 +52,9 @@ private const val TEST_MAX_TIME = 3000
 private const val MAX_VALUE_UNFINISHED_TEST = 0.9f
 private const val INTEGRITY_TOKEN_TIMEOUT_MS = 15_000L
 
+/** Logcat tag for the whole Play Integrity flow — filter with `adb logcat -s IntegrityAPI`. */
+private const val INTEGRITY_LOG_TAG = "IntegrityAPI"
+
 class TestControllerImpl(
     private val context: Context,
     private val config: Config,
@@ -209,9 +212,13 @@ class TestControllerImpl(
             if (uuid != null) { // no uuid yet (fresh install) -> no integrity fields
                 val integrityTimestamp = System.currentTimeMillis()
                 val requestHash = sha256Hex("$uuid|$integrityTimestamp")
+                Timber.tag(INTEGRITY_LOG_TAG)
+                    .i("Binding token to uuid=$uuid, integrityTimestamp=$integrityTimestamp -> requestHash=$requestHash")
                 val integrityResult = integrityTokenService.requestToken(requestHash, INTEGRITY_TOKEN_TIMEOUT_MS)
                 Timber.d("TestController: integrity result=${integrityResult::class.java.simpleName}")
                 appendIntegrityFields(additionalValues, integrityTimestamp, integrityResult)
+            } else {
+                Timber.tag(INTEGRITY_LOG_TAG).i("No client uuid yet (fresh install) — skipping integrity token")
             }
 
             Timber.d("TestController: connecting to ${if (config.controlServerUseSSL) "https" else "http"}://${config.controlServerHost}:${config.controlServerPort}")
