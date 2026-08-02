@@ -396,7 +396,7 @@ class StateRecorder @Inject constructor(
 
                         // Save 5G secondary cell info safely using zip to fill missing values with null
                         active5GNetworkInfos
-                            .zip(active5GSignals + List(active5GNetworkInfos.size - active5GSignals.size) { null })
+                            .zip(active5GSignals + List((active5GNetworkInfos.size - active5GSignals.size).coerceAtLeast(0)) { null })
                             .forEach { (cellNetworkInfoInner, signalStrengthInfo) ->
                                 otherCells?.remove(cellNetworkInfoInner?.rawCellInfo)
                                 saveNetworkInformation(cellNetworkInfoInner, signalStrengthInfo, uuid, testStartTimeNanos)
