@@ -87,15 +87,15 @@ class LoopConfigurationViewModel @Inject constructor(val config: AppConfig, conn
                     backgroundPermissionsWereAsked()
                 }
             } else if (shouldAskForPermission()) {
-                ActivityCompat.requestPermissions(
-                    activity,
+                val permissions = if (shouldAskForBackgroundPermission()) {
                     arrayOf(
                         Manifest.permission.ACCESS_FINE_LOCATION,
-                        if (shouldAskForBackgroundPermission())
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                        else null
-                    ), REQUEST_CODE_BACKGROUND
-                )
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    )
+                } else {
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+                ActivityCompat.requestPermissions(activity, permissions, REQUEST_CODE_BACKGROUND)
                 backgroundPermissionsWereAsked()
             }
         }
