@@ -56,8 +56,17 @@ import java.util.UUID
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.math.floor
 
+/**
+ * Must be a singleton: [at.specure.measurement.MeasurementService] initializes the
+ * [LoopModeRecord] with the session configuration (cert mode or loop mode parameters)
+ * and TestControllerImpl reads it back when building the loop settings reported to the
+ * control server. Separate instances would make TestControllerImpl fall back to the
+ * global loop mode config even for certified measurements.
+ */
+@Singleton
 class StateRecorder @Inject constructor(
     private val context: Context,
     private val netmonster: INetMonster,

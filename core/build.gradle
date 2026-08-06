@@ -87,6 +87,7 @@ dependencies {
 
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
     kapt "com.google.dagger:dagger-android-processor:$versions.dagger"
+    kaptTest "com.google.dagger:dagger-compiler:$versions.dagger"
 
     implementation "com.google.dagger:dagger:$versions.dagger"
     implementation "com.google.dagger:dagger-android-support:$versions.dagger"
