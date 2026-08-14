@@ -130,13 +130,41 @@ class ConnectivityWatcherImpl(private val connectivityManager: ConnectivityManag
     }
 
     override fun addListener(listener: ConnectivityWatcher.ConnectivityChangeListener) {
-        if (connectivityManager.activeNetwork == null) {
-            _activeNetwork = null
-        }
+        syncActiveNetwork()
         listeners.add(listener)
         listener.onConnectivityChanged(_activeNetwork, connectivityManager.activeNetwork)
         if (listeners.size == 1) {
             registerCallbacks()
+        }
+    }
+
+    /**
+     * Rebuilds the cached state from [ConnectivityManager]. The cache is otherwise updated only
+     * from [ConnectivityManager.NetworkCallback] events, which can be missed while the app
+     * process is frozen (doze/cached app freezer), leaving a stale null cache although a network
+     * is connected. Called whenever a listener is added, i.e. every time the UI comes back.
+     */
+    private fun syncActiveNetwork() {
+        val currentNetwork = connectivityManager.activeNetwork
+        if (currentNetwork == null) {
+            _activeNetwork = null
+            return
+        }
+        val currentNetworkId = currentNetwork.id()
+        if (_activeNetwork?.netId == currentNetworkId) {
+            return
+        }
+        val capabilities = connectivityManager.getNetworkCapabilities(currentNetwork)
+        if (capabilities != null) {
+            availableNetworkId = currentNetworkId
+            _activeNetwork = ConnectivityInfo(
+                netId = currentNetworkId,
+                transportType = TransportType.fromNetworkCapability(capabilities),
+                capabilities = NetworkCapability.fromNetworkCapability(capabilities),
+                capabilitiesRaw = capabilities,
+                linkDownstreamBandwidthKbps = capabilities.linkDownstreamBandwidthKbps,
+                linkUpstreamBandwidthKbps = capabilities.linkUpstreamBandwidthKbps
+            )
         }
     }
 

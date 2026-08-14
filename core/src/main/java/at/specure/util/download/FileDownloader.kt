@@ -7,8 +7,8 @@ import android.os.Build
 import android.os.Environment
 import android.text.TextUtils
 import android.webkit.MimeTypeMap
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -99,6 +99,9 @@ class FileDownloader @Inject constructor(
                     _downloadStateFlow.value = DownloadState.Error
                 }
             } catch (e: Exception) {
+                if (e is CancellationException) {
+                    throw e
+                }
                 e.printStackTrace()
                 _downloadStateFlow.value = DownloadState.Error
             }
@@ -116,6 +119,9 @@ class FileDownloader @Inject constructor(
             try {
                 context.startActivity(intent)
             } catch (e: Exception) {
+                if (e is CancellationException) {
+                    throw e
+                }
                 onError(e)
             }
         }
@@ -131,15 +137,8 @@ class FileDownloader @Inject constructor(
     }
 
     private fun createOpenFileIntentV29(fileUri: Uri): Intent {
-        val filename = fileUri.path?.getFileNameWithExtFromUriOrDefault() ?: "file"
-        val file = File(
-            ContextCompat.getExternalFilesDirs(context, Environment.DIRECTORY_DOWNLOADS)[0],
-            filename
-        )
-        val uri = Uri.fromFile(file)
-        val uriParsed = convertUriForUseInIntent(uri.toString())
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(uriParsed, getMimeType(fileUri))
+        intent.setDataAndType(fileUri, getMimeType(fileUri))
         intent.flags =
             Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
         return intent

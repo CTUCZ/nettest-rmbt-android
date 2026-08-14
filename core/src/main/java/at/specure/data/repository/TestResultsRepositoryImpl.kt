@@ -77,6 +77,7 @@ class TestResultsRepositoryImpl(
         return qosTestGoalDao.get(testUUID, testItemId)
     }
 
+    @Deprecated("use open data instead")
     override fun loadTestDetailsResult(testUUID: String) = flow {
         val clientUUID = clientUUID.value
         if (clientUUID == null) {
@@ -87,8 +88,13 @@ class TestResultsRepositoryImpl(
                 val body = TestResultDetailBody(testUUID, clientUUID, Locale.getDefault().language)
                 val result = client.getTestResultDetail(body)
                 result.onSuccess {
-                    testResultDetailsDao.insert(it.toModelList(testUUID))
-                    emit(result.ok)
+                    try {
+                        testResultDetailsDao.insert(it.toModelList(testUUID))
+                        emit(result.ok)
+                    } catch (e: NullPointerException) {
+                        Timber.e(e, "TestUUID: $testUUID,\n response: $it")
+                        emit(false)
+                    }
                 }
 
                 result.onFailure {
@@ -196,9 +202,8 @@ class TestResultsRepositoryImpl(
                         loadQosTestResults(testUUID, clientUUID)
                         emit(true)
                     } catch (e: NullPointerException) {
-                        throw (KotlinNullPointerException(
-                            message = "TestUUID: $testUUID,\n response: $it"
-                        ))
+                        Timber.e(e, "TestUUID: $testUUID,\n response: $it")
+                        emit(false)
                     }
                 }
 

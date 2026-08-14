@@ -28,7 +28,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/colorPrimary</item>
-        <item name="colorControlHighlight">@color/greenRipple</item>
+        <item name="colorControlHighlight">@color/rippleHighlight</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropdown</item>
@@ -41,13 +41,26 @@
         <item name="android:windowBackground">@color/colorPrimary</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="colorControlHighlight">@color/greenRipple</item>
+        <item name="colorControlHighlight">@color/rippleHighlight</item>
     </style>
 
     <style name="MeasurementTheme" parent="AppTheme">
         <item name="android:windowBackground">@color/measurement_dark_gray</item>
         <item name="android:statusBarColor">@color/measurement_dark_gray</item>
     </style>
+
+    <style name="Slider" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/toolbar_blue</item>
+        <item name="colorOnPrimary">@color/colorPrimaryDark</item>
+        <item name="colorOnSurface">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorControlHighlight">@color/rippleHighlight</item>
+    </style>
+
 
     <!--  Splash screen theme -->
 
@@ -70,6 +83,10 @@
     <style name="RobotoBoldStyle">
         <item name="android:fontFamily">@font/roboto_bold</item>
         <item name="fontFamily">@font/roboto_bold</item>
+    </style>
+
+    <style name="RobotoBoldStyle.Small">
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="RobotoRegularStyle.VerySmall">
@@ -137,7 +154,9 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowBackground">@null</item>
-        <item name="colorControlHighlight">@color/greenRipple</item>
+        <item name="colorControlHighlight">@color/rippleHighlight</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 
     <style name="TextInputTheme" parent="AppTheme">

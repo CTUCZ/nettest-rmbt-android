@@ -15,8 +15,13 @@
 package at.specure.config
 
 import at.rmbt.client.control.ControlEndpointProvider
+import at.specure.data.ControlServerSettings
+import timber.log.Timber
 
-class ControlServerProviderImpl(private val config: Config) : ControlEndpointProvider {
+class ControlServerProviderImpl(
+    private val config: Config,
+    private val controlServerSettings: ControlServerSettings,
+) : ControlEndpointProvider {
 
     private val protocol = if (config.controlServerUseSSL) "https://" else "http://"
 
@@ -25,8 +30,13 @@ class ControlServerProviderImpl(private val config: Config) : ControlEndpointPro
     override val host: String
         get() = protocol + config.controlServerHost
 
+    override val statisticsHost: String
+        get() = controlServerSettings.statisticsMasterServerUrl!!
+
+    // The settings check must reach the base host (not the IPv4-only override that [host] can
+    // resolve to in expert mode), so it always uses controlServerHostForSettings.
     override val checkSettingsUrl: String
-        get() = "$host$routePath/${config.controlServerSettingsEndpoint}"
+        get() = "$protocol${config.controlServerHostForSettings}$routePath/${config.controlServerSettingsEndpoint}"
 
     override val testRequestUrl: String
         get() = "$host$routePath/${config.controlServerRequestTestEndpoint}"

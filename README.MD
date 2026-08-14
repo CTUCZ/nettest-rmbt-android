@@ -70,6 +70,7 @@ The source code is published under [Apache version 2.0 license](https://github.c
 - __`EMAIL_ADDRESS`__:exclamation:Email address for support, default: `RMBT Support <support@example.com>`
 - __`DATA_PRIVACY_AND_TERMS_URL`__:exclamation:Link to Privacy Policy & Terms And Condition, default: `https://example.com/%s/tk/netztestterms`, where `1{%s}` is language code (currently `en` or `de`)
 - __`TERMS_FOR_ACCEPTANCE_URL`__:exclamation:Terms and Condition for User acceptance, default: `https://example.com/%s/tc_android.html`, where `1{%s}` is language code (currently `en` or `de`)
+- __`CLOUD_PROJECT_NUMBER`__ Google Cloud project number linked to the Play Console app entry, used for Play Integrity standard requests; empty value disables the integrity check, example: `"123456789012"`
 
 ##### MAP SETTINGS
 - __`MAP_SERVER_HOST`__ Map server host url, default: `sdev.example.com`

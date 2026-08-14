@@ -45,6 +45,10 @@
     <string name="preferences_expert_mode_summary">Zobrazit pokročílé nastavení a informace</string>
     <string name="preferences_ipv4_only">Pouze IPv4</string>
     <string name="preferences_ipv4_only_sum">Nepoužívat IPv6</string>
+    <string name="preferences_ipv6_only">Pouze IPv6</string>
+    <string name="preferences_ipv6_only_sum">Nepoužívat IPv4</string>
+    <string name="expert_mode_no_ipv4_connectivity">Bez IPv4 konektivity</string>
+    <string name="expert_mode_no_ipv6_connectivity">Bez IPv6 konektivity</string>
     <string name="preferences_radio_info">Informace o mobilním připojení</string>
     <string name="preferences_radio_info_sum">Podrobnosti o nastavení mobilní sítě</string>
     <string name="preferences_contact">Kontakt</string>
@@ -266,8 +270,8 @@
     <string name="title_loop_instruction_3">Oprávnění</string>
     <string name="title_cert_instruction_3">Proces certifikovaného měření</string>
     <string name="text_cert_instruction_3"><![CDATA[<p>Certifikované měření se skládá ze 6 časově oddělených testů během jedné hodiny.</p><p>Každý z 6 testů probíhá přibližně 1 minutu a mezi testy je přestávka vždy 10 minut.</p><p>Test se skládá z inicializace, měření odezvy oproti měřicímu serveru (ping) a testu datových přenosů v délce 10 sekund pro každý směr datové komunikace (download a upload).</p><p>Režim certifikovaného měření může způsobovat vysokou spotřebu dat. V kombinaci s rychlou službou přístupu k internetu může 6 provedených testů spotřebovat několik GB i více dat. Důrazně proto doporučujeme, abyste režim certifikovaného měření používali pouze s tarify bez FUP limitu, kde pro vás vyčerpání vašeho FUP limitu nebude znamenat další finanční náklady.</p><p>Dotazy ohledně certifikovaného měření směřujte, prosím, na adresu <a href="mailto:nettest@ctu.gov.cz">nettest@ctu.gov.cz</a>.</p>]]></string>
-    <string name="cert_location_permission_text_1">Funkce certifikovaného měření pro své správné fungování vyžaduje přístup k poloze na pozadí. Oprávnění je nezbytné pro zaznamenání přesné polohy vašeho zařízení v průběhu certifikovaného měření. Tímto způsobem je možné prokázat, že se vaše zařízení nacházelo v udávané lokalitě v průběhu celého procesu certifikovaného měření a nedocházelo k pohybu mimo tolerovanou vzdálenost.\n\nZvolte volbu \"Povolit vždy\".</string>
-    <string name="cert_location_permission_text_2">Funkce certifikovaného měření pro své správné fungování vyžaduje přístup k poloze na pozadí. Oprávnění je nezbytné pro zaznamenání přesné polohy vašeho zařízení v průběhu certifikovaného měření. Tímto způsobem je možné prokázat, že se vaše zařízení nacházelo v udávané lokalitě v průběhu celého procesu certifikovaného měření a nedocházelo k pohybu mimo tolerovanou vzdálenost.\nNejspíš jste již jednou toto oprávnění neudělili. V nastavení aplikace otevřete Oprávnění->Poloha a zvolte volbu \"Povolit vždy\".</string>
+    <string name="cert_location_permission_text_1">Funkce certifikovaného měření vyžaduje přístup k poloze vašeho zařízení, a to i na pozadí. Vaše poloha je v průběhu certifikovaného měření zaznamenávána a odesílána na servery ČTÚ, aby bylo možné prokázat, že se vaše zařízení po celou dobu procesu nacházelo v udávané lokalitě a nedocházelo k pohybu mimo tolerovanou vzdálenost.\n\nZvolte volbu \"Povolit vždy\".</string>
+    <string name="cert_location_permission_text_2">Funkce certifikovaného měření vyžaduje přístup k poloze vašeho zařízení, a to i na pozadí. Vaše poloha je v průběhu certifikovaného měření zaznamenávána a odesílána na servery ČTÚ, aby bylo možné prokázat, že se vaše zařízení po celou dobu procesu nacházelo v udávané lokalitě a nedocházelo k pohybu mimo tolerovanou vzdálenost.\n\nNejspíš jste již jednou toto oprávnění neudělili. V nastavení aplikace otevřete Oprávnění->Poloha a zvolte volbu \"Povolit vždy\".</string>
     <string name="title_loop_count">Počet testů</string>
     <string name="text_loop_start">Spustit testování</string>
     <string name="title_loop_mode">Opakované měření</string>
@@ -304,7 +308,7 @@
     <string name="signal_measurement_terms_title">Aktivace a použití</string>
 
     <string name="permissions_dialog_title">Oprávnění</string>
-    <string name="permissions_dialog_text">Měřící funkce vyžadují pro zaznamenání hodnot signálu a polohy zařízení přístup k poloze na pozadí. Pokud si přejete, aby Váš výsledek obsahoval údaje o mobilním signálu a také údaje o poloze zařízení v průběhu testu, povolte prosím přístup k poloze.\n\nUdělení souhlasu s přístupem k poloze na pozadí není pro režim běžného měření povinné.</string>
+    <string name="permissions_dialog_text">ČTÚ-NetTest během měření zjišťuje polohu vašeho zařízení a spolu s naměřenými hodnotami signálu a rychlosti ji odesílá na měřicí servery ČTÚ, aby bylo možné výsledek přiřadit k místu měření. Bez přístupu k poloze nebude výsledek obsahovat údaje o poloze ani o mobilním signálu.</string>
     <string name="loop_download_pdf">Stáhnout výsledky v PDF</string>
     <string name="loop_download_pdf_in_browser">Stáhnout výsledky v PDF (prohlížeč)</string>
     <string name="cert_measurement">Certifikované měření</string>
@@ -383,7 +387,7 @@
     <string name="location_permission_explanation">Povolení k přístupu k poloze je nezbytné pro identifikaci místa měření a jeho zobrazení v mapě. Bez přesného  přístupu k poloze není síla signálu na mnoha zařízeních k dispozici. Použití opakovaného režimu při pohybu je možné pouze s povolením k přístupu k poloze.</string>
     <string name="location_permissions_disclaimer">ČTÚ-Nettest používá oprávnění přístupu k poloze pouze během měření, pro spuštění opakovaného režimu na pozadí je vyžadováno oprávnění k běhu na pozadí.</string>
     <string name="downloading">Stahování</string>
-    <string name="notification_permission_title">3. Povolení oznámení</string>
+    <string name="notification_permission_title">Povolení oznámení</string>
     <string name="notification_permission_explanation">Povolení přístupu k oznámením je nezbytné pro udržení aplikace v chodu během měření prováděných na pozadí. Bez povolení přístupu k oznámením nebudete moci sledovat průběh měření, když je aplikace spuštěna na pozadí. Povolení přístupu k oznámením je vyžadováno pro spuštění opakovaného režimu na pozadí.</string>
     <string name="unknown_signal_mobile">Neznámý signál mobilního telefonu</string>
     <string name="unknown_signal_2G">Neznámý signál 2G</string>

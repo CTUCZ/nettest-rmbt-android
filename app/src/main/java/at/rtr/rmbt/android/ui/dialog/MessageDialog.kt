@@ -20,16 +20,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
 import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.DialogMessageBinding
 
-class MessageDialog(var message: Int) : FullscreenDialog() {
-
-    private lateinit var binding: DialogMessageBinding
+class MessageDialog : FullscreenDialog() {
 
     override val gravity = Gravity.CENTER
-
     override val dimBackground = false
+
+    private lateinit var binding: DialogMessageBinding
+    private var _onDismissListener: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,15 +42,39 @@ class MessageDialog(var message: Int) : FullscreenDialog() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val message = requireArguments().getString(ARG_MESSAGE)!!
+
         super.onViewCreated(view, savedInstanceState)
         binding.editTextValue.setText(message)
         binding.buttonCancel.setOnClickListener {
             dismiss()
+            _onDismissListener?.invoke()
         }
     }
 
-    companion object {
+    fun setOnDismissListener(onDismissListener: (() -> Unit)?): MessageDialog {
+        _onDismissListener = onDismissListener
+        return this
+    }
 
-        fun instance(message: Int): FullscreenDialog = MessageDialog(message)
+    companion object {
+        private const val ARG_MESSAGE = "arg_message"
+        private const val ARG_TAG = "arg_tag"
+
+        private fun newInstance(message: String, tag: String = "dialog"): MessageDialog {
+            return MessageDialog().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_MESSAGE, message)
+                    putString(ARG_TAG, tag)
+                }
+            }
+        }
+
+        fun show(fragmentManager: FragmentManager, message: String, tag: String = "dialog", onDismiss: (() -> Unit)? = null) {
+            if (fragmentManager.isStateSaved) return
+            if (fragmentManager.findFragmentByTag(tag) != null) return
+
+            newInstance(message).setOnDismissListener(onDismiss).show(fragmentManager, tag)
+        }
     }
 }

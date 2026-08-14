@@ -130,9 +130,14 @@ interface Config {
     var expertModeEnabled: Boolean
 
     /**
-     * Allows to use IPv4 protocol for requests
+     * Allows to use IPv4 protocol for requests.  Mutually exclusive with [expertModeUseIpV6Only].
      */
     var expertModeUseIpV4Only: Boolean
+
+    /**
+     * Allows to use IPv6 protocol for requests. Mutually exclusive with [expertModeUseIpV4Only].
+     */
+    var expertModeUseIpV6Only: Boolean
 
     /**
      * Allows to use "https://" when enabled otherwise "http://" should be used
@@ -148,6 +153,19 @@ interface Config {
      * Control server host, example "myhost.com"
      */
     var controlServerHost: String
+
+    /**
+     * Control server host used for the settings/registration check. Always the configured base
+     * host (never the IPv4-only override [controlServerHost] may resolve to in expert mode), so
+     * the settings request reaches the original server and can return the IPv4/IPv6 URLs.
+     */
+    val controlServerHostForSettings: String
+
+    /**
+     * Google Cloud project number for Play Integrity standard requests.
+     * Empty or non-numeric value disables the integrity flow completely.
+     */
+    val cloudProjectNumber: String
 
     /**
      * Url to the host for IPv4 test, example "v4.myhost.com"
@@ -511,5 +529,35 @@ interface Config {
      * Activation code entered by the technician (sent as developer_code in API)
      */
     var technicianActivationCode: String
+
+    /**
+     * Minimum distance factor between latest two dots on map during the signal measurement
+     */
+    var minDistanceFactorCoverageMeasurement: Int
+
+    /**
+     * Minimum location accuracy during signal measurement in meters
+     */
+    var minLocationAccuracyMetersDuringSignalMeasurement: Int
+
+    /**
+     * Maximum age of the location information for signal measurement in milliseconds to take it into processing
+     */
+    var maxAgeOfLocationInformationForSignalMeasurementMillis: Long
+
+    /**
+     * Maximum distance to consider the location point to be the same as other saved one
+     */
+    var sameLocationDistanceMetersForSignalMeasurement: Int
+
+    /**
+     * Minimal time duration of the fence during the signal measurement for high speed travelling to execute at least few pings, addition to fence radius
+     */
+    var minimalFenceDurationMillisForSignalMeasurement: Long
+
+    /**
+     * If the app should request the background location permission
+     */
+    var shouldRequestBackgroundLocation: Boolean
 
 }

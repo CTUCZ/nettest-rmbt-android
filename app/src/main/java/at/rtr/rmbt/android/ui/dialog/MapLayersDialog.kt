@@ -18,7 +18,7 @@ import at.rtr.rmbt.android.R
 import at.rtr.rmbt.android.databinding.LayoutMapLayersBinding
 import at.rtr.rmbt.android.util.args
 
-class MapLayersDialog : FullscreenDialog() {
+class MapLayersDialog : FullscreenBottomDialog() {
 
     override val gravity: Int = Gravity.BOTTOM
 
@@ -28,6 +28,7 @@ class MapLayersDialog : FullscreenDialog() {
 
     private val callback: Callback?
         get() = when {
+            parentFragment is Callback -> parentFragment as Callback
             targetFragment is Callback -> targetFragment as Callback
             activity is Callback -> activity as Callback
             else -> null
@@ -112,10 +113,9 @@ class MapLayersDialog : FullscreenDialog() {
             activeStyle: Int? = NO_VALUE,
             activeType: Int? = NO_VALUE,
             noSatelliteOrHybrid: Boolean = false
-        ): FullscreenDialog =
+        ): FullscreenBottomDialog =
             MapLayersDialog()
                 .apply {
-                    requestCode?.let { setTargetFragment(fragment, it) }
                     args {
                         activeStyle?.let { putInt(KEY_STYLE, it) }
                         activeType?.let { putInt(KEY_TYPE, it) }

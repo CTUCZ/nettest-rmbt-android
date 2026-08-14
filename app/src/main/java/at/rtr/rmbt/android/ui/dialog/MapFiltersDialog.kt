@@ -19,7 +19,7 @@ import at.rtr.rmbt.android.di.Injector
 import at.rtr.rmbt.android.util.listen
 import at.rtr.rmbt.android.viewmodel.MapFiltersViewModel
 
-class MapFiltersDialog : FullscreenDialog(), MapFiltersConfirmationDialog.Callback {
+class MapFiltersDialog : FullscreenBottomDialog(), MapFiltersConfirmationDialog.Callback {
 
     override val gravity: Int = Gravity.BOTTOM
 
@@ -30,6 +30,9 @@ class MapFiltersDialog : FullscreenDialog(), MapFiltersConfirmationDialog.Callba
 
     private val callback: Callback?
         get() = when {
+            // parentFragment first: shown on the host fragment's childFragmentManager (the
+            // NavController-managed parentFragmentManager crashes on navigation 2.6+).
+            parentFragment is Callback -> parentFragment as Callback
             targetFragment is Callback -> targetFragment as Callback
             activity is Callback -> activity as Callback
             else -> null
@@ -222,7 +225,7 @@ class MapFiltersDialog : FullscreenDialog(), MapFiltersConfirmationDialog.Callba
         const val CODE_PERIOD = 5
         const val CODE_PROVIDER = 6
 
-        fun instance(fragment: Fragment, requestCode: Int): FullscreenDialog = MapFiltersDialog().apply { setTargetFragment(fragment, requestCode) }
+        fun instance(fragment: Fragment, requestCode: Int): FullscreenBottomDialog = MapFiltersDialog()
     }
 
     interface Callback {

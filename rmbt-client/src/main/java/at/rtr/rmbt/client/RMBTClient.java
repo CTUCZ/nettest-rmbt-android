@@ -243,11 +243,11 @@ public class RMBTClient implements RMBTClientCallback {
                         if (isNotResponding) {
                             Timber.e("Test has been terminated, because of RMBTClient inactivity internal");
 
-                            if (commonCallback != null) {
-                                new Handler(Looper.getMainLooper()).post(() ->
-                                        commonCallback.onTestStatusUpdate(TestStatus.ERROR)
-                                );
-                            }
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                if (commonCallback != null) {
+                                    commonCallback.onTestStatusUpdate(TestStatus.ERROR);
+                                }
+                            });
 
                             abortTest(true);
                             shutdown();
@@ -290,6 +290,15 @@ public class RMBTClient implements RMBTClientCallback {
         if (error != null) {
             System.out.println(error);
             return null;
+        }
+
+        // The integrity fields belong to /testRequest only; remove them before the
+        // /qosTestRequest call reuses the same additional values object.
+        if (additionalValues != null) {
+            additionalValues.remove(Config.INTEGRITY_TOKEN);
+            additionalValues.remove(Config.INTEGRITY_TIMESTAMP);
+            additionalValues.remove(Config.INTEGRITY_ERROR);
+            additionalValues.remove(Config.INTEGRITY_ERROR_DETAIL);
         }
 
         final String errorNewTest = controlConnection.requestQoSTestParameters(host, pathPrefix, port, encryption, geoInfo,

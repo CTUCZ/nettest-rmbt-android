@@ -20,7 +20,7 @@ import at.rtr.rmbt.android.viewmodel.HistoryFiltersViewModel
 import javax.inject.Inject
 import kotlin.math.max
 
-class HistoryFiltersDialog : FullscreenDialog(), HistoryFiltersConfirmationDialog.Callback {
+class HistoryFiltersDialog : FullscreenBottomDialog(), HistoryFiltersConfirmationDialog.Callback {
 
     override val gravity: Int = Gravity.BOTTOM
 
@@ -37,6 +37,9 @@ class HistoryFiltersDialog : FullscreenDialog(), HistoryFiltersConfirmationDialo
 
     private val callback: Callback?
         get() = when {
+            // parentFragment first: the dialog is shown on the host fragment's childFragmentManager
+            // (not the NavController-managed parentFragmentManager, which crashes on navigation 2.6+).
+            parentFragment is Callback -> parentFragment as Callback
             targetFragment is Callback -> targetFragment as Callback
             activity is Callback -> activity as Callback
             else -> null
@@ -144,8 +147,10 @@ class HistoryFiltersDialog : FullscreenDialog(), HistoryFiltersConfirmationDialo
         const val CODE_DEVICES = 0
         const val CODE_NETWORK = 1
 
-        fun instance(fragment: Fragment, requestCode: Int): FullscreenDialog =
-            HistoryFiltersDialog().apply { setTargetFragment(fragment, requestCode) }
+        // The dialog resolves its callback via parentFragment, so no target fragment is set;
+        // the caller shows it on its own childFragmentManager.
+        fun instance(fragment: Fragment, requestCode: Int): FullscreenBottomDialog =
+            HistoryFiltersDialog()
     }
 
     interface Callback {

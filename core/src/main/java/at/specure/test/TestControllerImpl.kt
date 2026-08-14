@@ -22,7 +22,10 @@ import at.specure.config.Config
 import at.specure.data.ClientUUID
 import at.specure.data.MeasurementServers
 import at.rmbt.client.control.data.SignalMeasurementType
+import at.specure.integrity.IntegrityTokenService
+import at.specure.integrity.appendIntegrityFields
 import at.specure.measurement.MeasurementState
+import at.specure.util.sha256Hex
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -47,6 +50,10 @@ private const val KEY_COVERAGE = "coverage"
 
 private const val TEST_MAX_TIME = 3000
 private const val MAX_VALUE_UNFINISHED_TEST = 0.9f
+private const val INTEGRITY_TOKEN_TIMEOUT_MS = 15_000L
+
+/** Logcat tag for the whole Play Integrity flow — filter with `adb logcat -s IntegrityAPI`. */
+private const val INTEGRITY_LOG_TAG = "IntegrityAPI"
 
 class TestControllerImpl(
     private val context: Context,
@@ -54,7 +61,8 @@ class TestControllerImpl(
     private val clientUUID: ClientUUID,
     private val connectivityManager: ConnectivityManager,
     private val measurementServer: MeasurementServers,
-    private val stateRecorder: StateRecorder
+    private val stateRecorder: StateRecorder,
+    private val integrityTokenService: IntegrityTokenService
 ) : TestController {
 
     private var lastNetwork: Network? = null
@@ -198,6 +206,21 @@ class TestControllerImpl(
                 additionalValues.put(KEY_MEASUREMENT_TYPE, SignalMeasurementType.REGULAR.signalTypeName)
             }
 
+            // uuid is captured once so the request hash and the request body use
+            // the same value even if a background settings sync changes it.
+            val uuid = clientUUID.value
+            if (uuid != null) { // no uuid yet (fresh install) -> no integrity fields
+                val integrityTimestamp = System.currentTimeMillis()
+                val requestHash = sha256Hex("$uuid|$integrityTimestamp")
+                Timber.tag(INTEGRITY_LOG_TAG)
+                    .i("Binding token to uuid=$uuid, integrityTimestamp=$integrityTimestamp -> requestHash=$requestHash")
+                val integrityResult = integrityTokenService.requestToken(requestHash, INTEGRITY_TOKEN_TIMEOUT_MS)
+                Timber.d("TestController: integrity result=${integrityResult::class.java.simpleName}")
+                appendIntegrityFields(additionalValues, integrityTimestamp, integrityResult)
+            } else {
+                Timber.tag(INTEGRITY_LOG_TAG).i("No client uuid yet (fresh install) — skipping integrity token")
+            }
+
             Timber.d("TestController: connecting to ${if (config.controlServerUseSSL) "https" else "http"}://${config.controlServerHost}:${config.controlServerPort}")
             client = RMBTClient.getInstance(
                 config.controlServerHost,
@@ -205,7 +228,7 @@ class TestControllerImpl(
                 config.controlServerPort,
                 config.controlServerUseSSL,
                 geoInfo,
-                clientUUID.value,
+                uuid,
                 deviceInfo.clientType,
                 deviceInfo.clientName,
                 deviceInfo.softwareVersionName,

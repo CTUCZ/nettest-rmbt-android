@@ -955,6 +955,10 @@ data class CoverageRequestResponse( // CoverageSettingsResponse
     val provider: String?,
     @SerializedName("test_uuid")
     val testUUID: String,
+    @SerializedName("loop_uuid")
+    val loopUUID: String,
+    @SerializedName("loop_test_counter")
+    val loopTestCounter: Int,
     @SerializedName("ping_token")
     val pingToken: String,
     @SerializedName("ping_host")

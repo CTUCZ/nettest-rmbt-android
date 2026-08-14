@@ -16,10 +16,15 @@
 
 package at.rtr.rmbt.android.ui.activity
 
+import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
+import android.util.Rational
+import android.view.View
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.ViewCompat
@@ -179,6 +184,22 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
         viewModel.qosProgressLiveData.value?.let { binding.measurementBottomView?.qosProgressContainer?.update(it) }
     }
 
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if (viewModel.state.isLoopModeActive.get()) {
+            enterInPictureMode()
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(
+        isInPictureInPictureMode: Boolean,
+        newConfig: Configuration
+    ) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        // TODO: adjust variable for state and adjust UI to process that state
+    }
+
+
     private fun finishActivity(measurementFinished: Boolean) {
         Timber.d("Finish activity with measurement finished: $measurementFinished, testUUID: ${viewModel.testUUID}, measurementState: ${viewModel.state.measurementState.get()}, LoopModeActive: ${viewModel.state.isLoopModeActive.get()}, LoopModeState: ${viewModel.state.loopModeRecord.get()?.status}")
         if (measurementFinished) {
@@ -202,11 +223,13 @@ class MeasurementActivity : BaseActivity(), SimpleDialog.Callback {
                 viewModel.testUUID?.let {
                     if (viewModel.state.measurementState.get() == MeasurementState.FINISH) {
                         ResultsActivity.start(this, it, ResultsActivity.ReturnPoint.HOME)
+                        this.finish()
                         return
                     }
+                } ?: run {
+                    HomeActivity.start(this)
+                    this.finish()
                 }
-                finish()
-                HomeActivity.start(this)
             }
         }
     }

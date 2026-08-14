@@ -9,6 +9,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
+import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 
 /**
@@ -18,6 +19,9 @@ class NetworkLocationSource(val context: Context) : LocationSource {
 
     private val manager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var listener: LocationSource.Listener? = null
+
+    override val satellitesCount: Int
+        get() = 0
 
     override val location: LocationInfo?
         @SuppressLint("MissingPermission")
@@ -37,6 +41,9 @@ class NetworkLocationSource(val context: Context) : LocationSource {
             }
         } catch (ex: Exception) {
             Timber.e(ex, "Failed to get last known network location")
+            if (ex is CancellationException) {
+                throw ex
+            }
             null
         }
 
@@ -76,6 +83,9 @@ class NetworkLocationSource(val context: Context) : LocationSource {
             }
         } catch (ex: Exception) {
             Timber.e(ex, "Failed to register gps updates")
+            if (ex is CancellationException) {
+                throw ex
+            }
         }
     }
 
