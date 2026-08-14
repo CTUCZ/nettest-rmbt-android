@@ -13,7 +13,7 @@
   -->
 
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="toolbar_title">ČTÚ-NetTest</string>
+    <string name="toolbar_title">CTU-NetTest</string>
 
     <!-- Navigation menu titles -->
     <string name="menu_button_title_page">Home</string>
@@ -165,7 +165,7 @@
     <string name="location_location_direction_e">E %1$s</string>
     <string name="location_location_direction_s">S %1$s</string>
     <string name="location_location_direction_w">W %1$s</string>
-    <string name="open_location_permission_dialog_label_location_not_permitted">ČTÚ-NetTest is not allowed to use your location. Would you like to allow ČTÚ-NetTest to use your location?</string>
+    <string name="open_location_permission_dialog_label_location_not_permitted">CTU-NetTest is not allowed to use your location. Would you like to allow CTU-NetTest to use your location?</string>
     <string name="open_location_permission_dialog_label_open_permission_setting">Open application settings</string>
 
 
@@ -231,7 +231,7 @@
     <string name="text_cancel_measurement">Cancel measurement</string>
     <string name="text_stop_measurement">Stop measurement</string>
 
-    <string name="notification_test_title">ČTÚ-NetTest is running</string>
+    <string name="notification_test_title">CTU-NetTest is running</string>
 
     <string name="test_dialog_error_text_technician_mode">Test failed. Could not connect to the server. Please check the server settings and try again.</string>
     <string name="test_dialog_error_text_contact_support">Test failed. Could not connect to the server. Please try again later or contact support.</string>
@@ -323,7 +323,7 @@
     <string name="error_sync_code_short">The code must consist of twelve characters</string>
 
     <string name="notification_signal_test_title">Coverage measurement is running</string>
-    <string name="notification_signal_test_text">ČTÚ-NetTest signal measurement is running in the background</string>
+    <string name="notification_signal_test_text">CTU-NetTest signal measurement is running in the background</string>
 
     <string name="notification_loop_mode_finished_title">Loop mode finished</string>
 
@@ -355,9 +355,9 @@
     <string name="text_loop_mode">New test after waiting or covering the distance. Max. 2 days</string>
     <string name="text_button_decline">Decline</string>
     <string name="text_button_accept">Accept</string>
-    <string name="text_loop_instruction_1">The loop mode option for technically interested users allows the automatic repetition of ČTÚ-NetTest. The first test starts right after activation of the loop-modus; further tests are carried out when either the waiting time has elapsed or the specified distance has been covered. Tests will be performed until the configured number of tests has been reached. The signal strength is measured continuously, also between two tests. The loop-modus can be stopped at any time respectively it stops after 48 hours. It needs to be explicitly pointed out that due to the loop mode it cannot be excluded that the tester is identified.</string>
+    <string name="text_loop_instruction_1">The loop mode option for technically interested users allows the automatic repetition of CTU-NetTest. The first test starts right after activation of the loop-modus; further tests are carried out when either the waiting time has elapsed or the specified distance has been covered. Tests will be performed until the configured number of tests has been reached. The signal strength is measured continuously, also between two tests. The loop-modus can be stopped at any time respectively it stops after 48 hours. It needs to be explicitly pointed out that due to the loop mode it cannot be excluded that the tester is identified.</string>
     <string name="text_loop_instruction_2">In the event of a great demand or very high number of tests in a specific area, the loop mode can be rejected by the test system in order to avoid overload. Please note that the loop-modus is (only) intended for use within the EU and the EEA. The loop-modus consumes a large amount of data. With fast connections, 10 tests can consume 1 GB or more of data. It is therefore strongly recommended that the loop-modus is only used with real flat rate tariffs, where additional data volume does not cause additional costs. The loop-modus drains the battery quickly. In pauses between the tests, the GPS and the display remain active and signal measurements continue, which means that the energy is used up much faster than during stand-by mode. The loop-modus should therefore only be used if an external power supply is available.</string>
-    <string name="text_loop_instruction_3">ČTÚ-NetTest uses the location permission only during the measurement, the background permission is required to allow to run the loop mode in background.\n\nČTÚ-NetTest collects location data in order to record the location of a measurement during the loop mode, even when the app is running in background.</string>
+    <string name="text_loop_instruction_3">CTU-NetTest uses the location permission only during the measurement, the background permission is required to allow to run the loop mode in background.\n\nCTU-NetTest collects location data in order to record the location of a measurement during the loop mode, even when the app is running in background.</string>
     <string name="title_loop_instruction_1">Activation</string>
     <string name="title_loop_instruction_2">Usage</string>
     <string name="title_loop_instruction_3">Permissions</string>
@@ -372,11 +372,11 @@
     <string name="loop_mode_meters">Meters</string>
     <string name="loop_mode_no_gps">No GPS</string>
     <string name="or">or</string>
-    <string name="loop_mode_finished">ČTÚ-NetTest loop mode finished!</string>
+    <string name="loop_mode_finished">CTU-NetTest loop mode finished!</string>
     <string name="loop_continue_to_results">Continue to the result</string>
     <string name="loop_run_again">Run again</string>
     <string name="title_privacy_policy">Privacy policy</string>
-    <string name="text_terms_agree">I agree with ČTÚ’s privacy policy and terms of use for ČTÚ-NetTest.</string>
+    <string name="text_terms_agree">I agree with CTU’s privacy policy and terms of use for CTU-NetTest.</string>
     <string name="text_terms_agree_empty">You have to agree to the privacy policy and terms of use to continue.</string>
 
     <string name="dialog_title_config_check">Please change the following values:</string>
@@ -437,13 +437,13 @@
     <string name="label_some_permission_denied_explanation">Grant permissions in settings.</string>
     <string name="label_notification_permission_disabled">Notification permission missing</string>
     <string name="label_notification_permission_disabled_explanation">Grant notification permission in settings.</string>
-    <string name="title_open_nettest_accuracy">Permissions for ČTÚ-NetTest</string>
-    <string name="subtitle_open_nettest_accuracy">ČTÚ-NetTest requires certain permissions to work.</string>
+    <string name="title_open_nettest_accuracy">Permissions for CTU-NetTest</string>
+    <string name="subtitle_open_nettest_accuracy">CTU-NetTest requires certain permissions to work.</string>
     <string name="phone_permission_title">Phone permission</string>
     <string name="location_permission_title">Location permission</string>
-    <string name="phone_permission_explanation">ČTÚ-NetTest does not make phone calls. The telephone permission is necessary to identify the provider.</string>
+    <string name="phone_permission_explanation">CTU-NetTest does not make phone calls. The telephone permission is necessary to identify the provider.</string>
     <string name="location_permission_explanation">The location permission is necessary to identify the measurement location and to display it on the map. Without precise location permission, signal strength is unavailable on many devices. Use of loop mode while on the move is only possible with location permission.</string>
-    <string name="location_permissions_disclaimer">ČTÚ-NetTest uses the location permission only during the measurement, the background permission is required to allow to run the loop mode in background.</string>
+    <string name="location_permissions_disclaimer">CTU-NetTest uses the location permission only during the measurement, the background permission is required to allow to run the loop mode in background.</string>
     <string name="PDF" translatable="false">PDF</string>
     <string name="CSV" translatable="false">CSV</string>
     <string name="XLSX" translatable="false">XLSX</string>
@@ -613,12 +613,12 @@
 </ul></p>]]></string>
     <string name="text_cert_instruction_3"><![CDATA[<p>The certified measurement is a cycle composed of 6 time-diversified tests within 1 hour.</p><p>Each of the 6 tests takes approximately 1 minute and time spacing between individual tests is 10 minutes.</p><p>Each test is composed of initialization, measurement of measurement server response/round-trip delay (ping) and data transmission test having duration of 10 seconds for each direction of data communication (download and upload).</p><p>Certified measurement mode may cause high data consumption. In combination with a fast Internet access service, the 6 tests performed can consume several GB or more of data. We therefore strongly recommend that you use the certified measurement mode only with tariffs without a FUP limit, where exhausting your FUP limit will not result in additional financial costs for you.</p><p>Any questions related to certified measurement can be sent to <a href="mailto:nettest@ctu.gov.cz">nettest@ctu.gov.cz</a>.</p>]]></string>
     <string name="permissions_dialog_title">Permissions</string>
-    <string name="permissions_dialog_text">ČTÚ-NetTest collects your device location during the measurement and sends it, together with the measured signal and speed values, to the ČTÚ measurement servers, so that the result can be linked to the place of measurement. Without access to location, the result will not contain location or mobile signal data.</string>
+    <string name="permissions_dialog_text">CTU-NetTest collects your device location during the measurement and sends it, together with the measured signal and speed values, to the CTU servers, so that the result can be linked to the place of measurement. Without access to location, the result will not contain location or mobile signal data.</string>
     <string name="loop_download_pdf">Download result as PDF</string>
     <string name="loop_download_pdf_in_browser">Download result as PDF in browser</string>
 
-    <string name="cert_location_permission_text_1">The certified measurement function requires access to your location, including in the background. Your location is recorded and sent to the ČTÚ measurement servers throughout the certified measurement, so that it can be proven that your device stayed at the specified location during the entire process and did not move outside the tolerated distance.\n\nChoose the \"Allow all the time\" option.</string>
-    <string name="cert_location_permission_text_2">The certified measurement function requires access to your location, including in the background. Your location is recorded and sent to the ČTÚ measurement servers throughout the certified measurement, so that it can be proven that your device stayed at the specified location during the entire process and did not move outside the tolerated distance.\n\nYou have probably declined this permission in the past. In the application settings, open Permissions->Location and select the \"Allow all the time\" option.</string>
+    <string name="cert_location_permission_text_1">The certified measurement function requires access to your location, including in the background. Your location is recorded and sent to the CTU servers throughout the certified measurement, so that it can be proven that your device stayed at the specified location during the entire process and did not move outside the tolerated distance.\n\nChoose the \"Allow all the time\" option.</string>
+    <string name="cert_location_permission_text_2">The certified measurement function requires access to your location, including in the background. Your location is recorded and sent to the CTU servers throughout the certified measurement, so that it can be proven that your device stayed at the specified location during the entire process and did not move outside the tolerated distance.\n\nYou have probably declined this permission in the past. In the application settings, open Permissions->Location and select the \"Allow all the time\" option.</string>
 
     <string name="cert_measurement">Cert measurement</string>
     <string name="cert_mode_finished">Cert mode finished!</string>
@@ -636,8 +636,8 @@
     <string name="netmonster_core_text">Network information by Netmonster core</string>
     <string name="netmonster_link" translatable="false">https://netmonster.app/</string>
     <string name="preferences_acra_enabled_title">Error reporting</string>
-    <string name="preferences_acra_enabled_summary">Report app crashes to ČTÚ</string>
-    <string name="acra_dialog_title">ČTÚ-NetTest Crashed</string>
+    <string name="preferences_acra_enabled_summary">Report app crashes to CTU</string>
+    <string name="acra_dialog_title">CTU-NetTest Crashed</string>
     <string name="acra_dialog_text">Sorry, application crashed. Please send report to developers.</string>
     <string name="acra_dialog_comment_prompt">You can add a comment here:</string>
     <string name="preferences_5g_simulation_title">xG network debug(experimental)</string>
